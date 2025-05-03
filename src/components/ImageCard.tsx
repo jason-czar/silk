@@ -7,6 +7,7 @@ interface ImageCardProps {
   title: string;
   thumbnailUrl: string;
   imageUrl: string;
+  contextLink: string; // Add the contextLink from API response
   width: number;
   height: number;
 }
@@ -14,7 +15,8 @@ interface ImageCardProps {
 const ImageCard = ({ 
   title, 
   thumbnailUrl, 
-  imageUrl, 
+  imageUrl,
+  contextLink,
   width, 
   height 
 }: ImageCardProps) => {
@@ -26,14 +28,15 @@ const ImageCard = ({
     setIsLoading(true);
     
     try {
-      // Check if the URL is from DHgate and specifically a product page
-      const isDHgateProduct = imageUrl.includes('dhgate.com/product/');
-      
-      if (isDHgateProduct) {
-        // Navigate directly to the DHgate product page
+      // Use contextLink as the primary URL to navigate to
+      if (contextLink && contextLink.includes('dhgate.com')) {
+        // If contextLink is from DHgate, navigate there directly
+        window.open(contextLink, '_blank', 'noopener,noreferrer');
+      } else if (imageUrl.includes('dhgate.com/product/')) {
+        // Fallback to imageUrl if it's a DHgate product page
         window.open(imageUrl, '_blank', 'noopener,noreferrer');
       } else if (imageUrl.includes('dhgate.com')) {
-        // It's DHgate but not a product page, try to find product link
+        // It's DHgate but not a product page
         window.open(imageUrl, '_blank', 'noopener,noreferrer');
       } else {
         // For non-DHgate URLs, search for the product on DHgate

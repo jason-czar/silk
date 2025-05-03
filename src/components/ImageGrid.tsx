@@ -36,6 +36,7 @@ const ImageGrid = ({ results, loading = false }: ImageGridProps) => {
             title={item.title}
             thumbnailUrl={item.image.thumbnailLink}
             imageUrl={item.link}
+            contextLink={item.image.contextLink} // Pass the contextLink to ImageCard
             width={item.image.thumbnailWidth}
             height={item.image.thumbnailHeight}
           />
