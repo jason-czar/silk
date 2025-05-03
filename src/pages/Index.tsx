@@ -1,11 +1,9 @@
-
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle, AlertCircle } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
-
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -13,7 +11,6 @@ const Index = () => {
   const {
     toast
   } = useToast();
-
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -37,7 +34,6 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -70,13 +66,9 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      {!searchResults ? (
-        <div className="flex-grow flex items-center justify-center">
+  return <div className="flex flex-col min-h-screen bg-background">
+      {!searchResults ? <div className="flex-grow flex items-center justify-center">
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12">
               <div className="flex justify-center mb-4">
@@ -86,9 +78,7 @@ const Index = () => {
               <SearchBar onSearch={handleSearch} disabled={loading} />
             </header>
           </div>
-        </div>
-      ) : (
-        <div className="container mx-auto px-4 py-12 flex-grow">
+        </div> : <div className="container mx-auto px-4 py-12 flex-grow">
           <header className="text-center mb-12">
             <div className="flex justify-center mb-4">
               <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-12 md:h-14 object-fill" />
@@ -117,16 +107,13 @@ const Index = () => {
                 ({searchResults.searchInformation.formattedSearchTime} seconds)
               </div>}
           </main>
-        </div>
-      )}
+        </div>}
       
-      <footer className="py-6 bg-[#373c3f] bg-opacity-70 mt-auto">
+      <footer className="py-6 bg-opacity-70 mt-auto bg-[#42484b]">
         <div className="container mx-auto px-4 text-center text-sm text-gray-300">
           <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
