@@ -24,9 +24,9 @@ const SearchBar = ({ onSearch, disabled = false }: SearchBarProps) => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for images..."
+          placeholder="Paste URL or search"
           disabled={disabled}
-          className="w-full py-3 px-5 pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md"
+          className="w-full py-3 px-5 pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 placeholder:text-[#BDBDBD] focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md"
         />
         <button 
           type="submit" 
