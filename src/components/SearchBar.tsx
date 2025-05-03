@@ -33,13 +33,13 @@ const SearchBar = ({
         description: "We're analyzing the product from your URL...",
       });
 
-      // Add mode: 'no-cors' to handle CORS issues
-      const response = await fetch('https://hooks.zapier.com/hooks/catch/13559462/2pp7dii/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
+      // Use GET method with URL as a query parameter
+      const encodedUrl = encodeURIComponent(url);
+      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2pp7dii/?url=${encodedUrl}`;
+      
+      const response = await fetch(zapierEndpoint, {
+        method: 'GET',
+        mode: 'no-cors', // Keep no-cors to handle CORS issues
       });
 
       if (!response.ok) {
