@@ -119,7 +119,7 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center text-sm text-gray-300">
           <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };
