@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
@@ -83,7 +84,7 @@ const Index = () => {
   return <div className="flex flex-col min-h-screen">
       {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 text-center">
-            <header className="mb-12">
+            <header className="mb-12 -mt-[25px]">
               <div className="flex justify-center mb-8">
                 <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-12 md:h-14 object-fill" />
               </div>
