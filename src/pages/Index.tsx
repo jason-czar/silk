@@ -73,8 +73,14 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-white">Image Voyage Finder</h1>
-          <p className="text-lg text-gray-300 mb-8">Discover beautiful images from across the web</p>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" 
+              alt="SearchDH Logo" 
+              className="h-16 md:h-20" 
+            />
+          </div>
+          <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
           <SearchBar onSearch={handleSearch} disabled={loading} />
         </header>
         
@@ -113,7 +119,7 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center text-sm text-gray-300">
           <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
         </div>
-      </footer>
+      </div>
     </div>
   );
 };
