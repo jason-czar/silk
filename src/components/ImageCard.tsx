@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ImageCardProps {
   title: string;
@@ -73,8 +74,11 @@ const ImageCard = ({
     }
   };
 
+  // Check if the product is from DHgate
+  const isDHgate = contextLink?.includes('dhgate.com') || imageUrl?.includes('dhgate.com');
+  
   // Extract brand name and format price for display
-  const brandName = extractBrandName(title);
+  const brandName = isDHgate ? 'DHgate.com' : extractBrandName(title);
   const truncatedTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
   const price = generateRandomPrice();
 
@@ -98,9 +102,14 @@ const ImageCard = ({
       </div>
       <div className="p-3 text-white">
         <div className="flex items-center mb-1">
-          <div className="h-5 w-5 rounded-full bg-gray-300 mr-2 overflow-hidden flex items-center justify-center">
-            <span className="text-black text-xs">A</span>
-          </div>
+          <Avatar className="h-5 w-5 mr-2">
+            {isDHgate ? (
+              <AvatarImage src="https://www.dhgate.com/favicon.ico" alt="DHgate" />
+            ) : null}
+            <AvatarFallback className="text-black text-xs bg-gray-300">
+              {isDHgate ? 'D' : brandName.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
           <span className="text-gray-400 text-sm">{brandName}</span>
         </div>
         <p className="text-base font-medium mb-1 truncate">{truncatedTitle}</p>
