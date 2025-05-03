@@ -1,16 +1,20 @@
+
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowDownCircle, AlertCircle } from 'lucide-react';
+import { ArrowDownCircle } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<ImageSearchParams | null>(null);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
+  // Popular search suggestions
+  const searchSuggestions = ["Prada sunglasses", "New Balance 9060", "LV bag"];
+
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -34,6 +38,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -66,36 +71,58 @@ const Index = () => {
       setLoading(false);
     }
   };
-  const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-  return <div className="min-h-screen bg-background">
+
+  const hasMoreResults = searchResults && 
+    parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
+
+  return (
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
         <header className="text-center mb-12">
           <div className="flex justify-center mb-4">
-            <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-16 md:h-20 object-fill" />
+            <img 
+              src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" 
+              alt="SearchDH Logo" 
+              className="h-16 md:h-20 object-fill" 
+            />
           </div>
           <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
-          <SearchBar onSearch={handleSearch} disabled={loading} />
+          <SearchBar 
+            onSearch={handleSearch} 
+            disabled={loading} 
+            suggestions={searchSuggestions}
+            onSuggestionClick={handleSearch}
+          />
         </header>
         
         <main>
           <ImageGrid results={searchResults} loading={loading && !searchResults} />
           
-          {searchResults && !loading && hasMoreResults && <div className="flex justify-center mt-8 mb-12">
-              <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition-colors shadow-md">
+          {searchResults && !loading && hasMoreResults && (
+            <div className="flex justify-center mt-8 mb-12">
+              <button 
+                onClick={loadMore}
+                className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition-colors shadow-md"
+              >
                 <span>Load More</span>
                 <ArrowDownCircle size={20} />
               </button>
-            </div>}
+            </div>
+          )}
           
-          {loading && searchResults && <div className="text-center my-8">
+          {loading && searchResults && (
+            <div className="text-center my-8">
               <div className="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full"></div>
               <span className="ml-2 text-gray-300">Loading more images...</span>
-            </div>}
+            </div>
+          )}
           
-          {searchResults?.searchInformation && <div className="text-center text-sm text-gray-300 mt-8">
+          {searchResults?.searchInformation && (
+            <div className="text-center text-sm text-gray-300 mt-8">
               Found {searchResults.searchInformation.formattedTotalResults} results 
               ({searchResults.searchInformation.formattedSearchTime} seconds)
-            </div>}
+            </div>
+          )}
         </main>
       </div>
       
@@ -104,6 +131,8 @@ const Index = () => {
           <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
