@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
@@ -42,7 +43,7 @@ const Index = () => {
     try {
       const nextParams = {
         ...searchParams,
-        start: searchResults.items.length + 1
+        start: searchResults.items?.length ? searchResults.items.length + 1 : 1
       };
       const moreResults = await searchImages(nextParams);
 
@@ -51,7 +52,7 @@ const Index = () => {
         if (!prev) return moreResults;
         return {
           ...moreResults,
-          items: [...prev.items, ...moreResults.items]
+          items: [...(prev.items || []), ...(moreResults.items || [])]
         };
       });
 
@@ -68,7 +69,11 @@ const Index = () => {
       setLoading(false);
     }
   };
-  const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
+  const hasMoreResults = searchResults && 
+                        searchResults.searchInformation && 
+                        searchResults.items && 
+                        parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
+  
   return <div className="flex flex-col min-h-screen">
       {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 text-center">
@@ -127,4 +132,5 @@ const Index = () => {
       </footer>
     </div>;
 };
+
 export default Index;

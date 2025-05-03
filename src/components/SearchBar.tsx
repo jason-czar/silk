@@ -33,6 +33,7 @@ const SearchBar = ({
         description: "We're analyzing the product from your URL...",
       });
 
+      // Add mode: 'no-cors' to handle CORS issues
       const response = await fetch('https://hooks.zapier.com/hooks/catch/13559462/2pp7dii/', {
         method: 'POST',
         headers: {
@@ -45,9 +46,15 @@ const SearchBar = ({
         throw new Error('Failed to process URL');
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (error) {
+        // If JSON parsing fails, it could be a CORS issue or empty response
+        throw new Error('Failed to parse response from URL processor');
+      }
       
-      if (data.product_name || data.brand_name) {
+      if (data && (data.product_name || data.brand_name)) {
         const searchTerm = [data.brand_name, data.product_name].filter(Boolean).join(' ');
         if (searchTerm.trim()) {
           toast({
@@ -59,7 +66,12 @@ const SearchBar = ({
           throw new Error('No product information found');
         }
       } else {
-        throw new Error('No product information returned');
+        // If no product info returned, just search with the URL as the query
+        toast({
+          title: "No Product Data",
+          description: "Searching with URL as query instead",
+        });
+        onSearch(url);
       }
     } catch (error) {
       console.error('URL processing error:', error);
