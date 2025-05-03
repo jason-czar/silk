@@ -23,9 +23,6 @@ const ImageCard = ({
 }: ImageCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  
-  const fallbackImage = "/lovable-uploads/d144869e-9383-4867-859f-7e7483c98ac2.png";
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -85,32 +82,18 @@ const ImageCard = ({
   const truncatedTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
   const price = generateRandomPrice();
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
-
   return (
     <div className="rounded-lg overflow-hidden shadow-md bg-neutral-800 h-full">
       <div 
         className="relative pb-[100%] bg-white"
         onClick={handleClick}
       >
-        {!imageError ? (
-          <img
-            src={thumbnailUrl}
-            alt={title}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-            onError={handleImageError}
-          />
-        ) : (
-          <img
-            src={fallbackImage}
-            alt="Silk.surf"
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-          />
-        )}
+        <img
+          src={thumbnailUrl}
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
