@@ -73,6 +73,11 @@ const Index = () => {
     }
   };
   
+  const resetSearch = () => {
+    setSearchResults(null);
+    setSearchParams(null);
+  };
+  
   const hasMoreResults = searchResults && searchResults.searchInformation && searchResults.items && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
   
   return <div className="flex flex-col min-h-screen">
@@ -91,12 +96,12 @@ const Index = () => {
             <div className="container mx-auto px-4">
               <header className="flex items-center mb-4">
                 <div className={`${isMobile ? 'mr-2' : 'mr-8'}`}>
-                  <Link to="/">
+                  <div onClick={resetSearch} className="cursor-pointer">
                     {/* SVG version of the hashtag logo */}
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M24.8889 4L19.5556 28M12.4444 4L7.11111 28M28 10.6667H4M28 21.3333H4" stroke="#333333" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </Link>
+                  </div>
                 </div>
                 <div className="flex-grow">
                   <SearchBar onSearch={handleSearch} disabled={loading} />
