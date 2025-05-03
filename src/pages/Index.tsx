@@ -91,7 +91,7 @@ const Index = () => {
             <ImageGrid results={searchResults} loading={loading && !searchResults} />
             
             {searchResults && !loading && hasMoreResults && <div className="flex justify-center mt-8 mb-12">
-                <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition-colors shadow-md">
+                <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-transparent text-white rounded-full hover:bg-white/10 transition-colors shadow-md border border-white/50">
                   <span>Load More</span>
                   <ArrowDownCircle size={20} />
                 </button>
