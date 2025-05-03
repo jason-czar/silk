@@ -1,13 +1,13 @@
 
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
+import { Card } from '@/components/ui/card';
 
 interface ImageCardProps {
   title: string;
   thumbnailUrl: string;
   imageUrl: string;
-  contextLink: string; // Add the contextLink from API response
+  contextLink: string;
   width: number;
   height: number;
 }
@@ -73,12 +73,17 @@ const ImageCard = ({
     }
   };
 
+  // Extract brand name and format price for display
+  const brandName = extractBrandName(title);
+  const truncatedTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+  const price = generateRandomPrice();
+
   return (
-    <div 
-      onClick={handleClick}
-      className="rounded-lg overflow-hidden shadow-md h-full bg-white cursor-pointer"
-    >
-      <div className="relative pb-[100%]">
+    <div className="rounded-lg overflow-hidden shadow-md bg-neutral-800 h-full">
+      <div 
+        className="relative pb-[100%] bg-white"
+        onClick={handleClick}
+      >
         <img
           src={thumbnailUrl}
           alt={title}
@@ -91,9 +96,44 @@ const ImageCard = ({
           </div>
         )}
       </div>
-      {/* The text section below has been removed */}
+      <div className="p-3 text-white">
+        <div className="flex items-center mb-1">
+          <div className="h-5 w-5 rounded-full bg-gray-300 mr-2 overflow-hidden flex items-center justify-center">
+            <span className="text-black text-xs">A</span>
+          </div>
+          <span className="text-gray-400 text-sm">{brandName}</span>
+        </div>
+        <p className="text-base font-medium mb-1 truncate">{truncatedTitle}</p>
+        <div className="flex justify-between items-center">
+          <span className="text-xl font-bold">${price}</span>
+        </div>
+        <button 
+          onClick={handleClick}
+          className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100"
+        >
+          Find similar
+        </button>
+      </div>
     </div>
   );
+};
+
+// Helper function to extract brand name from title
+const extractBrandName = (title: string): string => {
+  const commonBrands = ['Gucci', 'Nike', 'Adidas', 'Amazon', 'Apple', 'Samsung', 'Sony'];
+  for (const brand of commonBrands) {
+    if (title.toLowerCase().includes(brand.toLowerCase())) {
+      return brand;
+    }
+  }
+  // Return first word if no known brand is found
+  return title.split(' ')[0];
+};
+
+// Helper function to generate a random price for demo purposes
+const generateRandomPrice = (): string => {
+  const basePrice = Math.floor(Math.random() * 200) + 50;
+  return basePrice.toString();
 };
 
 export default ImageCard;

@@ -99,7 +99,7 @@
 }
 
 .search-bar-container input {
-  @apply w-full py-3 px-5 pr-12 rounded-full border-2 border-primary/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none text-lg;
+  @apply w-full py-3 px-5 pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 placeholder:text-[#BDBDBD] focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md;
 }
 
 .search-bar-container button {

@@ -1,16 +1,17 @@
+
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<ImageSearchParams | null>(null);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -34,6 +35,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -66,9 +68,13 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-  return <div className="flex flex-col min-h-screen bg-background">
-      {!searchResults ? <div className="flex-grow flex items-center justify-center">
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {!searchResults ? (
+        <div className="flex-grow flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12">
               <div className="flex justify-center mb-8">
@@ -78,38 +84,63 @@ const Index = () => {
               <SearchBar onSearch={handleSearch} disabled={loading} />
             </header>
           </div>
-        </div> : <div className="container mx-auto px-4 py-12 flex-grow">
-          <header className="text-center mb-12">
-            <SearchBar onSearch={handleSearch} disabled={loading} />
-          </header>
+        </div>
+      ) : (
+        <div className="bg-neutral-800 min-h-screen">
+          <div className="bg-background py-6">
+            <div className="container mx-auto px-4">
+              <header className="flex items-center mb-4">
+                <div className="mr-8">
+                  <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-8 object-fill" />
+                </div>
+                <div className="flex-grow">
+                  <SearchBar onSearch={handleSearch} disabled={loading} />
+                </div>
+              </header>
+            </div>
+          </div>
           
-          <main>
-            <ImageGrid results={searchResults} loading={loading && !searchResults} />
-            
-            {searchResults && !loading && hasMoreResults && <div className="flex justify-center mt-8 mb-12">
-                <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full hover:opacity-90 transition-colors shadow-md">
-                  <span>Load More</span>
-                  <ArrowDownCircle size={20} />
-                </button>
-              </div>}
-            
-            {loading && searchResults && <div className="text-center my-8">
-                <div className="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full"></div>
-                <span className="ml-2 text-gray-600">Loading more images...</span>
-              </div>}
-            
-            {searchResults?.searchInformation && <div className="text-center text-sm text-gray-600 mt-8">
-                Found {searchResults.searchInformation.formattedTotalResults} results 
-                ({searchResults.searchInformation.formattedSearchTime} seconds)
-              </div>}
-          </main>
-        </div>}
+          <div className="container mx-auto px-4 py-6">
+            <main>
+              <ImageGrid results={searchResults} loading={loading && !searchResults} />
+              
+              {searchResults && !loading && hasMoreResults && (
+                <div className="flex justify-center mt-8 mb-12">
+                  <button 
+                    onClick={loadMore} 
+                    className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full hover:opacity-90 transition-colors shadow-md"
+                  >
+                    <span>Load More</span>
+                    <ArrowDownCircle size={20} />
+                  </button>
+                </div>
+              )}
+              
+              {loading && searchResults && (
+                <div className="text-center my-8">
+                  <div className="animate-spin inline-block w-6 h-6 border-4 border-white border-t-transparent rounded-full"></div>
+                  <span className="ml-2 text-gray-400">Loading more images...</span>
+                </div>
+              )}
+              
+              {searchResults?.searchInformation && (
+                <div className="text-center text-sm text-gray-400 mt-8">
+                  Found {searchResults.searchInformation.formattedTotalResults} results 
+                  ({searchResults.searchInformation.formattedSearchTime} seconds)
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
+      )}
       
-      <footer className="bg-background mt-auto py-[5px]">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-600">
+      <footer className={`${searchResults ? 'bg-neutral-900' : 'bg-background'} mt-auto py-[5px]`}>
+        <div className="container mx-auto px-4 text-center text-sm text-gray-500">
           <p>© 2025 Silk.surf • Powered by Google Custom Search</p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

@@ -29,14 +29,14 @@ const ImageGrid = ({ results, loading = false }: ImageGridProps) => {
 
   return (
     <div className="my-8">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {results.items.map((item, index) => (
           <ImageCard
             key={`${item.link}-${index}`}
             title={item.title}
             thumbnailUrl={item.image.thumbnailLink}
             imageUrl={item.link}
-            contextLink={item.image.contextLink} // Pass the contextLink to ImageCard
+            contextLink={item.image.contextLink}
             width={item.image.thumbnailWidth}
             height={item.image.thumbnailHeight}
           />
