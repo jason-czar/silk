@@ -5,13 +5,17 @@ import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<ImageSearchParams | null>(null);
+  const isMobile = useIsMobile();
   const {
     toast
   } = useToast();
+  
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -35,6 +39,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+  
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -67,7 +72,9 @@ const Index = () => {
       setLoading(false);
     }
   };
+  
   const hasMoreResults = searchResults && searchResults.searchInformation && searchResults.items && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
+  
   return <div className="flex flex-col min-h-screen">
       {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 text-center">
@@ -83,7 +90,7 @@ const Index = () => {
           <div className="bg-background py-[14px]">
             <div className="container mx-auto px-4">
               <header className="flex items-center mb-4">
-                <div className="mr-8">
+                <div className={`${isMobile ? 'mr-2' : 'mr-8'}`}>
                   <Link to="/">
                     {/* SVG version of the hashtag logo */}
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
