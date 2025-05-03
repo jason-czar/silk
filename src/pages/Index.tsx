@@ -70,11 +70,11 @@ const Index = () => {
     parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">Image Voyage Finder</h1>
-          <p className="text-lg text-gray-600 mb-8">Discover beautiful images from across the web</p>
+          <h1 className="text-4xl font-bold mb-4 text-white">Image Voyage Finder</h1>
+          <p className="text-lg text-gray-300 mb-8">Discover beautiful images from across the web</p>
           <SearchBar onSearch={handleSearch} disabled={loading} />
         </header>
         
@@ -96,12 +96,12 @@ const Index = () => {
           {loading && searchResults && (
             <div className="text-center my-8">
               <div className="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full"></div>
-              <span className="ml-2 text-gray-600">Loading more images...</span>
+              <span className="ml-2 text-gray-300">Loading more images...</span>
             </div>
           )}
           
           {searchResults?.searchInformation && (
-            <div className="text-center text-sm text-gray-500 mt-8">
+            <div className="text-center text-sm text-gray-300 mt-8">
               Found {searchResults.searchInformation.formattedTotalResults} results 
               ({searchResults.searchInformation.formattedSearchTime} seconds)
             </div>
@@ -109,8 +109,8 @@ const Index = () => {
         </main>
       </div>
       
-      <footer className="py-6 bg-white bg-opacity-70">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-500">
+      <footer className="py-6 bg-[#373c3f] bg-opacity-70">
+        <div className="container mx-auto px-4 text-center text-sm text-gray-300">
           <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
         </div>
       </footer>
