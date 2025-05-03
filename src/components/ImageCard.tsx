@@ -91,9 +91,7 @@ const ImageCard = ({
           </div>
         )}
       </div>
-      <div className="p-2 text-sm text-center truncate">
-        <span className="text-primary font-medium">View on DHgate</span>
-      </div>
+      {/* The text section below has been removed */}
     </div>
   );
 };
