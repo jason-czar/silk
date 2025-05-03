@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
@@ -74,7 +75,10 @@ const ImageCard = ({
 
   // Extract brand name and format price for display
   const brandName = isDHgate ? 'DHgate.com' : extractBrandName(title);
-  const truncatedTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+  
+  // Display the original title with truncation if needed
+  const displayTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+  
   const price = generateRandomPrice();
   return <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
       <div className="relative pb-[100%] bg-white" onClick={handleClick}>
@@ -93,7 +97,7 @@ const ImageCard = ({
           </Avatar>
           <span className="text-gray-400 text-sm">{brandName}</span>
         </div>
-        <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{truncatedTitle}</p>
+        <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
         {/* Price section hidden as requested */}
         <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
       </div>
