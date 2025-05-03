@@ -105,7 +105,7 @@ const Index = () => {
           </main>
         </div>}
       
-      <footer className="py-6 bg-background mt-auto">
+      <footer className="bg-background mt-auto py-[5px]">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600">
           <p>© 2025 Silk.surf • Powered by Google Custom Search</p>
         </div>
