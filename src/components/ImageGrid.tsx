@@ -29,7 +29,7 @@ const ImageGrid = ({ results, loading = false }: ImageGridProps) => {
 
   return (
     <div className="my-8">
-      <div className="image-grid">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {results.items.map((item, index) => (
           <ImageCard
             key={`${item.link}-${index}`}
