@@ -74,7 +74,7 @@ const Index = () => {
               <div className="flex justify-center mb-8">
                 <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-12 md:h-14 object-fill" />
               </div>
-              <p className="text-gray-600 mb-16 text-2xl px-[24px]">Find similar products - at factory direct prices.</p>
+              <p className="text-gray-600 mb-16 text-2xl px-[42px]">Find similar products - at factory direct prices.</p>
               <SearchBar onSearch={handleSearch} disabled={loading} />
             </header>
           </div>
