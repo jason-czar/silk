@@ -1,27 +1,113 @@
+
 import { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useToast } from "@/components/ui/use-toast";
+
 interface SearchBarProps {
   onSearch: (query: string) => void;
   disabled?: boolean;
 }
+
 const SearchBar = ({
   onSearch,
   disabled = false
 }: SearchBarProps) => {
   const [query, setQuery] = useState('');
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      onSearch(query.trim());
+  const [isProcessingUrl, setIsProcessingUrl] = useState(false);
+  const { toast } = useToast();
+
+  const isValidUrl = (string: string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
     }
   };
+
+  const sendUrlToZapier = async (url: string) => {
+    setIsProcessingUrl(true);
+    try {
+      toast({
+        title: "Processing URL",
+        description: "We're analyzing the product from your URL...",
+      });
+
+      const response = await fetch('https://hooks.zapier.com/hooks/catch/13559462/2pp7dii/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process URL');
+      }
+
+      const data = await response.json();
+      
+      if (data.product_name || data.brand_name) {
+        const searchTerm = [data.brand_name, data.product_name].filter(Boolean).join(' ');
+        if (searchTerm.trim()) {
+          toast({
+            title: "Product Found",
+            description: `Searching for: ${searchTerm}`,
+          });
+          onSearch(searchTerm);
+        } else {
+          throw new Error('No product information found');
+        }
+      } else {
+        throw new Error('No product information returned');
+      }
+    } catch (error) {
+      console.error('URL processing error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to process the URL. Please try searching manually.",
+        variant: "destructive"
+      });
+      // Fall back to regular search
+      onSearch(query);
+    } finally {
+      setIsProcessingUrl(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    
+    const trimmedQuery = query.trim();
+    
+    if (isValidUrl(trimmedQuery)) {
+      await sendUrlToZapier(trimmedQuery);
+    } else {
+      onSearch(trimmedQuery);
+    }
+  };
+
   return <div className="search-bar-container">
       <form onSubmit={handleSubmit} className="relative">
-        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled} className="w-full pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 placeholder:text-[#BDBDBD] focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md py-[14px] px-[22px]" />
-        <button type="submit" disabled={disabled || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
-          <Search size={24} className="text-primary hover:text-primary/80 transition-colors duration-300" />
+        <input 
+          type="text" 
+          value={query} 
+          onChange={e => setQuery(e.target.value)} 
+          placeholder="Paste URL or search" 
+          disabled={disabled || isProcessingUrl} 
+          className="w-full pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 placeholder:text-[#BDBDBD] focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md py-[14px] px-[22px]" 
+        />
+        <button 
+          type="submit" 
+          disabled={disabled || isProcessingUrl || !query.trim()} 
+          aria-label="Search" 
+          className="absolute right-4 top-1/2 -translate-y-1/2"
+        >
+          <Search size={24} className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} />
         </button>
       </form>
     </div>;
 };
+
 export default SearchBar;
