@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowDownCircle, Hash } from 'lucide-react';
+import { ArrowDownCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
@@ -13,6 +13,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
+  
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -36,6 +37,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+  
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -68,6 +70,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+  
   const hasMoreResults = searchResults && 
                         searchResults.searchInformation && 
                         searchResults.items && 
@@ -90,8 +93,10 @@ const Index = () => {
               <header className="flex items-center mb-4">
                 <div className="mr-8">
                   <Link to="/">
-                    {/* Replace the logo with a hashtag icon when search results are shown */}
-                    <Hash size={32} className="text-[#333333]" strokeWidth={2} />
+                    {/* SVG version of the hashtag logo */}
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M24.8889 4L19.5556 28M12.4444 4L7.11111 28M28 10.6667H4M28 21.3333H4" stroke="#333333" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </Link>
                 </div>
                 <div className="flex-grow">
