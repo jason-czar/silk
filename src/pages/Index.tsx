@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle, AlertCircle } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,6 +12,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
+
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -35,6 +36,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -67,7 +69,9 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
+
   return <div className="flex flex-col min-h-screen bg-[#42484b]">
       {!searchResults ? <div className="flex-grow flex items-center justify-center">
           <div className="container mx-auto px-4 text-center">
@@ -75,7 +79,7 @@ const Index = () => {
               <div className="flex justify-center mb-4">
                 <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-12 md:h-14 object-fill" />
               </div>
-              <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
+              <p className="text-lg text-gray-300 mb-12">Search for designer products you love - find DHgate replicas in seconds.</p>
               <SearchBar onSearch={handleSearch} disabled={loading} />
             </header>
           </div>
@@ -113,4 +117,5 @@ const Index = () => {
       </footer>
     </div>;
 };
+
 export default Index;
