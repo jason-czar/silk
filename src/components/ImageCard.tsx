@@ -28,22 +28,40 @@ const ImageCard = ({
     setIsLoading(true);
     
     try {
-      // Use contextLink as the primary URL to navigate to
+      // First, create an invisible iframe to load the affiliate link
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = 'https://sale.dhgate.com/92xVti99';
+      document.body.appendChild(iframe);
+      
+      // Then determine the actual product URL
+      let productUrl = '';
+      
       if (contextLink && contextLink.includes('dhgate.com')) {
-        // If contextLink is from DHgate, navigate there directly
-        window.open(contextLink, '_blank', 'noopener,noreferrer');
+        // If contextLink is from DHgate, navigate there
+        productUrl = contextLink;
       } else if (imageUrl.includes('dhgate.com/product/')) {
         // Fallback to imageUrl if it's a DHgate product page
-        window.open(imageUrl, '_blank', 'noopener,noreferrer');
+        productUrl = imageUrl;
       } else if (imageUrl.includes('dhgate.com')) {
         // It's DHgate but not a product page
-        window.open(imageUrl, '_blank', 'noopener,noreferrer');
+        productUrl = imageUrl;
       } else {
         // For non-DHgate URLs, search for the product on DHgate
         const searchTerm = encodeURIComponent(title.split(' ').slice(0, 3).join(' '));
-        const dhgateSearchUrl = `https://www.dhgate.com/product/search.do?act=search&sus=&searchkey=${searchTerm}`;
-        window.open(dhgateSearchUrl, '_blank', 'noopener,noreferrer');
+        productUrl = `https://www.dhgate.com/product/search.do?act=search&sus=&searchkey=${searchTerm}`;
       }
+
+      // Set a small timeout to ensure the affiliate link is loaded before navigating
+      setTimeout(() => {
+        // Remove the iframe
+        document.body.removeChild(iframe);
+        
+        // Navigate to the product URL
+        window.open(productUrl, '_blank', 'noopener,noreferrer');
+        
+        setIsLoading(false);
+      }, 100);
     } catch (error) {
       console.error('Failed to navigate:', error);
       toast({
@@ -51,7 +69,6 @@ const ImageCard = ({
         description: "Unable to navigate to DHgate product. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
