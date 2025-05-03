@@ -49,7 +49,7 @@ serve(async (req) => {
     };
 
     // Check if we have at least some data to store
-    if (productData.brand_name || productData.product_name) {
+    if (productData.brand_name || productData.product_name || productData.product_url || productData.product_image_url) {
       // Insert data into Supabase
       const { data, error } = await supabase
         .from('product_data')

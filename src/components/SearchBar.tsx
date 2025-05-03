@@ -45,7 +45,7 @@ const SearchBar = ({
         const product = existingProducts[0];
         toast({
           title: "Product Found",
-          description: `Found ${product.brand_name} ${product.product_name} in our database`,
+          description: `Found ${product.brand_name || ''} ${product.product_name || ''}`,
         });
         
         const searchTerm = [product.brand_name, product.product_name].filter(Boolean).join(' ');
@@ -56,43 +56,51 @@ const SearchBar = ({
         }
       }
 
-      // Use GET method with URL as a query parameter
-      const encodedUrl = encodeURIComponent(url);
-      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2pv14fa/?url=${encodedUrl}`;
+      // Use our Zapier webhook to process the URL
+      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2pv14fa/?url=${encodeURIComponent(url)}`;
       
-      const response = await fetch(zapierEndpoint, {
-        method: 'GET',
-        mode: 'no-cors', // Keep no-cors to handle CORS issues
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to process URL');
-      }
-
-      let data;
       try {
-        data = await response.json();
-      } catch (error) {
-        // If JSON parsing fails, it could be a CORS issue or empty response
-        throw new Error('Failed to parse response from URL processor');
-      }
-      
-      if (data && (data.product_name || data.brand_name)) {
-        const searchTerm = [data.brand_name, data.product_name].filter(Boolean).join(' ');
-        if (searchTerm.trim()) {
+        const response = await fetch(zapierEndpoint, {
+          method: 'GET',
+        });
+
+        // Wait a moment for Zapier to process and send data back to our function
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        // Now check if our product was received by the Supabase function
+        const { data: newProducts } = await supabase
+          .from('product_data')
+          .select('*')
+          .eq('product_url', url)
+          .limit(1);
+
+        if (newProducts && newProducts.length > 0) {
+          const product = newProducts[0];
           toast({
-            title: "Product Found",
-            description: `Searching for: ${searchTerm}`,
+            title: "Product Analyzed",
+            description: `Found ${product.brand_name || ''} ${product.product_name || ''}`,
           });
-          onSearch(searchTerm);
+
+          const searchTerm = [product.brand_name, product.product_name].filter(Boolean).join(' ');
+          if (searchTerm.trim()) {
+            onSearch(searchTerm);
+          } else {
+            // If somehow we got a product with no brand or name, just use the URL
+            onSearch(url);
+          }
         } else {
-          throw new Error('No product information found');
+          toast({
+            title: "Product Not Found",
+            description: "Searching with URL as query instead",
+          });
+          onSearch(url);
         }
-      } else {
-        // If no product info returned, just search with the URL as the query
+      } catch (error) {
+        console.error("Error with Zapier request:", error);
         toast({
-          title: "No Product Data",
-          description: "Searching with URL as query instead",
+          title: "Processing Error",
+          description: "Unable to process product. Searching with URL instead.",
+          variant: "destructive"
         });
         onSearch(url);
       }
