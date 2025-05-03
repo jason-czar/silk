@@ -1,11 +1,9 @@
-
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
-
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -13,7 +11,6 @@ const Index = () => {
   const {
     toast
   } = useToast();
-
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -37,7 +34,6 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -70,9 +66,7 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-
   return <div className="flex flex-col min-h-screen bg-background">
       {!searchResults ? <div className="flex-grow flex items-center justify-center">
           <div className="container mx-auto px-4 text-center">
@@ -80,7 +74,7 @@ const Index = () => {
               <div className="flex justify-center mb-8">
                 <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-12 md:h-14 object-fill" />
               </div>
-              <p className="text-lg text-gray-600 mb-16">Find similar products - at factory direct prices.</p>
+              <p className="text-gray-600 mb-16 text-xl">Find similar products - at factory direct prices.</p>
               <SearchBar onSearch={handleSearch} disabled={loading} />
             </header>
           </div>
@@ -118,5 +112,4 @@ const Index = () => {
       </footer>
     </div>;
 };
-
 export default Index;
