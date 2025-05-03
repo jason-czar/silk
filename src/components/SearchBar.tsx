@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -32,6 +33,28 @@ const SearchBar = ({
         title: "Processing URL",
         description: "We're analyzing the product from your URL...",
       });
+
+      // First try to check if we already have this product in our database
+      const { data: existingProducts } = await supabase
+        .from('product_data')
+        .select('*')
+        .eq('product_url', url)
+        .limit(1);
+
+      if (existingProducts && existingProducts.length > 0) {
+        const product = existingProducts[0];
+        toast({
+          title: "Product Found",
+          description: `Found ${product.brand_name} ${product.product_name} in our database`,
+        });
+        
+        const searchTerm = [product.brand_name, product.product_name].filter(Boolean).join(' ');
+        if (searchTerm.trim()) {
+          onSearch(searchTerm);
+          setIsProcessingUrl(false);
+          return;
+        }
+      }
 
       // Use GET method with URL as a query parameter
       const encodedUrl = encodeURIComponent(url);
