@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle, AlertCircle } from 'lucide-react';
@@ -72,44 +73,60 @@ const Index = () => {
 
   const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
 
-  return <div className="flex flex-col min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12 flex-grow">
-        <header className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-16 md:h-20 object-fill" />
+  return (
+    <div className="flex flex-col min-h-screen bg-background">
+      {!searchResults ? (
+        <div className="flex-grow flex items-center justify-center">
+          <div className="container mx-auto px-4 text-center">
+            <header className="mb-12">
+              <div className="flex justify-center mb-4">
+                <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-16 md:h-20 object-fill" />
+              </div>
+              <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
+              <SearchBar onSearch={handleSearch} disabled={loading} />
+            </header>
           </div>
-          <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
-          <SearchBar onSearch={handleSearch} disabled={loading} />
-        </header>
-        
-        <main>
-          <ImageGrid results={searchResults} loading={loading && !searchResults} />
+        </div>
+      ) : (
+        <div className="container mx-auto px-4 py-12 flex-grow">
+          <header className="text-center mb-12">
+            <div className="flex justify-center mb-4">
+              <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-16 md:h-20 object-fill" />
+            </div>
+            <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
+            <SearchBar onSearch={handleSearch} disabled={loading} />
+          </header>
           
-          {searchResults && !loading && hasMoreResults && <div className="flex justify-center mt-8 mb-12">
-              <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition-colors shadow-md">
-                <span>Load More</span>
-                <ArrowDownCircle size={20} />
-              </button>
-            </div>}
-          
-          {loading && searchResults && <div className="text-center my-8">
-              <div className="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full"></div>
-              <span className="ml-2 text-gray-300">Loading more images...</span>
-            </div>}
-          
-          {searchResults?.searchInformation && <div className="text-center text-sm text-gray-300 mt-8">
-              Found {searchResults.searchInformation.formattedTotalResults} results 
-              ({searchResults.searchInformation.formattedSearchTime} seconds)
-            </div>}
-        </main>
-      </div>
+          <main>
+            <ImageGrid results={searchResults} loading={loading && !searchResults} />
+            
+            {searchResults && !loading && hasMoreResults && <div className="flex justify-center mt-8 mb-12">
+                <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition-colors shadow-md">
+                  <span>Load More</span>
+                  <ArrowDownCircle size={20} />
+                </button>
+              </div>}
+            
+            {loading && searchResults && <div className="text-center my-8">
+                <div className="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full"></div>
+                <span className="ml-2 text-gray-300">Loading more images...</span>
+              </div>}
+            
+            {searchResults?.searchInformation && <div className="text-center text-sm text-gray-300 mt-8">
+                Found {searchResults.searchInformation.formattedTotalResults} results 
+                ({searchResults.searchInformation.formattedSearchTime} seconds)
+              </div>}
+          </main>
+        </div>
+      )}
       
       <footer className="py-6 bg-[#373c3f] bg-opacity-70 mt-auto">
         <div className="container mx-auto px-4 text-center text-sm text-gray-300">
           <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
 
 export default Index;
