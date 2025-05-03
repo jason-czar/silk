@@ -80,7 +80,7 @@ const Index = () => {
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12">
               <div className="flex justify-center mb-4">
-                <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-16 md:h-20 object-fill" />
+                <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-12 md:h-14 object-fill" />
               </div>
               <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
               <SearchBar onSearch={handleSearch} disabled={loading} />
@@ -91,7 +91,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-12 flex-grow">
           <header className="text-center mb-12">
             <div className="flex justify-center mb-4">
-              <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-16 md:h-20 object-fill" />
+              <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-12 md:h-14 object-fill" />
             </div>
             <p className="text-lg text-gray-300 mb-8">Search for designer products you love - find DHgate replicas in seconds.</p>
             <SearchBar onSearch={handleSearch} disabled={loading} />
