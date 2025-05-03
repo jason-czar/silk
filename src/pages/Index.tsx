@@ -67,7 +67,7 @@ const Index = () => {
     }
   };
   const hasMoreResults = searchResults && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-  return <div className="flex flex-col min-h-screen bg-background">
+  return <div className="flex flex-col min-h-screen bg-[#42484b]">
       {!searchResults ? <div className="flex-grow flex items-center justify-center">
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12">
