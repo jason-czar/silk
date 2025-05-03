@@ -76,8 +76,11 @@ const ImageCard = ({
   // Extract brand name and format price for display
   const brandName = isDHgate ? 'DHgate.com' : extractBrandName(title);
   
-  // Display the original title with truncation if needed
-  const displayTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+  // Clean up the title by removing common prefixes like "Bulk"
+  const cleanTitle = cleanProductTitle(title);
+  
+  // Display the cleaned title with truncation if needed
+  const displayTitle = cleanTitle.length > 20 ? cleanTitle.substring(0, 20) + '...' : cleanTitle;
   
   const price = generateRandomPrice();
   return <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
@@ -102,6 +105,24 @@ const ImageCard = ({
         <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
       </div>
     </div>;
+};
+
+// Helper function to clean up product titles by removing common prefixes
+const cleanProductTitle = (title: string): string => {
+  // List of common prefixes to remove
+  const prefixesToRemove = ['Bulk', 'Wholesale', 'Hot Sale', 'New'];
+  
+  let cleanedTitle = title.trim();
+  
+  // Check if title starts with any of the prefixes (case insensitive)
+  for (const prefix of prefixesToRemove) {
+    const regexPattern = new RegExp(`^${prefix}\\s+`, 'i');
+    if (regexPattern.test(cleanedTitle)) {
+      cleanedTitle = cleanedTitle.replace(regexPattern, '');
+    }
+  }
+  
+  return cleanedTitle;
 };
 
 // Helper function to extract brand name from title
