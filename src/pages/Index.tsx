@@ -86,7 +86,7 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-neutral-800 min-h-screen">
+        <div className="bg-[#EBEBEB] min-h-screen">
           <div className="bg-background py-6">
             <div className="container mx-auto px-4">
               <header className="flex items-center mb-4">
@@ -134,7 +134,7 @@ const Index = () => {
         </div>
       )}
       
-      <footer className={`${searchResults ? 'bg-neutral-900' : 'bg-background'} mt-auto py-[5px]`}>
+      <footer className={`${searchResults ? 'bg-[#EBEBEB]' : 'bg-background'} mt-auto py-[5px]`}>
         <div className="container mx-auto px-4 text-center text-sm text-gray-500">
           <p>© 2025 Silk.surf • Powered by Google Custom Search</p>
         </div>
