@@ -25,29 +25,32 @@ const ImageCard = ({
     e.preventDefault();
     setIsLoading(true);
     
-    // Check if the URL is from DHgate
-    const isDHgate = imageUrl.includes('dhgate.com');
-    
-    if (isDHgate) {
-      // Navigate to the DHgate product page
-      window.open(imageUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      // If not a DHgate URL, try to extract a product ID and construct a DHgate search URL
-      try {
+    try {
+      // Check if the URL is from DHgate and specifically a product page
+      const isDHgateProduct = imageUrl.includes('dhgate.com/product/');
+      
+      if (isDHgateProduct) {
+        // Navigate directly to the DHgate product page
+        window.open(imageUrl, '_blank', 'noopener,noreferrer');
+      } else if (imageUrl.includes('dhgate.com')) {
+        // It's DHgate but not a product page, try to find product link
+        window.open(imageUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        // For non-DHgate URLs, search for the product on DHgate
         const searchTerm = encodeURIComponent(title.split(' ').slice(0, 3).join(' '));
-        const dhgateSearchUrl = `https://www.dhgate.com/wholesale/search.do?act=search&sus=&searchkey=${searchTerm}`;
+        const dhgateSearchUrl = `https://www.dhgate.com/product/search.do?act=search&sus=&searchkey=${searchTerm}`;
         window.open(dhgateSearchUrl, '_blank', 'noopener,noreferrer');
-      } catch (error) {
-        console.error('Failed to navigate:', error);
-        toast({
-          title: "Navigation Error",
-          description: "Unable to navigate to DHgate. Please try again.",
-          variant: "destructive",
-        });
       }
+    } catch (error) {
+      console.error('Failed to navigate:', error);
+      toast({
+        title: "Navigation Error",
+        description: "Unable to navigate to DHgate product. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
