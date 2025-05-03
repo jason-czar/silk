@@ -76,7 +76,7 @@ const ImageCard = ({
   return (
     <div 
       onClick={handleClick}
-      className="rounded-lg overflow-hidden shadow-md h-full bg-white image-card-hover cursor-pointer transition-transform hover:scale-105"
+      className="rounded-lg overflow-hidden shadow-md h-full bg-white cursor-pointer"
     >
       <div className="relative pb-[100%]">
         <img

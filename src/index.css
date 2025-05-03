@@ -94,14 +94,6 @@
   }
 }
 
-.image-card-hover {
-  @apply transition-transform duration-300;
-}
-
-.image-card-hover:hover {
-  @apply transform scale-105;
-}
-
 .search-bar-container {
   @apply w-full max-w-3xl mx-auto relative;
 }
