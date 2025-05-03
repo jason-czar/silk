@@ -85,7 +85,7 @@ const Index = () => {
               <header className="flex items-center mb-4">
                 <div className="mr-8">
                   <Link to="/">
-                    <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-8 object-fill cursor-pointer" />
+                    <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-8 cursor-pointer object-contain" />
                   </Link>
                 </div>
                 <div className="flex-grow">
