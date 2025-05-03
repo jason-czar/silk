@@ -113,9 +113,7 @@ const ImageCard = ({
           <span className="text-gray-400 text-sm">{brandName}</span>
         </div>
         <p className="text-base font-medium mb-1 truncate">{truncatedTitle}</p>
-        <div className="flex justify-between items-center">
-          <span className="text-xl font-bold">${price}</span>
-        </div>
+        {/* Price section hidden as requested */}
         <button 
           onClick={handleClick}
           className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100"
