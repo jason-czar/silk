@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
@@ -91,7 +92,9 @@ const Index = () => {
             <div className="container mx-auto px-4">
               <header className="flex items-center mb-4">
                 <div className="mr-8">
-                  <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-8 object-fill" />
+                  <Link to="/">
+                    <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-8 object-fill cursor-pointer" />
+                  </Link>
                 </div>
                 <div className="flex-grow">
                   <SearchBar onSearch={handleSearch} disabled={loading} />
