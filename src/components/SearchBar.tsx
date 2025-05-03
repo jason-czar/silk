@@ -35,7 +35,7 @@ const SearchBar = ({
 
       // Use GET method with URL as a query parameter
       const encodedUrl = encodeURIComponent(url);
-      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2pp7dii/?url=${encodedUrl}`;
+      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2pv14fa/?url=${encodedUrl}`;
       
       const response = await fetch(zapierEndpoint, {
         method: 'GET',
