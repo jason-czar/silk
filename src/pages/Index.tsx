@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowDownCircle } from 'lucide-react';
+import { ArrowDownCircle, Hash } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
@@ -91,7 +90,8 @@ const Index = () => {
               <header className="flex items-center mb-4">
                 <div className="mr-8">
                   <Link to="/">
-                    <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-8 cursor-pointer object-contain" />
+                    {/* Replace the logo with a hashtag icon when search results are shown */}
+                    <Hash size={32} className="text-[#333333]" strokeWidth={2} />
                   </Link>
                 </div>
                 <div className="flex-grow">
