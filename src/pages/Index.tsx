@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowDownCircle, AlertCircle } from 'lucide-react';
+import { ArrowDownCircle } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
@@ -78,7 +78,7 @@ const Index = () => {
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12">
               <div className="flex justify-center mb-8">
-                <img src="/lovable-uploads/12561f65-e711-4413-84fb-3bbc32633f5c.png" alt="SearchDH Logo" className="h-12 md:h-14 object-fill" />
+                <img src="/lovable-uploads/b0ee370c-2965-4f6f-9ae5-8366c3b0946c.png" alt="Silk.surf Logo" className="h-12 md:h-14 object-fill" />
               </div>
               <p className="text-lg text-gray-600 mb-16">Search for the products you love - find the DHgate alternative in seconds.</p>
               <SearchBar onSearch={handleSearch} disabled={loading} />
@@ -113,7 +113,7 @@ const Index = () => {
       
       <footer className="py-6 bg-background mt-auto">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600">
-          <p>© 2025 Image Voyage Finder • Powered by Google Custom Search</p>
+          <p>© 2025 Silk.surf • Powered by Google Custom Search</p>
         </div>
       </footer>
     </div>;
