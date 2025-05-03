@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
-
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -13,7 +12,6 @@ const Index = () => {
   const {
     toast
   } = useToast();
-  
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -37,7 +35,6 @@ const Index = () => {
       setLoading(false);
     }
   };
-  
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -70,12 +67,7 @@ const Index = () => {
       setLoading(false);
     }
   };
-  
-  const hasMoreResults = searchResults && 
-                        searchResults.searchInformation && 
-                        searchResults.items && 
-                        parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-  
+  const hasMoreResults = searchResults && searchResults.searchInformation && searchResults.items && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
   return <div className="flex flex-col min-h-screen">
       {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background">
           <div className="container mx-auto px-4 text-center">
@@ -88,14 +80,14 @@ const Index = () => {
             </header>
           </div>
         </div> : <div className="bg-[#EBEBEB] min-h-screen">
-          <div className="bg-background py-6">
+          <div className="bg-background py-[14px]">
             <div className="container mx-auto px-4">
               <header className="flex items-center mb-4">
                 <div className="mr-8">
                   <Link to="/">
                     {/* SVG version of the hashtag logo */}
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24.8889 4L19.5556 28M12.4444 4L7.11111 28M28 10.6667H4M28 21.3333H4" stroke="#333333" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M24.8889 4L19.5556 28M12.4444 4L7.11111 28M28 10.6667H4M28 21.3333H4" stroke="#333333" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </Link>
                 </div>
@@ -137,5 +129,4 @@ const Index = () => {
       </footer>
     </div>;
 };
-
 export default Index;
