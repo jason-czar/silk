@@ -1,4 +1,8 @@
 
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { useToast } from '@/components/ui/use-toast';
+
 interface ImageCardProps {
   title: string;
   thumbnailUrl: string;
@@ -14,24 +18,60 @@ const ImageCard = ({
   width, 
   height 
 }: ImageCardProps) => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Check if the URL is from DHgate
+    const isDHgate = imageUrl.includes('dhgate.com');
+    
+    if (isDHgate) {
+      // Navigate to the DHgate product page
+      window.open(imageUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      // If not a DHgate URL, try to extract a product ID and construct a DHgate search URL
+      try {
+        const searchTerm = encodeURIComponent(title.split(' ').slice(0, 3).join(' '));
+        const dhgateSearchUrl = `https://www.dhgate.com/wholesale/search.do?act=search&sus=&searchkey=${searchTerm}`;
+        window.open(dhgateSearchUrl, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.error('Failed to navigate:', error);
+        toast({
+          title: "Navigation Error",
+          description: "Unable to navigate to DHgate. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+    
+    setIsLoading(false);
+  };
+
   return (
-    <a 
-      href={imageUrl} 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      className="block h-full"
+    <div 
+      onClick={handleClick}
+      className="rounded-lg overflow-hidden shadow-md h-full bg-white image-card-hover cursor-pointer transition-transform hover:scale-105"
     >
-      <div className="rounded-lg overflow-hidden shadow-md h-full bg-white image-card-hover">
-        <div className="relative pb-[100%]">
-          <img
-            src={thumbnailUrl}
-            alt={title}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
+      <div className="relative pb-[100%]">
+        <img
+          src={thumbnailUrl}
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
+          </div>
+        )}
       </div>
-    </a>
+      <div className="p-2 text-sm text-center truncate">
+        <span className="text-primary font-medium">View on DHgate</span>
+      </div>
+    </div>
   );
 };
 
