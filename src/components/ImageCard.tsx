@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
@@ -96,9 +95,7 @@ const ImageCard = ({
         </div>
         <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{truncatedTitle}</p>
         {/* Price section hidden as requested */}
-        <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">
-          Find similar
-        </button>
+        <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
       </div>
     </div>;
 };
