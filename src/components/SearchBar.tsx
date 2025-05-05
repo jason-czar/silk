@@ -75,7 +75,7 @@ const SearchBar = ({
       setProcessingTimer(timer);
 
       // Use our Zapier webhook to process the URL
-      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2pv14fa/?url=${encodeURIComponent(url)}`;
+      const zapierEndpoint = `https://hooks.zapier.com/hooks/catch/13559462/2n3nhzi/?url=${encodeURIComponent(url)}`;
       try {
         const response = await fetch(zapierEndpoint, {
           method: 'GET'
