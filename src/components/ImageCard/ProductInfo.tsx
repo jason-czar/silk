@@ -31,16 +31,16 @@ const ProductInfo = ({
       <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
       <div className="grid grid-cols-1 gap-2 mt-2">
         <button 
-          onClick={handleClick} 
-          className="w-full py-2 font-medium rounded-md bg-[#3ecf8e] text-[#ebebeb] hover:bg-[#2ebd7d] transition-colors"
-        >
-          View on DHgate
-        </button>
-        <button 
           onClick={handleFindSimilar} 
           className="w-full py-2 font-medium rounded-md bg-gray-700 text-[#ebebeb] hover:bg-gray-600 transition-colors"
         >
           Find similar
+        </button>
+        <button 
+          onClick={handleClick} 
+          className="w-full py-2 font-medium rounded-md bg-[#3ecf8e] text-[#ebebeb] hover:bg-[#2ebd7d] transition-colors"
+        >
+          View on DHgate
         </button>
       </div>
     </div>
