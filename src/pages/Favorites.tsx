@@ -23,40 +23,43 @@ export default function Favorites() {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-
-  // If not logged in, redirect to login page
-  if (!loading && !user) {
-    return <Navigate to="/auth" />;
-  }
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      if (!user) return;
-      
-      try {
-        setIsLoading(true);
-        const { data, error } = await supabase
-          .from('favorites')
-          .select('*')
-          .order('created_at', { ascending: false });
-          
-        if (error) throw error;
-        
-        setFavorites(data || []);
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load favorites. Please try again.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Check if user is not logged in after auth loading completes
+    if (!loading && !user) {
+      setShouldRedirect(true);
+      return;
+    }
+    
+    // Only fetch favorites if the user is logged in
+    if (user) {
+      fetchFavorites();
+    }
+  }, [user, loading]);
 
-    fetchFavorites();
-  }, [user, toast]);
+  const fetchFavorites = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('favorites')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      setFavorites(data || []);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load favorites. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const removeFavorite = async (id: string) => {
     try {
@@ -81,6 +84,11 @@ export default function Favorites() {
       });
     }
   };
+
+  // Render redirect component if needed
+  if (shouldRedirect) {
+    return <Navigate to="/auth" />;
+  }
 
   return (
     <div className="min-h-screen bg-[#EBEBEB] dark:bg-gray-900 transition-colors duration-300">
