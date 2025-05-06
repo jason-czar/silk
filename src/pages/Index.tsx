@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ImageGrid from '@/components/ImageGrid';
 import ThemeToggle from '@/components/ThemeToggle';
+import UserMenu from '@/components/UserMenu';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -98,7 +99,8 @@ const Index = () => {
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12 -mt-[25px]">
               <div className="flex items-center justify-center mb-8">
-                <div className="absolute top-4 right-4">
+                <div className="absolute top-4 right-4 flex items-center gap-2">
+                  <UserMenu />
                   <ThemeToggle />
                 </div>
                 <img 
@@ -130,7 +132,8 @@ const Index = () => {
                 <div className="flex-grow">
                   <SearchBar onSearch={handleSearch} disabled={loading} />
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 flex items-center gap-2">
+                  <UserMenu />
                   <ThemeToggle />
                 </div>
               </header>
