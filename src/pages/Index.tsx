@@ -8,7 +8,6 @@ import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,14 +17,13 @@ const Index = () => {
   const {
     toast
   } = useToast();
-  
+
   // Animation effect for search results
   useEffect(() => {
     if (searchResults && !loading) {
       setAnimateResults(true);
     }
   }, [searchResults, loading]);
-  
   const handleSearch = async (query: string, useDHgate: boolean = false) => {
     setLoading(true);
     setAnimateResults(false);
@@ -51,7 +49,6 @@ const Index = () => {
       setLoading(false);
     }
   };
-  
   const loadMore = async () => {
     if (!searchParams || !searchResults) return;
     setLoading(true);
@@ -84,18 +81,14 @@ const Index = () => {
       setLoading(false);
     }
   };
-  
   const resetSearch = () => {
     setSearchResults(null);
     setSearchParams(null);
     setAnimateResults(false);
   };
-  
   const hasMoreResults = searchResults && searchResults.searchInformation && searchResults.items && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
-  
   return <div className="flex flex-col min-h-screen">
-      {!searchResults ? (
-        <div className="flex-grow flex items-center justify-center bg-background transition-colors duration-300">
+      {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background transition-colors duration-300">
           <div className="container mx-auto px-4 text-center">
             <header className="mb-12 -mt-[25px]">
               <div className="flex items-center justify-center mb-8">
@@ -103,11 +96,7 @@ const Index = () => {
                   <UserMenu />
                   <ThemeToggle />
                 </div>
-                <img 
-                  src="/lovable-uploads/db230db2-4a02-4e6f-b7b7-f54da79455b2.png" 
-                  alt="Silk Logo" 
-                  className="h-12 md:h-14" 
-                />
+                <img src="/lovable-uploads/db230db2-4a02-4e6f-b7b7-f54da79455b2.png" alt="Silk Logo" className="h-12 md:h-14" />
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-16 text-xl sm:text-2xl px-4 sm:px-[42px] transition-colors duration-300">Find similar products - at factory direct prices.</p>
               <div className="scale-in">
@@ -115,9 +104,7 @@ const Index = () => {
               </div>
             </header>
           </div>
-        </div>
-      ) : (
-        <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
+        </div> : <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
           <div className="bg-background dark:bg-gray-800 py-[14px] transition-colors duration-300">
             <div className="container mx-auto px-4">
               <header className="flex items-center mb-4">
@@ -144,35 +131,22 @@ const Index = () => {
             <main className={animateResults ? 'fade-in' : ''}>
               <ImageGrid results={searchResults} loading={loading && !searchResults} animate={animateResults} />
               
-              {searchResults && !loading && hasMoreResults && (
-                <div className="flex justify-center mt-8 mb-12">
-                  <button 
-                    onClick={loadMore} 
-                    className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-black dark:text-white rounded-full hover:opacity-90 transition-colors shadow-md"
-                  >
+              {searchResults && !loading && hasMoreResults && <div className="flex justify-center mt-8 mb-12">
+                  <button onClick={loadMore} className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-black dark:text-white rounded-full hover:opacity-90 transition-colors shadow-md">
                     <span>Load More</span>
                     <ArrowDownCircle size={20} />
                   </button>
-                </div>
-              )}
+                </div>}
               
-              {loading && searchResults && (
-                <div className="text-center my-8">
+              {loading && searchResults && <div className="text-center my-8">
                   <div className="animate-spin inline-block w-6 h-6 border-4 border-white dark:border-gray-600 border-t-transparent rounded-full"></div>
                   <span className="ml-2 text-gray-400 dark:text-gray-500">Loading more images...</span>
-                </div>
-              )}
+                </div>}
               
-              {searchResults?.searchInformation && (
-                <div className="text-center text-sm text-gray-400 dark:text-gray-500 mt-8">
-                  Found {searchResults.searchInformation.formattedTotalResults} results 
-                  ({searchResults.searchInformation.formattedSearchTime} seconds)
-                </div>
-              )}
+              {searchResults?.searchInformation}
             </main>
           </div>
-        </div>
-      )}
+        </div>}
       
       <footer className={`${searchResults ? 'bg-[#EBEBEB] dark:bg-gray-900' : 'bg-background dark:bg-gray-800'} mt-auto py-[5px] transition-colors duration-300`}>
         <div className="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
