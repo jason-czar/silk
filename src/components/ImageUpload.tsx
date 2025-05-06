@@ -138,7 +138,7 @@ const ImageUpload = ({ onImageProcessed, disabled = false }: ImageUploadProps) =
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center space-x-2">
         <div 
           className="relative overflow-hidden cursor-pointer"
           onDragOver={handleDragOver}
@@ -150,20 +150,21 @@ const ImageUpload = ({ onImageProcessed, disabled = false }: ImageUploadProps) =
             capture="environment"
             onChange={handleFileChange}
             disabled={disabled || isProcessing}
-            className="absolute inset-0 opacity-0 cursor-pointer"
+            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+            aria-label="Take a photo"
           />
           <Button 
             variant="outline" 
-            size="icon" 
-            className="rounded-full bg-[#EBEBEB] border-gray-300 hover:bg-gray-200"
+            className="flex items-center space-x-2 bg-[#EBEBEB] border-gray-300 hover:bg-gray-200"
             disabled={disabled || isProcessing}
           >
             <Camera className="h-5 w-5 text-gray-700" />
+            <span className="text-gray-700">Take Photo</span>
           </Button>
         </div>
         
         <div 
-          className="ml-2 relative overflow-hidden cursor-pointer"
+          className="relative overflow-hidden cursor-pointer"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
@@ -172,15 +173,16 @@ const ImageUpload = ({ onImageProcessed, disabled = false }: ImageUploadProps) =
             accept="image/*"
             onChange={handleFileChange}
             disabled={disabled || isProcessing}
-            className="absolute inset-0 opacity-0 cursor-pointer"
+            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+            aria-label="Upload an image"
           />
           <Button 
             variant="outline" 
-            size="icon" 
-            className="rounded-full bg-[#EBEBEB] border-gray-300 hover:bg-gray-200"
+            className="flex items-center space-x-2 bg-[#EBEBEB] border-gray-300 hover:bg-gray-200"
             disabled={disabled || isProcessing}
           >
             <Upload className="h-5 w-5 text-gray-700" />
+            <span className="text-gray-700">Upload Image</span>
           </Button>
         </div>
       </div>

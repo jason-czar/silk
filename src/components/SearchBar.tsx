@@ -206,7 +206,8 @@ const SearchBar = ({
         <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
       </div>}
       
-      <div className="flex items-center justify-end space-x-2 mt-2">
+      <div className="flex items-center justify-center mt-3">
+        <p className="text-sm text-gray-500 mr-2">Search by image:</p>
         <ImageUpload onImageProcessed={onSearch} disabled={disabled} />
       </div>
     </div>;
