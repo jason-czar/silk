@@ -107,7 +107,7 @@ const Index = () => {
         </div> : <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
           <div className="bg-background dark:bg-gray-800 py-[14px] transition-colors duration-300">
             <div className="container mx-auto px-4">
-              <header className="flex items-center mb-4">
+              <header className="flex items-center mb-4 pl-[10px]">
                 <div className={`${isMobile ? 'mr-2' : 'mr-8'}`}>
                   <div onClick={resetSearch} className="cursor-pointer">
                     <h2 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-2xl">Silk</h2>
