@@ -164,7 +164,7 @@ const SearchBar = ({
   };
   return <div className="search-bar-container">
       <form onSubmit={handleSubmit} className="relative">
-        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB]\nborder border-gray-300 text-gray-800 text-lg\nplaceholder:text-[#BDBDBD]\nfocus:outline-none\nfocus:border-[#3ecf8e]\nfocus:ring-2 focus:ring-[#3ecf8e]/50\nshadow-md\npx-[22px] py-[16px]" />
+        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB]\nborder border-gray-300 text-gray-800 text-lg\nplaceholder:text-[#BDBDBD]\nfocus:outline-none\nfocus:border-[#3ecf8e]\nfocus:ring-2 focus:ring-[#3ecf8e]/75\nshadow-md\npx-[22px] py-[16px]" />
         <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
           <Search size={24} className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} />
         </button>
