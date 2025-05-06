@@ -6,6 +6,7 @@ import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhga
 import ProductImage from './ProductImage';
 import ImageCarousel from './ImageCarousel';
 import ProductInfo from './ProductInfo';
+import SimilarProductsModal from '../SimilarProductsModal';
 import { cleanProductTitle, extractBrandName, extractItemcode, generateFallbackVariants } from './utils';
 
 interface ImageCardProps {
@@ -39,6 +40,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const [showVariants, setShowVariants] = useState(false);
   const [dhgateProduct, setDhgateProduct] = useState<DHgateProductResponse['product'] | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
+  const [showSimilarModal, setShowSimilarModal] = useState(false);
   
   useEffect(() => {
     // Set the main image when the component mounts
@@ -174,6 +176,13 @@ const ImageCard = ({ item }: ImageCardProps) => {
       setIsLoading(false);
     }
   };
+  
+  // Handle the "Find Similar" button click
+  const handleFindSimilar = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowSimilarModal(true);
+  };
 
   // Extract relevant data from the item
   const title = item.title || '';
@@ -219,6 +228,15 @@ const ImageCard = ({ item }: ImageCardProps) => {
         isDHgate={isDHgate}
         displayTitle={displayTitle}
         handleClick={handleClick}
+        handleFindSimilar={handleFindSimilar}
+      />
+      
+      {/* Similar Products Modal */}
+      <SimilarProductsModal
+        isOpen={showSimilarModal}
+        onOpenChange={setShowSimilarModal}
+        productUrl={item.link}
+        productTitle={title}
       />
     </div>
   );
