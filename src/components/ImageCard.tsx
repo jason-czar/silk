@@ -3,26 +3,34 @@ import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 interface ImageCardProps {
-  title: string;
-  thumbnailUrl: string;
-  imageUrl: string;
-  contextLink: string;
-  width: number;
-  height: number;
+  item: {
+    kind: string;
+    title: string;
+    htmlTitle: string;
+    link: string;
+    displayLink: string;
+    snippet: string;
+    htmlSnippet: string;
+    mime?: string;
+    fileFormat?: string;
+    image?: {
+      contextLink: string;
+      height: number;
+      width: number;
+      byteSize: number;
+      thumbnailLink: string;
+      thumbnailHeight: number;
+      thumbnailWidth: number;
+    };
+  };
 }
-const ImageCard = ({
-  title,
-  thumbnailUrl,
-  imageUrl,
-  contextLink,
-  width,
-  height
-}: ImageCardProps) => {
-  const {
-    toast
-  } = useToast();
+
+const ImageCard = ({ item }: ImageCardProps) => {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -35,18 +43,18 @@ const ImageCard = ({
 
       // Then determine the actual product URL
       let productUrl = '';
-      if (contextLink && contextLink.includes('dhgate.com')) {
+      if (item.image?.contextLink && item.image.contextLink.includes('dhgate.com')) {
         // If contextLink is from DHgate, navigate there
-        productUrl = contextLink;
-      } else if (imageUrl.includes('dhgate.com/product/')) {
+        productUrl = item.image.contextLink;
+      } else if (item.link && item.link.includes('dhgate.com/product/')) {
         // Fallback to imageUrl if it's a DHgate product page
-        productUrl = imageUrl;
-      } else if (imageUrl.includes('dhgate.com')) {
+        productUrl = item.link;
+      } else if (item.link && item.link.includes('dhgate.com')) {
         // It's DHgate but not a product page
-        productUrl = imageUrl;
+        productUrl = item.link;
       } else {
         // For non-DHgate URLs, search for the product on DHgate
-        const searchTerm = encodeURIComponent(title.split(' ').slice(0, 3).join(' '));
+        const searchTerm = encodeURIComponent(item.title.split(' ').slice(0, 3).join(' '));
         productUrl = `https://www.dhgate.com/product/search.do?act=search&sus=&searchkey=${searchTerm}`;
       }
 
@@ -70,6 +78,12 @@ const ImageCard = ({
     }
   };
 
+  // Extract relevant data from the item
+  const title = item.title || '';
+  const thumbnailUrl = item.image?.thumbnailLink || '';
+  const imageUrl = item.link || '';
+  const contextLink = item.image?.contextLink || '';
+  
   // Check if the product is from DHgate
   const isDHgate = contextLink?.includes('dhgate.com') || imageUrl?.includes('dhgate.com');
 
@@ -83,12 +97,16 @@ const ImageCard = ({
   const displayTitle = cleanTitle.length > 20 ? cleanTitle.substring(0, 20) + '...' : cleanTitle;
   
   const price = generateRandomPrice();
-  return <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
+  
+  return (
+    <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
       <div className="relative pb-[100%] bg-white" onClick={handleClick}>
         <img src={thumbnailUrl} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-        {isLoading && <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
-          </div>}
+          </div>
+        )}
       </div>
       <div className="p-3 text-white">
         <div className="flex items-center mb-1">
@@ -104,7 +122,8 @@ const ImageCard = ({
         {/* Price section hidden as requested */}
         <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 // Helper function to clean up product titles by removing common prefixes
@@ -142,4 +161,5 @@ const generateRandomPrice = (): string => {
   const basePrice = Math.floor(Math.random() * 200) + 50;
   return basePrice.toString();
 };
+
 export default ImageCard;
