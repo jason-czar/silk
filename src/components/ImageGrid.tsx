@@ -26,6 +26,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
   const [favoritedItems, setFavoritedItems] = useState<FavoriteItem[]>([]);
   const [visibleItems, setVisibleItems] = useState<number>(0);
   const [prevItemCount, setPrevItemCount] = useState<number>(0);
+  const [itemsToAnimate, setItemsToAnimate] = useState<number>(0);
 
   // Track when new items are added to implement staggered animation
   useEffect(() => {
@@ -35,12 +36,14 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
     if (prevItemCount === 0 || results.items.length <= prevItemCount) {
       setVisibleItems(results.items.length);
       setPrevItemCount(results.items.length);
+      setItemsToAnimate(0);
       return;
     }
     
     // For newly loaded items (from infinite scroll), apply staggered animation
     const newItemCount = results.items.length;
-    const itemsToAnimate = newItemCount - prevItemCount;
+    const newItemsToAnimate = newItemCount - prevItemCount;
+    setItemsToAnimate(newItemsToAnimate);
     
     // Start with current visible count
     let currentCount = prevItemCount;
