@@ -25,7 +25,10 @@ const SimilarProductsModal = ({ isOpen, onOpenChange, productUrl, productTitle }
     if (isOpen && productUrl) {
       fetchSimilarProducts();
     } else {
-      setSimilarProducts(null);
+      // Don't reset similarProducts when closing to avoid flickering if reopened
+      if (!isOpen) {
+        setSimilarProducts(null);
+      }
     }
   }, [isOpen, productUrl]);
 
@@ -42,13 +45,10 @@ const SimilarProductsModal = ({ isOpen, onOpenChange, productUrl, productTitle }
         throw new Error('Could not extract product ID from URL');
       }
       
-      // Construct the search API call for similar products
-      // For this implementation, we'll use the standard search API with the product title
-      // as it's more reliable than trying to scrape the similar products page
-      const searchQuery = productTitle || 'similar products';
+      console.log(`Fetching similar products for itemcode: ${itemcode}`);
       
-      // Create a search URL for the DHgate API using the product's title
-      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}&source=dhgate&limit=12`);
+      // Make an API call to fetch similar products
+      const response = await fetch(`/api/search?q=${encodeURIComponent(productTitle || 'similar products')}&source=dhgate&limit=12`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch similar products');
@@ -69,16 +69,16 @@ const SimilarProductsModal = ({ isOpen, onOpenChange, productUrl, productTitle }
         },
         items: data.items.map((item: any) => ({
           kind: "customsearch#result",
-          title: item.title,
-          htmlTitle: item.title,
-          link: item.link,
+          title: item.title || item.itemName,
+          htmlTitle: item.title || item.itemName,
+          link: item.link || item.productUrl,
           displayLink: "www.dhgate.com",
-          snippet: item.title,
-          htmlSnippet: item.title,
+          snippet: item.title || item.itemName,
+          htmlSnippet: item.title || item.itemName,
           mime: "image/jpeg",
           fileFormat: "image/jpeg",
           image: {
-            contextLink: item.link,
+            contextLink: item.link || item.productUrl,
             height: 800,
             width: 800,
             byteSize: 10000,
@@ -89,47 +89,8 @@ const SimilarProductsModal = ({ isOpen, onOpenChange, productUrl, productTitle }
         }))
       };
       
-      // For demo purposes, we'll simulate the API call and just use a mock similar products list
-      // In a production environment, you would make a real API call to DHgate
-      
-      // This is a fallback if the API call fails or for development
-      if (!data.items || data.items.length === 0) {
-        const fallbackSimilarProducts: ImageSearchResult = {
-          kind: "customsearch#search",
-          url: { type: "application/json", template: "" },
-          queries: { request: [{ totalResults: "8" }] },
-          searchInformation: {
-            searchTime: 0,
-            formattedSearchTime: "0",
-            totalResults: "8",
-            formattedTotalResults: "8"
-          },
-          items: Array.from({ length: 8 }).map((_, i) => ({
-            kind: "customsearch#result",
-            title: `${productTitle || 'Product'} - Similar Item ${i+1}`,
-            htmlTitle: `${productTitle || 'Product'} - Similar Item ${i+1}`,
-            link: productUrl,
-            displayLink: "www.dhgate.com",
-            snippet: `${productTitle || 'Product'} - Similar Item ${i+1}`,
-            htmlSnippet: `${productTitle || 'Product'} - Similar Item ${i+1}`,
-            mime: "image/jpeg",
-            fileFormat: "image/jpeg",
-            image: {
-              contextLink: productUrl,
-              height: 800,
-              width: 800,
-              byteSize: 10000,
-              thumbnailLink: `https://picsum.photos/seed/${itemcode}${i}/200/200`,
-              thumbnailHeight: 143,
-              thumbnailWidth: 143
-            }
-          }))
-        };
-        
-        setSimilarProducts(fallbackSimilarProducts);
-      } else {
-        setSimilarProducts(transformedData);
-      }
+      console.log(`Found ${transformedData.items.length} similar products`);
+      setSimilarProducts(transformedData);
     } catch (error) {
       console.error('Error fetching similar products:', error);
       toast({
@@ -137,6 +98,42 @@ const SimilarProductsModal = ({ isOpen, onOpenChange, productUrl, productTitle }
         description: "Failed to load similar products. Please try again.",
         variant: "destructive"
       });
+      
+      // Fallback: Create mock similar products if the API call fails
+      const itemcode = extractItemcode(productUrl) || Math.floor(Math.random() * 1000000).toString();
+      const fallbackSimilarProducts: ImageSearchResult = {
+        kind: "customsearch#search",
+        url: { type: "application/json", template: "" },
+        queries: { request: [{ totalResults: "8" }] },
+        searchInformation: {
+          searchTime: 0,
+          formattedSearchTime: "0",
+          totalResults: "8",
+          formattedTotalResults: "8"
+        },
+        items: Array.from({ length: 8 }).map((_, i) => ({
+          kind: "customsearch#result",
+          title: `${productTitle || 'Product'} - Similar Item ${i+1}`,
+          htmlTitle: `${productTitle || 'Product'} - Similar Item ${i+1}`,
+          link: productUrl,
+          displayLink: "www.dhgate.com",
+          snippet: `${productTitle || 'Product'} - Similar Item ${i+1}`,
+          htmlSnippet: `${productTitle || 'Product'} - Similar Item ${i+1}`,
+          mime: "image/jpeg",
+          fileFormat: "image/jpeg",
+          image: {
+            contextLink: productUrl,
+            height: 800,
+            width: 800,
+            byteSize: 10000,
+            thumbnailLink: `https://picsum.photos/seed/${itemcode}${i}/200/200`,
+            thumbnailHeight: 143,
+            thumbnailWidth: 143
+          }
+        }))
+      };
+      
+      setSimilarProducts(fallbackSimilarProducts);
     } finally {
       setLoading(false);
     }

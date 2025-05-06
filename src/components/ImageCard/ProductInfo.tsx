@@ -31,7 +31,7 @@ const ProductInfo = ({
       <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
       <button 
         onClick={handleFindSimilar} 
-        className="w-full mt-2 py-2 font-medium rounded-md bg-[#3ecf8e] text-[#ebebeb]"
+        className="w-full mt-2 py-2 font-medium rounded-md bg-[#3ecf8e] text-[#ebebeb] hover:bg-[#2ebd7d] transition-colors"
       >
         Find similar
       </button>

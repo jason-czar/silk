@@ -19,6 +19,25 @@ window.fetch = async function(input: RequestInfo | URL, init?: RequestInit) {
     return createMockResponse(mockData);
   }
   
+  // Intercept API calls for similar products by itemcode
+  if (url.includes('/similar-products/') || url.includes('itemcode=')) {
+    let itemcode = '';
+    
+    // Extract itemcode from URL
+    if (url.includes('/similar-products/')) {
+      itemcode = url.split('/similar-products/')[1].split('/')[0];
+    } else {
+      const params = new URL(url, window.location.origin).searchParams;
+      itemcode = params.get('itemcode') || '';
+    }
+    
+    if (itemcode) {
+      console.log(`Mock API: Fetching similar products for item ${itemcode}`);
+      const mockData = await getMockSimilarProducts(`Similar to ${itemcode}`, 12);
+      return createMockResponse(mockData);
+    }
+  }
+  
   // For all other requests, use the original fetch
   return originalFetch(input, init);
 };

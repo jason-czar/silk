@@ -16,12 +16,13 @@ export const getMockSimilarProducts = async (
       // Create mock products based on the search query
       const mockItems: DHgateProduct[] = Array.from({ length: limit }).map((_, i) => {
         const itemCode = Math.floor(100000000 + Math.random() * 900000000).toString();
+        const price = 10 + Math.random() * 90;
         return {
           itemCode,
           itemName: `${searchQuery} - Similar Product ${i + 1}`,
           price: {
-            minPrice: 10 + Math.random() * 90,
-            maxPrice: 100 + Math.random() * 900,
+            minPrice: price,
+            maxPrice: price * (1.5 + Math.random()),
             currency: 'USD'
           },
           imageUrl: `https://picsum.photos/seed/${itemCode}/400/400`,
@@ -34,7 +35,7 @@ export const getMockSimilarProducts = async (
       });
       
       resolve({ items: mockItems });
-    }, 500);
+    }, 800); // Added a slightly longer delay for more realistic loading state
   });
 };
 
