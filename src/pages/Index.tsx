@@ -8,6 +8,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -96,7 +97,7 @@ const Index = () => {
                   <UserMenu />
                   <ThemeToggle />
                 </div>
-                <img src="/lovable-uploads/db230db2-4a02-4e6f-b7b7-f54da79455b2.png" alt="Silk Logo" className="h-12 md:h-14" />
+                <h1 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-5xl">Silk</h1>
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-16 text-xl sm:text-2xl px-4 sm:px-[42px] transition-colors duration-300">Find similar products - at factory direct prices.</p>
               <div className="scale-in">
@@ -110,10 +111,7 @@ const Index = () => {
               <header className="flex items-center mb-4">
                 <div className={`${isMobile ? 'mr-2' : 'mr-8'}`}>
                   <div onClick={resetSearch} className="cursor-pointer">
-                    {/* SVG version of the hashtag logo */}
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24.8889 4L19.5556 28M12.4444 4L7.11111 28M28 10.6667H4M28 21.3333H4" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <h2 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-2xl">Silk</h2>
                   </div>
                 </div>
                 <div className="flex-grow">
