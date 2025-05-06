@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
@@ -22,6 +21,12 @@ const Index = () => {
   const {
     toast
   } = useToast();
+
+  // Helper function to determine if more results are available
+  const hasMoreResults = searchResults && 
+                        searchResults.searchInformation && 
+                        searchResults.items && 
+                        parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
 
   // Animation effect for search results
   useEffect(() => {
@@ -161,8 +166,6 @@ const Index = () => {
     setSearchParams(null);
     setAnimateResults(false);
   };
-
-  const hasMoreResults = searchResults && searchResults.searchInformation && searchResults.items && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
 
   return <div className="flex flex-col min-h-screen">
       {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background transition-colors duration-300">
