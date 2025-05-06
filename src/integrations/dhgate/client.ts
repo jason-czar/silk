@@ -11,10 +11,10 @@ const DHGATE_CONFIG = {
   DEFAULT_PASSWORD: "1qaz2wsx"
 };
 
-// Use sandbox environment for development
-const BASE_URL = DHGATE_CONFIG.SANDBOX_URL;
-// For production, uncomment this line:
-// const BASE_URL = DHGATE_CONFIG.PRODUCTION_URL;
+// Use production environment
+const BASE_URL = DHGATE_CONFIG.PRODUCTION_URL;
+// For sandbox, uncomment this line:
+// const BASE_URL = DHGATE_CONFIG.SANDBOX_URL;
 
 // Token storage
 interface TokenResponse {

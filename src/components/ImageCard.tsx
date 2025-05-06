@@ -43,14 +43,11 @@ const extractItemcode = (url: string): string | null => {
   return match ? match[1] : null;
 };
 
-// Sample color variants for demonstration
-const generateColorVariants = (baseImageUrl: string): {url: string, color: string}[] => {
+// Fallback color variants for when API doesn't provide them
+const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
   // For demo purposes, we'll create some color variants with slight modifications to the URL
   return [
-    { url: baseImageUrl, color: 'Gray/Volt' },
-    { url: baseImageUrl.replace(/(\.\w+)$/, '-yellow$1'), color: 'Yellow/Black' },
-    { url: baseImageUrl.replace(/(\.\w+)$/, '-blue$1'), color: 'Blue/White' },
-    { url: baseImageUrl.replace(/(\.\w+)$/, '-red$1'), color: 'Red/Black' },
+    { url: baseImageUrl, color: 'Default' },
   ];
 };
 
@@ -61,14 +58,15 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const [colorVariants, setColorVariants] = useState<{url: string, color: string}[]>([]);
   const [showVariants, setShowVariants] = useState(false);
   const [dhgateProduct, setDhgateProduct] = useState<any>(null);
+  const [isLoadingProduct, setIsLoadingProduct] = useState(false);
   
   useEffect(() => {
     // Set the main image when the component mounts
     if (item.image?.thumbnailLink) {
       setSelectedImage(item.image.thumbnailLink);
       
-      // Generate simulated color variants based on the main image
-      setColorVariants(generateColorVariants(item.image.thumbnailLink));
+      // Set a fallback variant based on the main image
+      setColorVariants(generateFallbackVariants(item.image.thumbnailLink));
     }
     
     // If this is a DHgate product, try to fetch additional details
@@ -77,29 +75,54 @@ const ImageCard = ({ item }: ImageCardProps) => {
       if (itemcode) {
         // Fetch product details from DHgate API
         const fetchProductDetails = async () => {
+          setIsLoadingProduct(true);
           try {
             const productDetails = await getProductByItemcode(itemcode);
             if (productDetails) {
               setDhgateProduct(productDetails);
               
-              // If the product has real variants, use those instead of simulated ones
-              if (productDetails.skuProperties && productDetails.skuProperties.length > 0) {
-                const realVariants = productDetails.skuProperties
-                  .flatMap((prop: any) => prop.values)
-                  .filter((value: any) => value.imageUrl)
-                  .map((value: any) => ({
-                    url: value.imageUrl,
-                    color: value.propertyValueDisplayName || 'Variant'
-                  }));
+              // Extract actual variants from the product if available
+              if (productDetails.skuProperties && Array.isArray(productDetails.skuProperties) && productDetails.skuProperties.length > 0) {
+                // Collect all variants from all properties that have images
+                const extractedVariants: {url: string, color: string}[] = [];
                 
-                if (realVariants.length > 0) {
-                  setColorVariants(realVariants);
+                productDetails.skuProperties.forEach((property: any) => {
+                  if (property && property.values && Array.isArray(property.values)) {
+                    property.values.forEach((value: any) => {
+                      if (value && value.imageUrl) {
+                        extractedVariants.push({
+                          url: value.imageUrl,
+                          color: value.propertyValueDisplayName || property.propertyName || 'Variant'
+                        });
+                      }
+                    });
+                  }
+                });
+                
+                // If we found variants with images, use them
+                if (extractedVariants.length > 0) {
+                  console.log("Found product variants:", extractedVariants.length);
+                  setColorVariants(extractedVariants);
+                  // If the product has a main image, make sure it's the first in our variants
+                  if (productDetails.originalImageUrl) {
+                    setSelectedImage(productDetails.originalImageUrl);
+                    // Add the main product image if it's not already in the variants
+                    const hasMainImage = extractedVariants.some(v => v.url === productDetails.originalImageUrl);
+                    if (!hasMainImage) {
+                      setColorVariants([
+                        { url: productDetails.originalImageUrl, color: 'Main' },
+                        ...extractedVariants
+                      ]);
+                    }
+                  }
                 }
               }
             }
           } catch (error) {
             console.error('Failed to fetch DHgate product details:', error);
-            // Fall back to simulated variants - already set above
+            // Fallback to the existing variant
+          } finally {
+            setIsLoadingProduct(false);
           }
         };
         
@@ -177,8 +200,6 @@ const ImageCard = ({ item }: ImageCardProps) => {
   // Display the cleaned title with truncation if needed
   const displayTitle = cleanTitle.length > 20 ? cleanTitle.substring(0, 20) + '...' : cleanTitle;
   
-  const price = generateRandomPrice();
-  
   return (
     <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
       <div className="relative pb-[100%] bg-white" onClick={handleClick}>
@@ -201,6 +222,13 @@ const ImageCard = ({ item }: ImageCardProps) => {
             <Image size={16} className="text-gray-600" />
           </div>
         )}
+        
+        {/* Loading indicator for product details */}
+        {isLoadingProduct && (
+          <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
+            <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"></div>
+          </div>
+        )}
       </div>
 
       {/* Color variants carousel - only displayed if showVariants is true */}
@@ -220,15 +248,17 @@ const ImageCard = ({ item }: ImageCardProps) => {
                     className={`aspect-square rounded overflow-hidden cursor-pointer border-2 ${selectedImage === variant.url ? 'border-blue-500' : 'border-transparent'}`}
                     onClick={() => handleVariantClick(variant.url)}
                   >
-                    <img src={variant.url} alt={`Color variant ${index + 1}`} className="w-full h-full object-cover" />
+                    <img src={variant.url} alt={`${variant.color}`} className="w-full h-full object-cover" />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex items-center justify-end gap-1 mt-1">
-              <CarouselPrevious className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
-              <CarouselNext className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
-            </div>
+            {colorVariants.length > 3 && (
+              <div className="flex items-center justify-end gap-1 mt-1">
+                <CarouselPrevious className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
+                <CarouselNext className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
+              </div>
+            )}
           </Carousel>
         </div>
       )}
@@ -244,7 +274,6 @@ const ImageCard = ({ item }: ImageCardProps) => {
           <span className="text-gray-400 text-sm">{brandName}</span>
         </div>
         <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
-        {/* Price section hidden as requested */}
         <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
       </div>
     </div>
@@ -279,12 +308,6 @@ const extractBrandName = (title: string): string => {
   }
   // Return first word if no known brand is found
   return title.split(' ')[0];
-};
-
-// Helper function to generate a random price for demo purposes
-const generateRandomPrice = (): string => {
-  const basePrice = Math.floor(Math.random() * 200) + 50;
-  return basePrice.toString();
 };
 
 export default ImageCard;
