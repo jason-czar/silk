@@ -47,8 +47,11 @@ const SimilarProductsModal = ({ isOpen, onOpenChange, productUrl, productTitle }
       
       console.log(`Fetching similar products for itemcode: ${itemcode}`);
       
-      // Make an API call to fetch similar products
-      const response = await fetch(`/api/search?q=${encodeURIComponent(productTitle || 'similar products')}&source=dhgate&limit=12`);
+      // Construct the DHgate similar products URL
+      const similarProductsUrl = `https://www.dhgate.com/similar-product/showlist.do?imploc=cpssim&lang=en&itemcode=${itemcode}&vid=4E0A12ACB7521A68CD36260002A41405==&dspm=pcen.sp.findsimilar.25.QwueXoTWKhABKL9r5EeT&resource_id=#searl-simitem`;
+      
+      // Make an API call to fetch similar products using our mock API interceptor
+      const response = await fetch(similarProductsUrl);
       
       if (!response.ok) {
         throw new Error('Failed to fetch similar products');

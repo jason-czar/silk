@@ -38,6 +38,19 @@ window.fetch = async function(input: RequestInfo | URL, init?: RequestInit) {
     }
   }
   
+  // Special case for DHgate similar products URLs
+  if (url.includes('similar-product/showlist.do') && url.includes('itemcode=')) {
+    // Extract itemcode from URL using regex
+    const itemcodeMatch = url.match(/itemcode=(\d+)/);
+    const itemcode = itemcodeMatch ? itemcodeMatch[1] : '';
+    
+    if (itemcode) {
+      console.log(`Mock API: Fetching DHgate similar products for item ${itemcode}`);
+      const mockData = await getMockSimilarProducts(`DHgate similar to ${itemcode}`, 12);
+      return createMockResponse(mockData);
+    }
+  }
+  
   // For all other requests, use the original fetch
   return originalFetch(input, init);
 };
