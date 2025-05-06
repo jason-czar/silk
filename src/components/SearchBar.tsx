@@ -5,10 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+
 interface SearchBarProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   disabled?: boolean;
 }
+
 const SearchBar = ({
   onSearch,
   disabled = false
@@ -21,6 +23,7 @@ const SearchBar = ({
   const {
     toast
   } = useToast();
+
   const isValidUrl = (string: string) => {
     try {
       new URL(string);
@@ -29,6 +32,7 @@ const SearchBar = ({
       return false;
     }
   };
+
   const sendUrlToZapier = async (url: string) => {
     setIsProcessingUrl(true);
     setProcessingProgress(0);
@@ -152,6 +156,7 @@ const SearchBar = ({
       setIsProcessingUrl(false);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
@@ -162,23 +167,46 @@ const SearchBar = ({
       onSearch(trimmedQuery, useDHgate);
     }
   };
+
   return <div className="search-bar-container">
       <form onSubmit={handleSubmit} className="relative">
-        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB] \nborder border-gray-300 text-gray-800 text-Ig \nplaceholder:text-[#BDBDBD] \nfocus:outline-none \nfocus:ring-2 \nfocus:ring-primary/20 \nshadow-md\npx-[22px] py-[16px]" />
-        <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
-          <Search size={24} className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} />
+        <input 
+          type="text" 
+          value={query} 
+          onChange={e => setQuery(e.target.value)} 
+          placeholder="Paste URL or search" 
+          disabled={disabled || isProcessingUrl} 
+          className="w-full pr-12 rounded-full bg-[#EBEBEB] \
+                    border border-gray-300 text-gray-800 text-Ig \
+                    placeholder:text-[#BDBDBD] \
+                    focus:outline-none \
+                    focus:border-[#3ECF8E80] \
+                    focus:ring-2 \
+                    focus:ring-[#3ECF8E80] \
+                    shadow-md\
+                    px-[22px] py-[16px]"
+        />
+        <button 
+          type="submit" 
+          disabled={disabled || isProcessingUrl || !query.trim()} 
+          aria-label="Search" 
+          className="absolute right-4 top-1/2 -translate-y-1/2"
+        >
+          <Search 
+            size={24} 
+            className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} 
+          />
         </button>
       </form>
       
       {isProcessingUrl && <div className="mt-2">
-          <Progress value={processingProgress} className="h-1" />
-          <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
-        </div>}
+        <Progress value={processingProgress} className="h-1" />
+        <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
+      </div>}
       
       <div className="flex items-center justify-end space-x-2 mt-2">
-        
-        
       </div>
     </div>;
 };
+
 export default SearchBar;
