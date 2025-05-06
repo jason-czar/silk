@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
@@ -141,7 +142,11 @@ const Index = () => {
                   <span className="ml-2 text-gray-400 dark:text-gray-500">Loading more images...</span>
                 </div>}
               
-              {searchResults?.searchInformation}
+              {searchResults?.searchInformation && (
+                <div className="text-center text-sm text-gray-500 mt-4">
+                  Found {searchResults.searchInformation.formattedTotalResults} results in {searchResults.searchInformation.formattedSearchTime} seconds
+                </div>
+              )}
             </main>
           </div>
         </div>}
