@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Heart, Settings } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const UserMenu = () => {
   const { user, signOut } = useAuth();
@@ -22,6 +23,12 @@ const UserMenu = () => {
     setIsOpen(false);
     navigate('/');
   };
+
+  // Get display name and avatar from user metadata if available
+  const userMetadata = user?.user_metadata;
+  const displayName = userMetadata?.full_name || userMetadata?.name || user?.email?.split('@')[0] || 'User';
+  const avatarUrl = userMetadata?.avatar_url || userMetadata?.picture;
+  const userInitial = displayName.charAt(0).toUpperCase();
 
   if (!user) {
     return (
@@ -40,8 +47,15 @@ const UserMenu = () => {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="flex items-center gap-2">
-          <User size={18} />
-          <span className="hidden md:inline">Account</span>
+          {avatarUrl ? (
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={avatarUrl} alt={displayName} />
+              <AvatarFallback>{userInitial}</AvatarFallback>
+            </Avatar>
+          ) : (
+            <User size={18} />
+          )}
+          <span className="hidden md:inline">{displayName}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

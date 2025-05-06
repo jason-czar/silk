@@ -9,10 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import ThemeToggle from '@/components/ThemeToggle';
+import { Separator } from "@/components/ui/separator";
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, signIn, signUp, signInWithGoogle, loading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -102,6 +103,14 @@ export default function Auth() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error('Google sign in error:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="absolute top-4 right-4">
@@ -158,12 +167,32 @@ export default function Auth() {
                       required
                     />
                   </div>
-                </CardContent>
-                <CardFooter>
+
                   <Button type="submit" className="w-full" disabled={authLoading}>
                     {authLoading ? 'Signing in...' : 'Sign In'}
                   </Button>
-                </CardFooter>
+                  
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <Separator className="w-full" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={handleGoogleSignIn}
+                  >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" className="w-5 h-5" />
+                    Sign in with Google
+                  </Button>
+                </CardContent>
               </form>
             </TabsContent>
             
@@ -207,12 +236,32 @@ export default function Auth() {
                       required
                     />
                   </div>
-                </CardContent>
-                <CardFooter>
+
                   <Button type="submit" className="w-full" disabled={authLoading}>
                     {authLoading ? 'Creating account...' : 'Create Account'}
                   </Button>
-                </CardFooter>
+                  
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <Separator className="w-full" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={handleGoogleSignIn}
+                  >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" className="w-5 h-5" />
+                    Sign up with Google
+                  </Button>
+                </CardContent>
               </form>
             </TabsContent>
           </Tabs>
