@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ImageSearchResult } from '@/services/imageSearch';
 import ImageCard from './ImageCard';
@@ -23,6 +24,41 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
   const { user } = useAuth();
   const { toast } = useToast();
   const [favoritedItems, setFavoritedItems] = useState<FavoriteItem[]>([]);
+  const [visibleItems, setVisibleItems] = useState<number>(0);
+  const [prevItemCount, setPrevItemCount] = useState<number>(0);
+
+  // Track when new items are added to implement staggered animation
+  useEffect(() => {
+    if (!results?.items) return;
+    
+    // If this is the initial load or we're replacing results
+    if (prevItemCount === 0 || results.items.length <= prevItemCount) {
+      setVisibleItems(results.items.length);
+      setPrevItemCount(results.items.length);
+      return;
+    }
+    
+    // For newly loaded items (from infinite scroll), apply staggered animation
+    const newItemCount = results.items.length;
+    const itemsToAnimate = newItemCount - prevItemCount;
+    
+    // Start with current visible count
+    let currentCount = prevItemCount;
+    
+    // Show each new item with a 100ms delay
+    const interval = setInterval(() => {
+      if (currentCount < newItemCount) {
+        currentCount++;
+        setVisibleItems(currentCount);
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+    
+    setPrevItemCount(newItemCount);
+    
+    return () => clearInterval(interval);
+  }, [results?.items?.length]);
 
   // Fetch user's favorited items when component mounts or user changes
   useEffect(() => {
@@ -139,8 +175,18 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
 
   return (
     <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${animate ? 'fade-in' : ''}`}>
-      {results.items.map((item, index) => (
-        <div key={`${item.link}-${index}`} className="group relative">
+      {results.items.slice(0, visibleItems).map((item, index) => (
+        <div 
+          key={`${item.link}-${index}`} 
+          className={`group relative ${
+            index >= prevItemCount - itemsToAnimate ? 'animate-fadeIn opacity-0' : ''
+          }`}
+          style={
+            index >= prevItemCount - itemsToAnimate 
+              ? { animationDelay: `${(index - (prevItemCount - itemsToAnimate)) * 0.1}s`, animationFillMode: 'forwards' } 
+              : {}
+          }
+        >
           <ImageCard item={item} />
           {user && (
             <button
