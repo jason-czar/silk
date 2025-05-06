@@ -1,5 +1,4 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.43.2'
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 
 // Set up CORS headers for the function
@@ -28,31 +27,19 @@ serve(async (req) => {
       );
     }
 
-    // Get the API key from Supabase secrets
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    // Retrieve the Google Cloud Vision API key from secrets
-    const { data: secretData, error: secretError } = await supabaseClient
-      .from('secrets')
-      .select('value')
-      .eq('name', 'GOOGLE_CLOUD_API_KEY')
-      .single();
-
-    if (secretError || !secretData) {
-      console.error("Error retrieving Google Cloud API Key:", secretError);
+    // Get the API key directly from environment variables
+    const GOOGLE_CLOUD_API_KEY = Deno.env.get('GOOGLE_CLOUD_API_KEY');
+    
+    if (!GOOGLE_CLOUD_API_KEY) {
+      console.error("Google Cloud API Key not found in environment variables");
       return new Response(
-        JSON.stringify({ error: "Could not retrieve API key" }),
+        JSON.stringify({ error: "API key not configured" }),
         { 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 500 
         }
       );
     }
-
-    const GOOGLE_CLOUD_API_KEY = secretData.value;
 
     // Call the Vision API
     const visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_CLOUD_API_KEY}`;

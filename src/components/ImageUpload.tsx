@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Camera, Upload, Images } from 'lucide-react';
+import { Camera, Upload } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -80,22 +80,24 @@ const ImageUpload = ({ onImageProcessed, disabled = false }: ImageUploadProps) =
         const base64data = reader.result?.toString().split(',')[1]; // Remove data URL prefix
         
         // Send to our edge function
-        const { data: supabase } = await fetch("/api/vision", {
+        const response = await fetch("https://jzupbllxgtobpykyerbi.supabase.co/functions/v1/vision", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ image: base64data }),
-        }).then(res => res.json());
+        });
         
-        if (supabase.error) {
-          throw new Error(supabase.error);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to process image");
         }
 
         // Use the labels returned from the Vision API
-        if (supabase.labels && supabase.labels.length > 0) {
+        if (data.labels && data.labels.length > 0) {
           // Use the top 3 labels for the search
-          const searchQuery = supabase.labels.slice(0, 3).map((label: any) => label.description).join(' ');
+          const searchQuery = data.labels.slice(0, 3).map((label: any) => label.description).join(' ');
           
           toast({
             title: "Image Analysis Complete",
