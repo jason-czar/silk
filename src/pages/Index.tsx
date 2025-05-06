@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
@@ -27,14 +26,15 @@ const Index = () => {
     }
   }, [searchResults, loading]);
   
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, useDHgate: boolean = false) => {
     setLoading(true);
     setAnimateResults(false);
     try {
       const params = {
         query,
         start: 1,
-        num: 10
+        num: 10,
+        useDHgate
       };
       setSearchParams(params);
       const results = await searchImages(params);

@@ -1,3 +1,4 @@
+import { formatDHgateProductsAsImageResults, searchDHgate } from "./dhgateSearch";
 
 export interface ImageSearchResult {
   kind: string;
@@ -42,13 +43,31 @@ export interface ImageSearchParams {
   query: string;
   start?: number;
   num?: number;
+  useDHgate?: boolean; // New parameter to determine search source
 }
 
 export const searchImages = async ({ 
   query, 
   start = 1, 
-  num = 10 
+  num = 10,
+  useDHgate = false
 }: ImageSearchParams): Promise<ImageSearchResult> => {
+  // First try to search directly on DHgate if the flag is set
+  if (useDHgate) {
+    try {
+      // Convert start/num to DHgate pagination
+      const page = Math.ceil(start / num);
+      const pageSize = num;
+      
+      const dhgateResults = await searchDHgate(query, page, pageSize);
+      return formatDHgateProductsAsImageResults(dhgateResults);
+    } catch (error) {
+      console.error('DHgate search failed, falling back to Google:', error);
+      // If DHgate search fails, fall back to Google search
+    }
+  }
+  
+  // Otherwise use Google search (or as fallback)
   const apiKey = 'AIzaSyCnhfnf18LVDXEWywoRYnTejykVPz_7niI';
   const cx = '2224a95ca357d4e8a';
   
@@ -63,4 +82,3 @@ export const searchImages = async ({
   
   return response.json();
 };
-

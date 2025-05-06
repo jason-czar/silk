@@ -11,6 +11,7 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel';
 import { Image, ChevronRight } from 'lucide-react';
+import { getProductByItemcode } from '@/integrations/dhgate/client';
 
 interface ImageCardProps {
   item: {
@@ -35,6 +36,13 @@ interface ImageCardProps {
   };
 }
 
+// Extract DHgate itemcode from URL
+const extractItemcode = (url: string): string | null => {
+  // Example URL: https://www.dhgate.com/product/2023-tailwind-5-v-men-running-shoes-skepta/886638181.html
+  const match = url.match(/\/product\/.*?\/(\d+)\.html/);
+  return match ? match[1] : null;
+};
+
 // Sample color variants for demonstration
 const generateColorVariants = (baseImageUrl: string): {url: string, color: string}[] => {
   // For demo purposes, we'll create some color variants with slight modifications to the URL
@@ -52,6 +60,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [colorVariants, setColorVariants] = useState<{url: string, color: string}[]>([]);
   const [showVariants, setShowVariants] = useState(false);
+  const [dhgateProduct, setDhgateProduct] = useState<any>(null);
   
   useEffect(() => {
     // Set the main image when the component mounts
@@ -60,6 +69,42 @@ const ImageCard = ({ item }: ImageCardProps) => {
       
       // Generate simulated color variants based on the main image
       setColorVariants(generateColorVariants(item.image.thumbnailLink));
+    }
+    
+    // If this is a DHgate product, try to fetch additional details
+    if (item.link && item.link.includes('dhgate.com/product')) {
+      const itemcode = extractItemcode(item.link);
+      if (itemcode) {
+        // Fetch product details from DHgate API
+        const fetchProductDetails = async () => {
+          try {
+            const productDetails = await getProductByItemcode(itemcode);
+            if (productDetails) {
+              setDhgateProduct(productDetails);
+              
+              // If the product has real variants, use those instead of simulated ones
+              if (productDetails.skuProperties && productDetails.skuProperties.length > 0) {
+                const realVariants = productDetails.skuProperties
+                  .flatMap((prop: any) => prop.values)
+                  .filter((value: any) => value.imageUrl)
+                  .map((value: any) => ({
+                    url: value.imageUrl,
+                    color: value.propertyValueDisplayName || 'Variant'
+                  }));
+                
+                if (realVariants.length > 0) {
+                  setColorVariants(realVariants);
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Failed to fetch DHgate product details:', error);
+            // Fall back to simulated variants - already set above
+          }
+        };
+        
+        fetchProductDetails();
+      }
     }
   }, [item]);
 

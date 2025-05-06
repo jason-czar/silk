@@ -4,9 +4,11 @@ import { Search } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: (query: string, useDHgate?: boolean) => void;
   disabled?: boolean;
 }
 
@@ -18,6 +20,7 @@ const SearchBar = ({
   const [isProcessingUrl, setIsProcessingUrl] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingTimer, setProcessingTimer] = useState<NodeJS.Timeout | null>(null);
+  const [useDHgate, setUseDHgate] = useState(false);
   
   const { toast } = useToast();
   
@@ -163,7 +166,7 @@ const SearchBar = ({
     if (isValidUrl(trimmedQuery)) {
       await sendUrlToZapier(trimmedQuery);
     } else {
-      onSearch(trimmedQuery);
+      onSearch(trimmedQuery, useDHgate);
     }
   };
   
@@ -193,6 +196,17 @@ const SearchBar = ({
           <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
         </div>
       )}
+      
+      <div className="flex items-center justify-end space-x-2 mt-2">
+        <Switch 
+          id="use-dhgate" 
+          checked={useDHgate} 
+          onCheckedChange={setUseDHgate} 
+        />
+        <Label htmlFor="use-dhgate" className="text-sm text-gray-500">
+          Search directly on DHgate
+        </Label>
+      </div>
     </div>;
 };
 
