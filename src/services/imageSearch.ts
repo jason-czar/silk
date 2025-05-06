@@ -44,7 +44,7 @@ export interface ImageSearchParams {
   query: string;
   start?: number;
   num?: number;
-  useDHgate?: boolean; // New parameter to determine search source
+  useDHgate?: boolean;
 }
 
 export const searchImages = async ({ 
@@ -72,14 +72,29 @@ export const searchImages = async ({
   const apiKey = 'AIzaSyCnhfnf18LVDXEWywoRYnTejykVPz_7niI';
   const cx = '2224a95ca357d4e8a';
   
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
-  
-  const response = await fetch(url);
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error?.message || `Failed to fetch images (${response.status})`);
+  try {
+    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+    
+    const controller = new AbortController();
+    // Set a timeout for the fetch request
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error?.message || `Failed to fetch images (${response.status})`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Google search error:', error);
+    
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Search request timed out. Please try again.');
+    }
+    
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch images');
   }
-  
-  return response.json();
 };
