@@ -15,13 +15,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check for saved theme in local storage
     const savedTheme = localStorage.getItem('theme') as Theme;
+    
     if (savedTheme) {
+      // Use saved theme from local storage
       setTheme(savedTheme);
       document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      // Use system preference if no saved theme
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
+    } else {
+      // Default to light theme instead of checking system preference
+      setTheme('light');
+      document.documentElement.classList.remove('dark'); // Ensure dark class is removed
+      localStorage.setItem('theme', 'light'); // Save the default light theme
     }
   }, []);
 
