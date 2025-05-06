@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowDownCircle } from 'lucide-react';
@@ -9,7 +8,6 @@ import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -98,7 +96,7 @@ const Index = () => {
                   <UserMenu />
                   <ThemeToggle />
                 </div>
-                <h1 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-5xl">Silk</h1>
+                <h1 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-7xl">Silk</h1>
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-16 text-xl sm:text-2xl px-4 sm:px-[42px] transition-colors duration-300">Find similar products - at factory direct prices.</p>
               <div className="scale-in">
@@ -142,11 +140,9 @@ const Index = () => {
                   <span className="ml-2 text-gray-400 dark:text-gray-500">Loading more images...</span>
                 </div>}
               
-              {searchResults?.searchInformation && (
-                <div className="text-center text-sm text-gray-500 mt-4">
+              {searchResults?.searchInformation && <div className="text-center text-sm text-gray-500 mt-4">
                   Found {searchResults.searchInformation.formattedTotalResults} results in {searchResults.searchInformation.formattedSearchTime} seconds
-                </div>
-              )}
+                </div>}
             </main>
           </div>
         </div>}
