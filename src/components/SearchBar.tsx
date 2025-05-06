@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
@@ -6,12 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-
 interface SearchBarProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   disabled?: boolean;
 }
-
 const SearchBar = ({
   onSearch,
   disabled = false
@@ -21,9 +18,9 @@ const SearchBar = ({
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingTimer, setProcessingTimer] = useState<NodeJS.Timeout | null>(null);
   const [useDHgate, setUseDHgate] = useState(false);
-  
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const isValidUrl = (string: string) => {
     try {
       new URL(string);
@@ -32,11 +29,9 @@ const SearchBar = ({
       return false;
     }
   };
-  
   const sendUrlToZapier = async (url: string) => {
     setIsProcessingUrl(true);
     setProcessingProgress(0);
-    
     try {
       toast({
         title: "Processing URL",
@@ -44,7 +39,9 @@ const SearchBar = ({
       });
 
       // First try to check if we already have this product in our database
-      const { data: existingProducts } = await supabase.from('product_data').select('*').eq('product_url', url).limit(1);
+      const {
+        data: existingProducts
+      } = await supabase.from('product_data').select('*').eq('product_url', url).limit(1);
       if (existingProducts && existingProducts.length > 0) {
         const product = existingProducts[0];
         toast({
@@ -64,17 +61,14 @@ const SearchBar = ({
       const interval = 300; // Update every 300ms
       const steps = maxWaitTime / interval;
       let currentStep = 0;
-      
       const timer = setInterval(() => {
         currentStep++;
-        const newProgress = Math.min(Math.floor((currentStep / steps) * 100), 99);
+        const newProgress = Math.min(Math.floor(currentStep / steps * 100), 99);
         setProcessingProgress(newProgress);
-        
         if (currentStep >= steps) {
           clearInterval(timer);
         }
       }, interval);
-      
       setProcessingTimer(timer);
 
       // Use our Zapier webhook to process the URL
@@ -89,22 +83,22 @@ const SearchBar = ({
         let attempts = 0;
         const maxAttempts = 5; // Check every 3 seconds, up to 15 seconds
         let productFound = false;
-        
         while (attempts < maxAttempts && !productFound) {
           await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds between checks
-          
+
           // Check if our product was received by the Supabase function
-          const { data: newProducts } = await supabase.from('product_data').select('*').eq('product_url', url).limit(1);
+          const {
+            data: newProducts
+          } = await supabase.from('product_data').select('*').eq('product_url', url).limit(1);
           if (newProducts && newProducts.length > 0) {
             const product = newProducts[0];
-            
+
             // Clean up timer
             if (processingTimer) {
               clearInterval(processingTimer);
               setProcessingTimer(null);
             }
             setProcessingProgress(100);
-            
             toast({
               title: "Product Analyzed",
               description: `Found ${product.brand_name || ''} ${product.product_name || ''}`
@@ -121,7 +115,7 @@ const SearchBar = ({
           }
           attempts++;
         }
-        
+
         // If we've exhausted all attempts and still no product
         if (!productFound) {
           toast({
@@ -158,7 +152,6 @@ const SearchBar = ({
       setIsProcessingUrl(false);
     }
   };
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
@@ -169,45 +162,23 @@ const SearchBar = ({
       onSearch(trimmedQuery, useDHgate);
     }
   };
-  
   return <div className="search-bar-container">
       <form onSubmit={handleSubmit} className="relative">
-        <input 
-          type="text" 
-          value={query} 
-          onChange={e => setQuery(e.target.value)} 
-          placeholder="Paste URL or search" 
-          disabled={disabled || isProcessingUrl} 
-          className="w-full pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 text-lg placeholder:text-[#BDBDBD] focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md px-[22px] py-[16px]" 
-        />
-        <button 
-          type="submit" 
-          disabled={disabled || isProcessingUrl || !query.trim()} 
-          aria-label="Search" 
-          className="absolute right-4 top-1/2 -translate-y-1/2"
-        >
+        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB] border border-gray-300 text-gray-800 text-lg placeholder:text-[#BDBDBD] focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-md px-[22px] py-[16px]" />
+        <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
           <Search size={24} className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} />
         </button>
       </form>
       
-      {isProcessingUrl && (
-        <div className="mt-2">
+      {isProcessingUrl && <div className="mt-2">
           <Progress value={processingProgress} className="h-1" />
           <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
-        </div>
-      )}
+        </div>}
       
       <div className="flex items-center justify-end space-x-2 mt-2">
-        <Switch 
-          id="use-dhgate" 
-          checked={useDHgate} 
-          onCheckedChange={setUseDHgate} 
-        />
-        <Label htmlFor="use-dhgate" className="text-sm text-gray-500">
-          Search directly on DHgate
-        </Label>
+        <Switch id="use-dhgate" checked={useDHgate} onCheckedChange={setUseDHgate} />
+        
       </div>
     </div>;
 };
-
 export default SearchBar;
