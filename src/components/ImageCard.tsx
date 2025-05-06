@@ -1,8 +1,16 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from '@/components/ui/carousel';
+import { Image, ChevronRight } from 'lucide-react';
 
 interface ImageCardProps {
   item: {
@@ -27,9 +35,37 @@ interface ImageCardProps {
   };
 }
 
+// Sample color variants for demonstration
+const generateColorVariants = (baseImageUrl: string): {url: string, color: string}[] => {
+  // For demo purposes, we'll create some color variants with slight modifications to the URL
+  return [
+    { url: baseImageUrl, color: 'Gray/Volt' },
+    { url: baseImageUrl.replace(/(\.\w+)$/, '-yellow$1'), color: 'Yellow/Black' },
+    { url: baseImageUrl.replace(/(\.\w+)$/, '-blue$1'), color: 'Blue/White' },
+    { url: baseImageUrl.replace(/(\.\w+)$/, '-red$1'), color: 'Red/Black' },
+  ];
+};
+
 const ImageCard = ({ item }: ImageCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [colorVariants, setColorVariants] = useState<{url: string, color: string}[]>([]);
+  const [showVariants, setShowVariants] = useState(false);
+  
+  useEffect(() => {
+    // Set the main image when the component mounts
+    if (item.image?.thumbnailLink) {
+      setSelectedImage(item.image.thumbnailLink);
+      
+      // Generate simulated color variants based on the main image
+      setColorVariants(generateColorVariants(item.image.thumbnailLink));
+    }
+  }, [item]);
+
+  const handleVariantClick = (variantUrl: string) => {
+    setSelectedImage(variantUrl);
+  };
   
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -80,7 +116,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
 
   // Extract relevant data from the item
   const title = item.title || '';
-  const thumbnailUrl = item.image?.thumbnailLink || '';
+  const thumbnailUrl = selectedImage || item.image?.thumbnailLink || '';
   const imageUrl = item.link || '';
   const contextLink = item.image?.contextLink || '';
   
@@ -107,7 +143,51 @@ const ImageCard = ({ item }: ImageCardProps) => {
             <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
           </div>
         )}
+
+        {/* Color variant indicator - only shows if we have variants */}
+        {colorVariants.length > 1 && (
+          <div 
+            className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1.5 shadow-md cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowVariants(!showVariants);
+            }}
+          >
+            <Image size={16} className="text-gray-600" />
+          </div>
+        )}
       </div>
+
+      {/* Color variants carousel - only displayed if showVariants is true */}
+      {showVariants && colorVariants.length > 1 && (
+        <div className="bg-white p-2" onClick={(e) => e.stopPropagation()}>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2">
+              {colorVariants.map((variant, index) => (
+                <CarouselItem key={index} className="pl-2 basis-1/3">
+                  <div 
+                    className={`aspect-square rounded overflow-hidden cursor-pointer border-2 ${selectedImage === variant.url ? 'border-blue-500' : 'border-transparent'}`}
+                    onClick={() => handleVariantClick(variant.url)}
+                  >
+                    <img src={variant.url} alt={`Color variant ${index + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex items-center justify-end gap-1 mt-1">
+              <CarouselPrevious className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
+              <CarouselNext className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
+            </div>
+          </Carousel>
+        </div>
+      )}
+
       <div className="p-3 text-white">
         <div className="flex items-center mb-1">
           <Avatar className="h-5 w-5 mr-2">
