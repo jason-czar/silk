@@ -19,9 +19,9 @@ const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut();
     setIsOpen(false);
-    navigate('/');
+    await signOut();
+    // Note: No need to navigate here as the signOut function now handles redirection
   };
 
   // Get display name and avatar from user metadata if available
