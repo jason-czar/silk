@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
@@ -5,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import ImageUpload from './ImageUpload';
 
 interface SearchBarProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
@@ -205,6 +207,7 @@ const SearchBar = ({
       </div>}
       
       <div className="flex items-center justify-end space-x-2 mt-2">
+        <ImageUpload onImageProcessed={onSearch} disabled={disabled} />
       </div>
     </div>;
 };
