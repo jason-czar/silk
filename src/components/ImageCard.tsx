@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
@@ -11,7 +10,7 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel';
 import { Image, ChevronRight } from 'lucide-react';
-import { getProductByItemcode } from '@/integrations/dhgate/client';
+import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
 
 interface ImageCardProps {
   item: {
@@ -57,7 +56,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [colorVariants, setColorVariants] = useState<{url: string, color: string}[]>([]);
   const [showVariants, setShowVariants] = useState(false);
-  const [dhgateProduct, setDhgateProduct] = useState<any>(null);
+  const [dhgateProduct, setDhgateProduct] = useState<DHgateProductResponse['product'] | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
   
   useEffect(() => {
@@ -81,41 +80,54 @@ const ImageCard = ({ item }: ImageCardProps) => {
             if (productDetails) {
               setDhgateProduct(productDetails);
               
-              // Extract actual variants from the product if available
-              if (productDetails.skuProperties && Array.isArray(productDetails.skuProperties) && productDetails.skuProperties.length > 0) {
-                // Collect all variants from all properties that have images
-                const extractedVariants: {url: string, color: string}[] = [];
-                
-                productDetails.skuProperties.forEach((property: any) => {
+              // First collect all images from the imageList if available
+              const allImages: {url: string, color: string}[] = [];
+              
+              // Add the main product image first if available
+              if (productDetails.originalImageUrl) {
+                allImages.push({
+                  url: productDetails.originalImageUrl,
+                  color: 'Main'
+                });
+                setSelectedImage(productDetails.originalImageUrl);
+              }
+              
+              // Add all images from the imageList if available
+              if (productDetails.imageList && Array.isArray(productDetails.imageList)) {
+                productDetails.imageList.forEach((img, index) => {
+                  if (img && img.imageUrl) {
+                    allImages.push({
+                      url: img.imageUrl,
+                      color: `Image ${index + 1}`
+                    });
+                  }
+                });
+              }
+              
+              // Then add any variant images from skuProperties
+              if (productDetails.skuProperties && Array.isArray(productDetails.skuProperties)) {
+                productDetails.skuProperties.forEach((property) => {
                   if (property && property.values && Array.isArray(property.values)) {
-                    property.values.forEach((value: any) => {
+                    property.values.forEach((value) => {
                       if (value && value.imageUrl) {
-                        extractedVariants.push({
-                          url: value.imageUrl,
-                          color: value.propertyValueDisplayName || property.propertyName || 'Variant'
-                        });
+                        // Check if this image URL is already in our collection
+                        const exists = allImages.some(img => img.url === value.imageUrl);
+                        if (!exists) {
+                          allImages.push({
+                            url: value.imageUrl,
+                            color: value.propertyValueDisplayName || property.propertyName || 'Variant'
+                          });
+                        }
                       }
                     });
                   }
                 });
-                
-                // If we found variants with images, use them
-                if (extractedVariants.length > 0) {
-                  console.log("Found product variants:", extractedVariants.length);
-                  setColorVariants(extractedVariants);
-                  // If the product has a main image, make sure it's the first in our variants
-                  if (productDetails.originalImageUrl) {
-                    setSelectedImage(productDetails.originalImageUrl);
-                    // Add the main product image if it's not already in the variants
-                    const hasMainImage = extractedVariants.some(v => v.url === productDetails.originalImageUrl);
-                    if (!hasMainImage) {
-                      setColorVariants([
-                        { url: productDetails.originalImageUrl, color: 'Main' },
-                        ...extractedVariants
-                      ]);
-                    }
-                  }
-                }
+              }
+              
+              // If we found images, use them
+              if (allImages.length > 0) {
+                console.log(`Found ${allImages.length} product images for carousel`);
+                setColorVariants(allImages);
               }
             }
           } catch (error) {
@@ -203,7 +215,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
   return (
     <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
       <div className="relative pb-[100%] bg-white" onClick={handleClick}>
-        <img src={thumbnailUrl} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+        <img src={selectedImage} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>

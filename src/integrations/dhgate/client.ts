@@ -25,13 +25,30 @@ interface TokenResponse {
 }
 
 // Define interface for product response
-interface DHgateProductResponse {
-  product: any;
+export interface DHgateProductResponse {
+  product: {
+    itemCode: string;
+    itemName: string;
+    originalImageUrl?: string;
+    skuProperties?: Array<{
+      propertyId: string;
+      propertyName?: string;
+      values: Array<{
+        propertyValueId?: string;
+        propertyValueDisplayName?: string;
+        imageUrl?: string;
+      }>;
+    }>;
+    imageList?: Array<{
+      imageUrl: string;
+    }>;
+    [key: string]: any;
+  };
   [key: string]: any;
 }
 
 // Define interface for product search response
-interface DHgateSearchResponse {
+export interface DHgateSearchResponse {
   totalItem: number;
   totalPage: number;
   pageSize: number;
@@ -41,7 +58,7 @@ interface DHgateSearchResponse {
 }
 
 // Define interface for seller response
-interface DHgateSellerResponse {
+export interface DHgateSellerResponse {
   seller: any;
   [key: string]: any;
 }
@@ -138,9 +155,28 @@ export const dhgateApiRequest = async <T>(
 /**
  * Get product details by itemcode
  */
-export const getProductByItemcode = async (itemcode: string) => {
+export const getProductByItemcode = async (itemcode: string): Promise<DHgateProductResponse['product']> => {
   try {
+    console.log("Fetching product details for itemcode:", itemcode);
     const response = await dhgateApiRequest<DHgateProductResponse>('dh.product.get', '1.0', { itemcode });
+    
+    console.log("DHgate product response:", JSON.stringify(response, null, 2));
+    
+    // Check if we have image information and log it for debugging
+    if (response.product) {
+      if (response.product.skuProperties) {
+        console.log("Found SKU properties with images:", 
+          response.product.skuProperties
+            .filter(prop => prop.values.some(v => v.imageUrl))
+            .length
+        );
+      }
+      
+      if (response.product.imageList) {
+        console.log("Found image list with", response.product.imageList.length, "images");
+      }
+    }
+    
     return response.product;
   } catch (error) {
     console.error('Error fetching product details:', error);
