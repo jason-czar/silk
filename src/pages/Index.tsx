@@ -1,13 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowDownCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import SearchBar from '@/components/SearchBar';
-import ImageGrid from '@/components/ImageGrid';
-import ThemeToggle from '@/components/ThemeToggle';
-import UserMenu from '@/components/UserMenu';
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
-import { useIsMobile } from '@/hooks/use-mobile';
+import SearchHeader from '@/components/SearchHeader';
+import ResultsSection from '@/components/ResultsSection';
 
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
@@ -15,12 +11,7 @@ const Index = () => {
   const [searchParams, setSearchParams] = useState<ImageSearchParams | null>(null);
   const [animateResults, setAnimateResults] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
 
   // Helper function to determine if more results are available
   const hasMoreResults = searchResults && 
@@ -98,7 +89,6 @@ const Index = () => {
     if (!searchParams || !searchResults || loading || autoLoading) return;
     setAutoLoading(true);
     
-    // Add a slight delay to show the loading animation
     try {
       const nextParams = {
         ...searchParams,
@@ -133,113 +123,49 @@ const Index = () => {
     }
   }, [searchParams, searchResults, loading, autoLoading, toast]);
 
-  // Setup intersection observer for infinite scroll
-  useEffect(() => {
-    if (!searchResults) return;
-    
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && hasMoreResults && !loading && !autoLoading) {
-          autoLoadMore();
-        }
-      },
-      { threshold: 0.5 } // Trigger when 50% of the element is visible
-    );
-
-    const currentObserver = observerRef.current;
-    const currentRef = loadMoreRef.current;
-    
-    if (currentRef) {
-      currentObserver.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef && currentObserver) {
-        currentObserver.unobserve(currentRef);
-      }
-    };
-  }, [searchResults, hasMoreResults, loading, autoLoading, autoLoadMore]);
-
   const resetSearch = () => {
     setSearchResults(null);
     setSearchParams(null);
     setAnimateResults(false);
   };
 
-  return <div className="flex flex-col min-h-screen">
-      {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background transition-colors duration-300">
+  return (
+    <div className="flex flex-col min-h-screen">
+      {!searchResults ? (
+        <div className="flex-grow flex items-center justify-center bg-background transition-colors duration-300">
           <div className="container mx-auto px-4 text-center">
-            <header className="mb-12 -mt-[25px]">
-              <div className="flex items-center justify-center mb-8">
-                <div className="absolute top-4 right-4 flex items-center gap-2">
-                  <UserMenu />
-                  <ThemeToggle />
-                </div>
-                <h1 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-7xl">Silk</h1>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 mb-16 text-xl sm:text-2xl px-4 sm:px-[42px] transition-colors duration-300">Find similar products - at factory direct prices.</p>
-              <div className="scale-in">
-                <SearchBar onSearch={handleSearch} disabled={loading} />
-              </div>
-            </header>
+            <SearchHeader onSearch={handleSearch} loading={loading} />
           </div>
-        </div> : <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
-          <div className="bg-background dark:bg-gray-800 py-[14px] transition-colors duration-300">
-            <div className="container mx-auto px-4">
-              <header className="flex items-center mb-4 pl-[10px]">
-                <div className={`${isMobile ? 'mr-2' : 'mr-8'}`}>
-                  <div onClick={resetSearch} className="cursor-pointer">
-                    <h2 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-2xl">Silk</h2>
-                  </div>
-                </div>
-                <div className="flex-grow">
-                  <SearchBar onSearch={handleSearch} disabled={loading} />
-                </div>
-                <div className="ml-4 flex items-center gap-2">
-                  <UserMenu />
-                  <ThemeToggle />
-                </div>
-              </header>
-            </div>
-          </div>
+        </div>
+      ) : (
+        <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
+          <SearchHeader 
+            onSearch={handleSearch} 
+            loading={loading} 
+            resetSearch={resetSearch} 
+            isCompact={true} 
+          />
           
           <div className="container mx-auto px-4 py-6">
-            <main className={animateResults ? 'fade-in' : ''}>
-              <ImageGrid results={searchResults} loading={loading && !searchResults} animate={animateResults} />
-              
-              {/* Infinite Scroll Loading Indicator - This replaces the Load More button */}
-              {searchResults && !loading && hasMoreResults && (
-                <div ref={loadMoreRef} className="h-16 flex items-center justify-center my-4">
-                  {autoLoading ? (
-                    <div className="flex flex-col items-center">
-                      <div className="animate-spin mb-2 w-6 h-6 border-4 border-[#3ECF8E] border-t-transparent rounded-full"></div>
-                      <span className="text-gray-500">Loading more items...</span>
-                    </div>
-                  ) : (
-                    <div className="h-8 opacity-0">Loading trigger</div>
-                  )}
-                </div>
-              )}
-              
-              {loading && searchResults && !autoLoading && <div className="text-center my-8">
-                  <div className="animate-spin inline-block w-6 h-6 border-4 border-white dark:border-gray-600 border-t-transparent rounded-full"></div>
-                  <span className="ml-2 text-gray-400 dark:text-gray-500">Loading more images...</span>
-                </div>}
-              
-              {searchResults?.searchInformation && <div className="text-center text-sm text-gray-500 mt-4">
-                  Found {searchResults.searchInformation.formattedTotalResults} results in {searchResults.searchInformation.formattedSearchTime} seconds
-                </div>}
-            </main>
+            <ResultsSection 
+              results={searchResults}
+              loading={loading}
+              autoLoading={autoLoading}
+              animateResults={animateResults}
+              hasMoreResults={!!hasMoreResults}
+              onAutoLoadMore={autoLoadMore}
+            />
           </div>
-        </div>}
+        </div>
+      )}
       
       <footer className={`${searchResults ? 'bg-[#EBEBEB] dark:bg-gray-900' : 'bg-background dark:bg-gray-800'} mt-auto py-[5px] transition-colors duration-300`}>
         <div className="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>© 2025 Silk.surf</p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
 
 export default Index;
