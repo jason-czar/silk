@@ -2,16 +2,9 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
-} from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Image, ChevronRight } from 'lucide-react';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
-
 interface ImageCardProps {
   item: {
     kind: string;
@@ -43,31 +36,40 @@ const extractItemcode = (url: string): string | null => {
 };
 
 // Fallback color variants for when API doesn't provide them
-const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
+const generateFallbackVariants = (baseImageUrl: string): {
+  url: string;
+  color: string;
+}[] => {
   // For demo purposes, we'll create some color variants with slight modifications to the URL
-  return [
-    { url: baseImageUrl, color: 'Default' },
-  ];
+  return [{
+    url: baseImageUrl,
+    color: 'Default'
+  }];
 };
-
-const ImageCard = ({ item }: ImageCardProps) => {
-  const { toast } = useToast();
+const ImageCard = ({
+  item
+}: ImageCardProps) => {
+  const {
+    toast
+  } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
-  const [colorVariants, setColorVariants] = useState<{url: string, color: string}[]>([]);
+  const [colorVariants, setColorVariants] = useState<{
+    url: string;
+    color: string;
+  }[]>([]);
   const [showVariants, setShowVariants] = useState(false);
   const [dhgateProduct, setDhgateProduct] = useState<DHgateProductResponse['product'] | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
-  
   useEffect(() => {
     // Set the main image when the component mounts
     if (item.image?.thumbnailLink) {
       setSelectedImage(item.image.thumbnailLink);
-      
+
       // Set a fallback variant based on the main image
       setColorVariants(generateFallbackVariants(item.image.thumbnailLink));
     }
-    
+
     // If this is a DHgate product, try to fetch additional details
     if (item.link && item.link.includes('dhgate.com/product')) {
       const itemcode = extractItemcode(item.link);
@@ -79,10 +81,13 @@ const ImageCard = ({ item }: ImageCardProps) => {
             const productDetails = await getProductByItemcode(itemcode);
             if (productDetails) {
               setDhgateProduct(productDetails);
-              
+
               // First collect all images from the imageList if available
-              const allImages: {url: string, color: string}[] = [];
-              
+              const allImages: {
+                url: string;
+                color: string;
+              }[] = [];
+
               // Add the main product image first if available
               if (productDetails.originalImageUrl) {
                 allImages.push({
@@ -91,7 +96,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
                 });
                 setSelectedImage(productDetails.originalImageUrl);
               }
-              
+
               // Add all images from the imageList if available
               if (productDetails.imageList && Array.isArray(productDetails.imageList)) {
                 productDetails.imageList.forEach((img, index) => {
@@ -103,12 +108,12 @@ const ImageCard = ({ item }: ImageCardProps) => {
                   }
                 });
               }
-              
+
               // Then add any variant images from skuProperties
               if (productDetails.skuProperties && Array.isArray(productDetails.skuProperties)) {
-                productDetails.skuProperties.forEach((property) => {
+                productDetails.skuProperties.forEach(property => {
                   if (property && property.values && Array.isArray(property.values)) {
-                    property.values.forEach((value) => {
+                    property.values.forEach(value => {
                       if (value && value.imageUrl) {
                         // Check if this image URL is already in our collection
                         const exists = allImages.some(img => img.url === value.imageUrl);
@@ -123,7 +128,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
                   }
                 });
               }
-              
+
               // If we found images, use them
               if (allImages.length > 0) {
                 console.log(`Found ${allImages.length} product images for carousel`);
@@ -137,16 +142,13 @@ const ImageCard = ({ item }: ImageCardProps) => {
             setIsLoadingProduct(false);
           }
         };
-        
         fetchProductDetails();
       }
     }
   }, [item]);
-
   const handleVariantClick = (variantUrl: string) => {
     setSelectedImage(variantUrl);
   };
-  
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -199,81 +201,58 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const thumbnailUrl = selectedImage || item.image?.thumbnailLink || '';
   const imageUrl = item.link || '';
   const contextLink = item.image?.contextLink || '';
-  
+
   // Check if the product is from DHgate
   const isDHgate = contextLink?.includes('dhgate.com') || imageUrl?.includes('dhgate.com');
 
   // Extract brand name and format price for display
   const brandName = isDHgate ? 'DHgate.com' : extractBrandName(title);
-  
+
   // Clean up the title by removing common prefixes like "Bulk"
   const cleanTitle = cleanProductTitle(title);
-  
+
   // Display the cleaned title with truncation if needed
   const displayTitle = cleanTitle.length > 20 ? cleanTitle.substring(0, 20) + '...' : cleanTitle;
-  
-  return (
-    <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
+  return <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
       <div className="relative pb-[100%] bg-white" onClick={handleClick}>
         <img src={selectedImage} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        {isLoading && <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
-          </div>
-        )}
+          </div>}
 
         {/* Color variant indicator - only shows if we have variants */}
-        {colorVariants.length > 1 && (
-          <div 
-            className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1.5 shadow-md cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowVariants(!showVariants);
-            }}
-          >
+        {colorVariants.length > 1 && <div className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1.5 shadow-md cursor-pointer" onClick={e => {
+        e.stopPropagation();
+        setShowVariants(!showVariants);
+      }}>
             <Image size={16} className="text-gray-600" />
-          </div>
-        )}
+          </div>}
         
         {/* Loading indicator for product details */}
-        {isLoadingProduct && (
-          <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
+        {isLoadingProduct && <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
             <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"></div>
-          </div>
-        )}
+          </div>}
       </div>
 
       {/* Color variants carousel - only displayed if showVariants is true */}
-      {showVariants && colorVariants.length > 1 && (
-        <div className="bg-white p-2" onClick={(e) => e.stopPropagation()}>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: false,
-            }}
-            className="w-full"
-          >
+      {showVariants && colorVariants.length > 1 && <div className="bg-white p-2" onClick={e => e.stopPropagation()}>
+          <Carousel opts={{
+        align: "start",
+        loop: false
+      }} className="w-full">
             <CarouselContent className="-ml-2">
-              {colorVariants.map((variant, index) => (
-                <CarouselItem key={index} className="pl-2 basis-1/3">
-                  <div 
-                    className={`aspect-square rounded overflow-hidden cursor-pointer border-2 ${selectedImage === variant.url ? 'border-blue-500' : 'border-transparent'}`}
-                    onClick={() => handleVariantClick(variant.url)}
-                  >
+              {colorVariants.map((variant, index) => <CarouselItem key={index} className="pl-2 basis-1/3">
+                  <div className={`aspect-square rounded overflow-hidden cursor-pointer border-2 ${selectedImage === variant.url ? 'border-blue-500' : 'border-transparent'}`} onClick={() => handleVariantClick(variant.url)}>
                     <img src={variant.url} alt={`${variant.color}`} className="w-full h-full object-cover" />
                   </div>
-                </CarouselItem>
-              ))}
+                </CarouselItem>)}
             </CarouselContent>
-            {colorVariants.length > 3 && (
-              <div className="flex items-center justify-end gap-1 mt-1">
+            {colorVariants.length > 3 && <div className="flex items-center justify-end gap-1 mt-1">
                 <CarouselPrevious className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
                 <CarouselNext className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
-              </div>
-            )}
+              </div>}
           </Carousel>
-        </div>
-      )}
+        </div>}
 
       <div className="p-3 text-white">
         <div className="flex items-center mb-1">
@@ -286,19 +265,17 @@ const ImageCard = ({ item }: ImageCardProps) => {
           <span className="text-gray-400 text-sm">{brandName}</span>
         </div>
         <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
-        <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
+        <button onClick={handleClick} className="w-full mt-2 py-2 font-medium rounded-md bg-[#3ecf8e] text-[#ebebeb]">View similar</button>
       </div>
-    </div>
-  );
+    </div>;
 };
 
 // Helper function to clean up product titles by removing common prefixes
 const cleanProductTitle = (title: string): string => {
   // List of common prefixes to remove
   const prefixesToRemove = ['Bulk', 'Wholesale', 'Hot Sale', 'New'];
-  
   let cleanedTitle = title.trim();
-  
+
   // Check if title starts with any of the prefixes (case insensitive)
   for (const prefix of prefixesToRemove) {
     const regexPattern = new RegExp(`^${prefix}\\s+`, 'i');
@@ -306,7 +283,6 @@ const cleanProductTitle = (title: string): string => {
       cleanedTitle = cleanedTitle.replace(regexPattern, '');
     }
   }
-  
   return cleanedTitle;
 };
 
@@ -321,5 +297,4 @@ const extractBrandName = (title: string): string => {
   // Return first word if no known brand is found
   return title.split(' ')[0];
 };
-
 export default ImageCard;
