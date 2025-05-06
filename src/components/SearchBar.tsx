@@ -176,7 +176,7 @@ const SearchBar = ({
         </div>}
       
       <div className="flex items-center justify-end space-x-2 mt-2">
-        <Switch id="use-dhgate" checked={useDHgate} onCheckedChange={setUseDHgate} />
+        
         
       </div>
     </div>;
