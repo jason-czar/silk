@@ -1,3 +1,4 @@
+
 import { formatDHgateProductsAsImageResults, searchDHgate } from "./dhgateSearch";
 
 export interface ImageSearchResult {
@@ -60,7 +61,7 @@ export const searchImages = async ({
       const pageSize = num;
       
       const dhgateResults = await searchDHgate(query, page, pageSize);
-      return formatDHgateProductsAsImageResults(dhgateResults);
+      return formatDHgateProductsAsImageResults(dhgateResults) as ImageSearchResult;
     } catch (error) {
       console.error('DHgate search failed, falling back to Google:', error);
       // If DHgate search fails, fall back to Google search

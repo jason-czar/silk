@@ -37,7 +37,7 @@ export const searchDHgate = async (
     const result = await searchDHgateProducts(query, page, pageSize);
     
     // DHgate API response structure might need adaptation
-    // This is a placeholder for the actual response structure
+    // Handle the case where properties might be missing
     return {
       totalItem: result.totalItem || 0,
       totalPage: result.totalPage || 0,
@@ -59,6 +59,15 @@ export const formatDHgateProductsAsImageResults = (dhgateResults: DHgateSearchRe
   // Convert DHgate products to the format expected by ImageGrid
   return {
     kind: "customsearch#search",
+    url: {
+      type: "application/json",
+      template: `${window.location.origin}/dhgate-search`
+    },
+    queries: {
+      request: [{
+        totalResults: dhgateResults.totalItem.toString()
+      }]
+    },
     searchInformation: {
       searchTime: 0,
       formattedSearchTime: "0",

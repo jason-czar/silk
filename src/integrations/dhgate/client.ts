@@ -7,8 +7,8 @@ const DHGATE_CONFIG = {
   APP_SECRET: "ugKIDI4gOXTZIH5lLGI6PVVr87iz8OzX",
   SANDBOX_URL: "http://sandbox.api.dhgate.com",
   PRODUCTION_URL: "http://api.dhgate.com",
-  DEFAULT_USERNAME: "gynnx",  // Replace with your actual username if needed
-  DEFAULT_PASSWORD: "1qaz2wsx" // Replace with your actual password if needed
+  DEFAULT_USERNAME: "gynnx",
+  DEFAULT_PASSWORD: "1qaz2wsx"
 };
 
 // Use sandbox environment for development
@@ -22,6 +22,28 @@ interface TokenResponse {
   refresh_token: string;
   expires_in: number;
   scope: string;
+}
+
+// Define interface for product response
+interface DHgateProductResponse {
+  product: any;
+  [key: string]: any;
+}
+
+// Define interface for product search response
+interface DHgateSearchResponse {
+  totalItem: number;
+  totalPage: number;
+  pageSize: number;
+  pageNum: number;
+  items: any[];
+  [key: string]: any;
+}
+
+// Define interface for seller response
+interface DHgateSellerResponse {
+  seller: any;
+  [key: string]: any;
 }
 
 let cachedToken: TokenResponse | null = null;
@@ -106,7 +128,7 @@ export const dhgateApiRequest = async <T>(
       throw new Error(data.error_response.msg || 'DHgate API error');
     }
     
-    return data;
+    return data as T;
   } catch (error) {
     console.error(`Error in DHgate API request (${method}):`, error);
     throw error;
@@ -118,7 +140,7 @@ export const dhgateApiRequest = async <T>(
  */
 export const getProductByItemcode = async (itemcode: string) => {
   try {
-    const response = await dhgateApiRequest('dh.product.get', '1.0', { itemcode });
+    const response = await dhgateApiRequest<DHgateProductResponse>('dh.product.get', '1.0', { itemcode });
     return response.product;
   } catch (error) {
     console.error('Error fetching product details:', error);
@@ -131,7 +153,7 @@ export const getProductByItemcode = async (itemcode: string) => {
  */
 export const searchDHgateProducts = async (keyword: string, pageNum: number = 1, pageSize: number = 20) => {
   try {
-    const response = await dhgateApiRequest('dh.product.search', '1.0', {
+    const response = await dhgateApiRequest<DHgateSearchResponse>('dh.product.search', '1.0', {
       keyword,
       pageNum: pageNum.toString(),
       pageSize: pageSize.toString()
@@ -148,7 +170,7 @@ export const searchDHgateProducts = async (keyword: string, pageNum: number = 1,
  */
 export const getSellerInfo = async () => {
   try {
-    const response = await dhgateApiRequest('dh.user.seller.get', '1.0');
+    const response = await dhgateApiRequest<DHgateSellerResponse>('dh.user.seller.get', '1.0');
     return response.seller;
   } catch (error) {
     console.error('Error fetching seller info:', error);
