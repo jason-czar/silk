@@ -10,7 +10,7 @@ interface ImageUploadButtonProps {
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  capture?: string;
+  capture?: boolean | 'user' | 'environment';  // Updated type to match expected values
   ariaLabel: string;
 }
 
