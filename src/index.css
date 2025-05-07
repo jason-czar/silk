@@ -168,7 +168,12 @@
 }
 
 .search-bar-container input {
-  @apply w-full py-3 px-5 pr-12 rounded-full bg-[#EBEBEB] dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 placeholder:text-[#BDBDBD] dark:placeholder:text-gray-500 focus:outline-none focus:border-[#3ECF8E80] focus:ring-2 focus:ring-[#3ECF8E80] shadow-md transition-colors duration-300;
+  @apply w-full pl-12 pr-12 py-3 rounded-full bg-[#EBEBEB] dark:bg-gray-800 
+         border border-gray-300 dark:border-gray-700 
+         text-gray-800 dark:text-gray-200 
+         placeholder:text-[#BDBDBD] dark:placeholder:text-gray-500 
+         focus:outline-none focus:border-[#3ECF8E80] focus:ring-2 focus:ring-[#3ECF8E80] 
+         shadow-md transition-colors duration-300;
 }
 
 .search-bar-container button {

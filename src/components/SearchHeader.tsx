@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
