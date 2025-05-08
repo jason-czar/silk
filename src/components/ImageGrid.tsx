@@ -173,6 +173,16 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
     );
   }
 
+  // Calculate number of items to animate for staggered animation
+  const calculateItemsToAnimate = () => {
+    if (!results?.items) return 0;
+    if (prevItemCount === 0) return 0;
+    return Math.max(0, results.items.length - prevItemCount);
+  };
+
+  // Store the calculated value
+  const itemsToAnimate = calculateItemsToAnimate();
+
   return (
     <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${animate ? 'fade-in' : ''}`}>
       {results.items.slice(0, visibleItems).map((item, index) => (
