@@ -25,13 +25,13 @@ const SearchHeader = ({ onSearch, loading, resetSearch, isCompact = false }: Sea
                 <UserMenu />
                 <ThemeToggle />
               </div>
-              <h1 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-7xl">Silk</h1>
+              <h1 className="font-['Montserrat'] font-black italic text-[#E3231E] text-7xl">Silk</h1>
             </div>
           ) : (
             <>
               <div className={`${isMobile ? 'mr-2' : 'mr-8'}`}>
                 <div onClick={resetSearch} className="cursor-pointer">
-                  <h2 className="font-['Montserrat'] font-black italic text-[#3ECF8E] text-2xl">Silk</h2>
+                  <h2 className="font-['Montserrat'] font-black italic text-[#E3231E] text-2xl">Silk</h2>
                 </div>
               </div>
               <div className="flex-grow">
