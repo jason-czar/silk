@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ProductInfoProps {
@@ -7,16 +6,9 @@ interface ProductInfoProps {
   isDHgate: boolean;
   displayTitle: string;
   handleClick: (e: React.MouseEvent) => void;
-  handleFindSimilar: (e: React.MouseEvent) => void;
 }
 
-const ProductInfo = ({ 
-  brandName, 
-  isDHgate, 
-  displayTitle, 
-  handleClick,
-  handleFindSimilar
-}: ProductInfoProps) => {
+const ProductInfo = ({ brandName, isDHgate, displayTitle, handleClick }: ProductInfoProps) => {
   return (
     <div className="p-3 text-white">
       <div className="flex items-center mb-1">
@@ -29,20 +21,7 @@ const ProductInfo = ({
         <span className="text-gray-400 text-sm">{brandName}</span>
       </div>
       <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
-      <div className="grid grid-cols-2 gap-2 mt-2">
-        <button 
-          onClick={handleClick} 
-          className="w-full py-2 font-medium rounded-md bg-[#3ecf8e] text-[#ebebeb] hover:bg-[#2ebd7d] transition-colors"
-        >
-          View on DHgate
-        </button>
-        <button 
-          onClick={handleFindSimilar} 
-          className="w-full py-2 font-medium rounded-md bg-gray-700 text-[#ebebeb] hover:bg-gray-600 transition-colors"
-        >
-          Find similar
-        </button>
-      </div>
+      <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
     </div>
   );
 };

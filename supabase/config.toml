@@ -1,24 +1,5 @@
 
 project_id = "jzupbllxgtobpykyerbi"
 
-[api]
-enabled = true
-port = 54321
-schemas = ["public", "storage"]
-
-[db]
-port = 54322
-
-[studio]
-enabled = true
-port = 54323
-
-[storage]
-enabled = true
-
-[auth]
-enabled = true
-site_url = "http://localhost:5173"
-
-[functions.vision]
+[functions.process-zapier-data]
 verify_jwt = false

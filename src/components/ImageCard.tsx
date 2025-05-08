@@ -1,12 +1,16 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from '@/components/ui/carousel';
+import { Image, ChevronRight } from 'lucide-react';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
-import ProductImage from './ProductImage';
-import ImageCarousel from './ImageCarousel';
-import ProductInfo from './ProductInfo';
-import { cleanProductTitle, extractBrandName, extractItemcode, generateFallbackVariants } from './utils';
 
 interface ImageCardProps {
   item: {
@@ -30,6 +34,21 @@ interface ImageCardProps {
     };
   };
 }
+
+// Extract DHgate itemcode from URL
+const extractItemcode = (url: string): string | null => {
+  // Example URL: https://www.dhgate.com/product/2023-tailwind-5-v-men-running-shoes-skepta/886638181.html
+  const match = url.match(/\/product\/.*?\/(\d+)\.html/);
+  return match ? match[1] : null;
+};
+
+// Fallback color variants for when API doesn't provide them
+const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
+  // For demo purposes, we'll create some color variants with slight modifications to the URL
+  return [
+    { url: baseImageUrl, color: 'Default' },
+  ];
+};
 
 const ImageCard = ({ item }: ImageCardProps) => {
   const { toast } = useToast();
@@ -195,33 +214,112 @@ const ImageCard = ({ item }: ImageCardProps) => {
   
   return (
     <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
-      <ProductImage 
-        thumbnailUrl={thumbnailUrl}
-        title={title}
-        isLoading={isLoading}
-        hasVariants={colorVariants.length > 1}
-        onToggleVariants={() => setShowVariants(!showVariants)}
-        isLoadingProduct={isLoadingProduct}
-        handleClick={handleClick}
-      />
+      <div className="relative pb-[100%] bg-white" onClick={handleClick}>
+        <img src={selectedImage} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
+          </div>
+        )}
+
+        {/* Color variant indicator - only shows if we have variants */}
+        {colorVariants.length > 1 && (
+          <div 
+            className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1.5 shadow-md cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowVariants(!showVariants);
+            }}
+          >
+            <Image size={16} className="text-gray-600" />
+          </div>
+        )}
+        
+        {/* Loading indicator for product details */}
+        {isLoadingProduct && (
+          <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
+            <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"></div>
+          </div>
+        )}
+      </div>
 
       {/* Color variants carousel - only displayed if showVariants is true */}
-      {showVariants && (
-        <ImageCarousel 
-          variants={colorVariants}
-          selectedImage={selectedImage}
-          onVariantClick={handleVariantClick}
-        />
+      {showVariants && colorVariants.length > 1 && (
+        <div className="bg-white p-2" onClick={(e) => e.stopPropagation()}>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2">
+              {colorVariants.map((variant, index) => (
+                <CarouselItem key={index} className="pl-2 basis-1/3">
+                  <div 
+                    className={`aspect-square rounded overflow-hidden cursor-pointer border-2 ${selectedImage === variant.url ? 'border-blue-500' : 'border-transparent'}`}
+                    onClick={() => handleVariantClick(variant.url)}
+                  >
+                    <img src={variant.url} alt={`${variant.color}`} className="w-full h-full object-cover" />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {colorVariants.length > 3 && (
+              <div className="flex items-center justify-end gap-1 mt-1">
+                <CarouselPrevious className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
+                <CarouselNext className="static h-6 w-6 translate-y-0 transform-none rounded-full" />
+              </div>
+            )}
+          </Carousel>
+        </div>
       )}
 
-      <ProductInfo 
-        brandName={brandName}
-        isDHgate={isDHgate}
-        displayTitle={displayTitle}
-        handleClick={handleClick}
-      />
+      <div className="p-3 text-white">
+        <div className="flex items-center mb-1">
+          <Avatar className="h-5 w-5 mr-2">
+            {isDHgate ? <AvatarImage src="https://www.dhgate.com/favicon.ico" alt="DHgate" /> : null}
+            <AvatarFallback className="text-black text-xs bg-gray-300">
+              {isDHgate ? 'D' : brandName.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-gray-400 text-sm">{brandName}</span>
+        </div>
+        <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">{displayTitle}</p>
+        <button onClick={handleClick} className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100">View product</button>
+      </div>
     </div>
   );
+};
+
+// Helper function to clean up product titles by removing common prefixes
+const cleanProductTitle = (title: string): string => {
+  // List of common prefixes to remove
+  const prefixesToRemove = ['Bulk', 'Wholesale', 'Hot Sale', 'New'];
+  
+  let cleanedTitle = title.trim();
+  
+  // Check if title starts with any of the prefixes (case insensitive)
+  for (const prefix of prefixesToRemove) {
+    const regexPattern = new RegExp(`^${prefix}\\s+`, 'i');
+    if (regexPattern.test(cleanedTitle)) {
+      cleanedTitle = cleanedTitle.replace(regexPattern, '');
+    }
+  }
+  
+  return cleanedTitle;
+};
+
+// Helper function to extract brand name from title
+const extractBrandName = (title: string): string => {
+  const commonBrands = ['Gucci', 'Nike', 'Adidas', 'Amazon', 'Apple', 'Samsung', 'Sony'];
+  for (const brand of commonBrands) {
+    if (title.toLowerCase().includes(brand.toLowerCase())) {
+      return brand;
+    }
+  }
+  // Return first word if no known brand is found
+  return title.split(' ')[0];
 };
 
 export default ImageCard;

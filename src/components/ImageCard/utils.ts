@@ -31,35 +31,9 @@ export const extractBrandName = (title: string): string => {
 
 // Extract DHgate itemcode from URL
 export const extractItemcode = (url: string): string | null => {
-  if (!url) return null;
-  
-  // Handle different URL patterns for DHgate products
-  
-  // Pattern 1: /product/<product-name>/<itemcode>.html
-  const productPattern = url.match(/\/product\/.*?\/(\d+)\.html/);
-  if (productPattern) {
-    return productPattern[1];
-  }
-  
-  // Pattern 2: itemcode parameter in query string
-  const queryPattern = url.match(/[?&]itemcode=(\d+)/);
-  if (queryPattern) {
-    return queryPattern[1];
-  }
-  
-  // Pattern 3: URL with just numbers (for testing)
-  if (/^\d+$/.test(url)) {
-    return url;
-  }
-  
-  // Pattern 4: Extract from similar-product URL
-  const similarPattern = url.match(/similar-product\/.*?itemcode=(\d+)/);
-  if (similarPattern) {
-    return similarPattern[1];
-  }
-  
-  console.log("Failed to extract itemcode from URL:", url);
-  return null;
+  // Example URL: https://www.dhgate.com/product/2023-tailwind-5-v-men-running-shoes-skepta/886638181.html
+  const match = url.match(/\/product\/.*?\/(\d+)\.html/);
+  return match ? match[1] : null;
 };
 
 // Fallback color variants for when API doesn't provide them
