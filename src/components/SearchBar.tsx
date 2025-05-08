@@ -162,7 +162,7 @@ const SearchBar = ({
       onSearch(trimmedQuery, useDHgate);
     }
   };
-  return <div className="search-bar-container">
+  return <div className="search-bar-container flex items-end justify-center">
       <form onSubmit={handleSubmit} className="relative">
         <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB]\n                    border border-gray-300 text-gray-800 text-lg\n                    placeholder:text-[#BDBDBD]\n                    focus:outline-none\n                    focus:border-[#E3231E70]\n                    focus:ring-2\n                    focus:ring-[#E3231E70]\n                    shadow-md\n                    px-[22px] py-[16px]" />
         <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
