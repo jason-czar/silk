@@ -47,25 +47,6 @@ export interface ImageSearchParams {
   useDHgate?: boolean; // New parameter to determine search source
 }
 
-// Helper function to get high quality image URL
-export const getHighQualityImageUrl = (url: string): string => {
-  if (!url) return url;
-  
-  // For Google image search results
-  if (url.includes('googleusercontent.com')) {
-    // Remove any size restrictions in the URL
-    return url.replace(/=w\d+-h\d+/, '=w1000-h1000').replace(/=s\d+/, '=s1000');
-  }
-  
-  // For DHgate images, increase the size parameter if present
-  if (url.includes('dhgate.com')) {
-    // DHgate often uses patterns like ...200x200.jpg or ...200x200_1.jpg
-    return url.replace(/(\d+)x(\d+)((_\d+)?\.jpg)/, '800x800$3');
-  }
-  
-  return url;
-}
-
 export const searchImages = async ({ 
   query, 
   start = 1, 
@@ -91,8 +72,7 @@ export const searchImages = async ({
   const apiKey = 'AIzaSyCnhfnf18LVDXEWywoRYnTejykVPz_7niI';
   const cx = '2224a95ca357d4e8a';
   
-  // Add imgSize=huge to get higher resolution images
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&imgSize=large&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
   
   const response = await fetch(url);
   
@@ -103,4 +83,3 @@ export const searchImages = async ({
   
   return response.json();
 };
-
