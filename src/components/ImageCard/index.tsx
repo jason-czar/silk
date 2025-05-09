@@ -31,24 +31,6 @@ interface ImageCardProps {
   };
 }
 
-// Helper function to get a high-quality image URL from thumbnail
-const getHighQualityImageUrl = (thumbnailUrl: string): string => {
-  // For Google image search thumbnails, we can try to access the original image
-  if (thumbnailUrl.includes('googleusercontent.com')) {
-    // Remove size restrictions or increase them
-    return thumbnailUrl.replace(/=s\d+-c/, '=s800-c');
-  }
-  
-  // For DHgate images, increase the size parameter if present
-  if (thumbnailUrl.includes('dhgate.com')) {
-    // DHgate often uses patterns like ?f_w=600&f_h=600
-    return thumbnailUrl.replace(/\?f_w=\d+&f_h=\d+/, '?f_w=1200&f_h=1200');
-  }
-  
-  // Default: return the original URL if we can't improve it
-  return thumbnailUrl;
-}
-
 const ImageCard = ({ item }: ImageCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -61,11 +43,10 @@ const ImageCard = ({ item }: ImageCardProps) => {
   useEffect(() => {
     // Set the main image when the component mounts
     if (item.image?.thumbnailLink) {
-      const highQualityImage = getHighQualityImageUrl(item.image.thumbnailLink);
-      setSelectedImage(highQualityImage);
+      setSelectedImage(item.image.thumbnailLink);
       
       // Set a fallback variant based on the main image
-      setColorVariants(generateFallbackVariants(highQualityImage));
+      setColorVariants(generateFallbackVariants(item.image.thumbnailLink));
     }
     
     // If this is a DHgate product, try to fetch additional details
@@ -85,23 +66,19 @@ const ImageCard = ({ item }: ImageCardProps) => {
               
               // Add the main product image first if available
               if (productDetails.originalImageUrl) {
-                // Get high-quality version
-                const highQualityImage = getHighQualityImageUrl(productDetails.originalImageUrl);
                 allImages.push({
-                  url: highQualityImage,
+                  url: productDetails.originalImageUrl,
                   color: 'Main'
                 });
-                setSelectedImage(highQualityImage);
+                setSelectedImage(productDetails.originalImageUrl);
               }
               
               // Add all images from the imageList if available
               if (productDetails.imageList && Array.isArray(productDetails.imageList)) {
                 productDetails.imageList.forEach((img, index) => {
                   if (img && img.imageUrl) {
-                    // Get high-quality version
-                    const highQualityImage = getHighQualityImageUrl(img.imageUrl);
                     allImages.push({
-                      url: highQualityImage,
+                      url: img.imageUrl,
                       color: `Image ${index + 1}`
                     });
                   }
@@ -114,13 +91,11 @@ const ImageCard = ({ item }: ImageCardProps) => {
                   if (property && property.values && Array.isArray(property.values)) {
                     property.values.forEach((value) => {
                       if (value && value.imageUrl) {
-                        // Get high-quality version
-                        const highQualityImage = getHighQualityImageUrl(value.imageUrl);
                         // Check if this image URL is already in our collection
-                        const exists = allImages.some(img => img.url === highQualityImage);
+                        const exists = allImages.some(img => img.url === value.imageUrl);
                         if (!exists) {
                           allImages.push({
-                            url: highQualityImage,
+                            url: value.imageUrl,
                             color: value.propertyValueDisplayName || property.propertyName || 'Variant'
                           });
                         }
@@ -202,7 +177,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
 
   // Extract relevant data from the item
   const title = item.title || '';
-  const thumbnailUrl = selectedImage || (item.image?.thumbnailLink ? getHighQualityImageUrl(item.image.thumbnailLink) : '');
+  const thumbnailUrl = selectedImage || item.image?.thumbnailLink || '';
   const imageUrl = item.link || '';
   const contextLink = item.image?.contextLink || '';
   

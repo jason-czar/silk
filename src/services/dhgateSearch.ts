@@ -1,6 +1,5 @@
 
 import { dhgateApiRequest, searchDHgateProducts } from "@/integrations/dhgate/client";
-import { getHighQualityImageUrl } from "@/components/ImageCard/utils";
 
 export interface DHgateProduct {
   itemCode: string;
@@ -75,30 +74,25 @@ export const formatDHgateProductsAsImageResults = (dhgateResults: DHgateSearchRe
       totalResults: dhgateResults.totalItem.toString(),
       formattedTotalResults: dhgateResults.totalItem.toLocaleString()
     },
-    items: dhgateResults.items.map(product => {
-      // Get high-quality image URL
-      const highQualityImageUrl = getHighQualityImageUrl(product.imageUrl);
-      
-      return {
-        kind: "customsearch#result",
-        title: product.itemName,
-        htmlTitle: product.itemName,
-        link: product.productUrl,
-        displayLink: "www.dhgate.com",
-        snippet: product.itemName,
-        htmlSnippet: product.itemName,
-        mime: "image/jpeg",
-        fileFormat: "image/jpeg",
-        image: {
-          contextLink: product.productUrl,
-          height: 800, // Increased from typical default values
-          width: 800, // Increased from typical default values
-          byteSize: 20000, // Increased for higher quality images
-          thumbnailLink: highQualityImageUrl,
-          thumbnailHeight: 286, // Doubled from typical 143
-          thumbnailWidth: 286 // Doubled from typical 143
-        }
-      };
-    })
+    items: dhgateResults.items.map(product => ({
+      kind: "customsearch#result",
+      title: product.itemName,
+      htmlTitle: product.itemName,
+      link: product.productUrl,
+      displayLink: "www.dhgate.com",
+      snippet: product.itemName,
+      htmlSnippet: product.itemName,
+      mime: "image/jpeg",
+      fileFormat: "image/jpeg",
+      image: {
+        contextLink: product.productUrl,
+        height: 800,
+        width: 800,
+        byteSize: 10000, // Placeholder
+        thumbnailLink: product.imageUrl,
+        thumbnailHeight: 143,
+        thumbnailWidth: 143
+      }
+    }))
   };
 };
