@@ -36,10 +36,28 @@ export const extractItemcode = (url: string): string | null => {
   return match ? match[1] : null;
 };
 
+// Helper function to get a high-quality image URL
+export const getHighQualityImageUrl = (thumbnailUrl: string): string => {
+  // For Google image search thumbnails, we can try to access the original image
+  if (thumbnailUrl.includes('googleusercontent.com')) {
+    // Remove size restrictions or increase them
+    return thumbnailUrl.replace(/=s\d+-c/, '=s800-c');
+  }
+  
+  // For DHgate images, increase the size parameter if present
+  if (thumbnailUrl.includes('dhgate.com')) {
+    // DHgate often uses patterns like ?f_w=600&f_h=600
+    return thumbnailUrl.replace(/\?f_w=\d+&f_h=\d+/, '?f_w=1200&f_h=1200');
+  }
+  
+  // Default: return the original URL if we can't improve it
+  return thumbnailUrl;
+}
+
 // Fallback color variants for when API doesn't provide them
 export const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
   // For demo purposes, we'll create some color variants with slight modifications to the URL
   return [
-    { url: baseImageUrl, color: 'Default' },
+    { url: getHighQualityImageUrl(baseImageUrl), color: 'Default' },
   ];
 };

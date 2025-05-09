@@ -72,7 +72,8 @@ export const searchImages = async ({
   const apiKey = 'AIzaSyCnhfnf18LVDXEWywoRYnTejykVPz_7niI';
   const cx = '2224a95ca357d4e8a';
   
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+  // Add imgSize=large parameter to request higher quality images
+  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}&imgSize=large`;
   
   const response = await fetch(url);
   
