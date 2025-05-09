@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
@@ -144,17 +143,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
         document.body.appendChild(iframe);
         
         // Then determine the actual product URL
-        let productUrl = '';
-        if (item.image?.contextLink && item.image.contextLink.includes('dhgate.com')) {
-          // If contextLink is from DHgate, navigate there
-          productUrl = item.image.contextLink;
-        } else if (item.link && item.link.includes('dhgate.com/product/')) {
-          // Use the direct product link
-          productUrl = item.link;
-        } else {
-          // It's DHgate but not a direct product page, use the link anyway
-          productUrl = item.link;
-        }
+        let productUrl = item.link;
         
         // Set a small timeout to ensure the affiliate link is loaded before navigating
         setTimeout(() => {
@@ -167,7 +156,18 @@ const ImageCard = ({ item }: ImageCardProps) => {
         }, 100);
       } else {
         // For non-DHgate products, navigate directly to the product URL
-        window.open(item.link, '_blank', 'noopener,noreferrer');
+        let productUrl = '';
+        
+        // Choose the best URL to navigate to
+        if (item.image?.contextLink) {
+          // Use the contextLink if available
+          productUrl = item.image.contextLink;
+        } else if (item.link) {
+          // Otherwise use the direct item link
+          productUrl = item.link;
+        }
+        
+        window.open(productUrl, '_blank', 'noopener,noreferrer');
         setIsLoading(false);
       }
     } catch (error) {
