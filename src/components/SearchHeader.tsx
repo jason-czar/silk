@@ -26,13 +26,16 @@ const SearchHeader = ({
   return (
     <div className={`${isCompact ? 'sticky top-0 z-50 shadow-sm' : ''} ${gradientBgClass}`}>
       <div className="container mx-auto px-4 py-[18px]">
+        {!isCompact && (
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <UserMenu />
+            <ThemeToggle />
+          </div>
+        )}
+        
         <header className={`flex items-center ${!isCompact ? 'mb-8' : 'mb-4 pl-[10px]'}`}>
           {!isCompact ? (
             <div className="flex items-center justify-center mb-8 w-full">
-              <div className="absolute top-4 right-4 flex items-center gap-2">
-                <UserMenu />
-                <ThemeToggle />
-              </div>
               <h1 className="font-['Montserrat'] font-black italic text-[#E3231E] text-7xl">Silk</h1>
             </div>
           ) : (
