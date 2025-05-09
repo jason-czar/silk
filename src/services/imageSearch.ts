@@ -44,7 +44,7 @@ export interface ImageSearchParams {
   query: string;
   start?: number;
   num?: number;
-  useDHgate?: boolean; // New parameter to determine search source
+  useDHgate?: boolean; // Parameter to determine search source
 }
 
 export const searchImages = async ({ 
@@ -72,7 +72,8 @@ export const searchImages = async ({
   const apiKey = 'AIzaSyCnhfnf18LVDXEWywoRYnTejykVPz_7niI';
   const cx = '2224a95ca357d4e8a';
   
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+  // Add imgSize=large to get higher quality images
+  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&imgSize=large&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
   
   const response = await fetch(url);
   

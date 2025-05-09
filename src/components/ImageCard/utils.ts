@@ -36,6 +36,40 @@ export const extractItemcode = (url: string): string | null => {
   return match ? match[1] : null;
 };
 
+// Get source platform from URL
+export const getProductSource = (url: string): string => {
+  if (url.includes('dhgate.com')) {
+    return 'DHgate';
+  } else if (url.includes('made-in-china.com')) {
+    return 'Made in China';
+  } else if (url.includes('tiktok.com/shop')) {
+    return 'TikTok Shop';
+  } else if (url.includes('yiwugo.com')) {
+    return 'Yiwugo';
+  } else if (url.includes('aliexpress')) {
+    return 'AliExpress';
+  }
+  return 'Unknown';
+};
+
+// Get platform favicon
+export const getPlatformFavicon = (source: string): string => {
+  switch (source) {
+    case 'DHgate':
+      return 'https://www.dhgate.com/favicon.ico';
+    case 'Made in China':
+      return 'https://www.made-in-china.com/favicon.ico';
+    case 'TikTok Shop':
+      return 'https://www.tiktok.com/favicon.ico';
+    case 'Yiwugo':
+      return 'https://www.yiwugo.com/favicon.ico';
+    case 'AliExpress':
+      return 'https://www.aliexpress.us/favicon.ico';
+    default:
+      return '';
+  }
+};
+
 // Fallback color variants for when API doesn't provide them
 export const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
   // For demo purposes, we'll create some color variants with slight modifications to the URL
@@ -43,3 +77,4 @@ export const generateFallbackVariants = (baseImageUrl: string): {url: string, co
     { url: baseImageUrl, color: 'Default' },
   ];
 };
+

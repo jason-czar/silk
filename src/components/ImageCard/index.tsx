@@ -1,12 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { Card } from '@/components/ui/card';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
 import ProductImage from './ProductImage';
 import ImageCarousel from './ImageCarousel';
 import ProductInfo from './ProductInfo';
-import { cleanProductTitle, extractBrandName, extractItemcode, generateFallbackVariants } from './utils';
+import { cleanProductTitle, extractBrandName, extractItemcode, getProductSource, generateFallbackVariants } from './utils';
 
 interface ImageCardProps {
   item: {
@@ -131,44 +130,51 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    
     try {
-      // First, create an invisible iframe to load the affiliate link
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'https://sale.dhgate.com/92xVti99';
-      document.body.appendChild(iframe);
-
-      // Then determine the actual product URL
-      let productUrl = '';
-      if (item.image?.contextLink && item.image.contextLink.includes('dhgate.com')) {
-        // If contextLink is from DHgate, navigate there
-        productUrl = item.image.contextLink;
-      } else if (item.link && item.link.includes('dhgate.com/product/')) {
-        // Fallback to imageUrl if it's a DHgate product page
-        productUrl = item.link;
-      } else if (item.link && item.link.includes('dhgate.com')) {
-        // It's DHgate but not a product page
-        productUrl = item.link;
+      // Get the product source from the URL
+      const productSource = getProductSource(item.link);
+      
+      if (productSource === 'DHgate') {
+        // For DHgate products, use the existing affiliate link logic
+        // First, create an invisible iframe to load the affiliate link
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = 'https://sale.dhgate.com/92xVti99';
+        document.body.appendChild(iframe);
+        
+        // Then determine the actual product URL
+        let productUrl = '';
+        if (item.image?.contextLink && item.image.contextLink.includes('dhgate.com')) {
+          // If contextLink is from DHgate, navigate there
+          productUrl = item.image.contextLink;
+        } else if (item.link && item.link.includes('dhgate.com/product/')) {
+          // Use the direct product link
+          productUrl = item.link;
+        } else {
+          // It's DHgate but not a direct product page, use the link anyway
+          productUrl = item.link;
+        }
+        
+        // Set a small timeout to ensure the affiliate link is loaded before navigating
+        setTimeout(() => {
+          // Remove the iframe
+          document.body.removeChild(iframe);
+          
+          // Navigate to the product URL
+          window.open(productUrl, '_blank', 'noopener,noreferrer');
+          setIsLoading(false);
+        }, 100);
       } else {
-        // For non-DHgate URLs, search for the product on DHgate
-        const searchTerm = encodeURIComponent(item.title.split(' ').slice(0, 3).join(' '));
-        productUrl = `https://www.dhgate.com/product/search.do?act=search&sus=&searchkey=${searchTerm}`;
-      }
-
-      // Set a small timeout to ensure the affiliate link is loaded before navigating
-      setTimeout(() => {
-        // Remove the iframe
-        document.body.removeChild(iframe);
-
-        // Navigate to the product URL
-        window.open(productUrl, '_blank', 'noopener,noreferrer');
+        // For non-DHgate products, navigate directly to the product URL
+        window.open(item.link, '_blank', 'noopener,noreferrer');
         setIsLoading(false);
-      }, 100);
+      }
     } catch (error) {
       console.error('Failed to navigate:', error);
       toast({
         title: "Navigation Error",
-        description: "Unable to navigate to DHgate product. Please try again.",
+        description: "Unable to navigate to product page. Please try again.",
         variant: "destructive"
       });
       setIsLoading(false);
@@ -181,11 +187,8 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const imageUrl = item.link || '';
   const contextLink = item.image?.contextLink || '';
   
-  // Check if the product is from DHgate
-  const isDHgate = contextLink?.includes('dhgate.com') || imageUrl?.includes('dhgate.com');
-
-  // Extract brand name and format price for display
-  const brandName = isDHgate ? 'DHgate.com' : extractBrandName(title);
+  // Get the product source
+  const productSource = getProductSource(item.link || contextLink || '');
   
   // Clean up the title by removing common prefixes like "Bulk"
   const cleanTitle = cleanProductTitle(title);
@@ -215,8 +218,8 @@ const ImageCard = ({ item }: ImageCardProps) => {
       )}
 
       <ProductInfo 
-        brandName={brandName}
-        isDHgate={isDHgate}
+        brandName={extractBrandName(title)}
+        source={productSource}
         displayTitle={displayTitle}
         handleClick={handleClick}
       />
