@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Image } from 'lucide-react';
+import { getHighQualityImageUrl } from '@/services/imageSearch';
 
 interface ProductImageProps {
   thumbnailUrl: string;
@@ -21,9 +22,17 @@ const ProductImage = ({
   isLoadingProduct,
   handleClick 
 }: ProductImageProps) => {
+  // Get high quality version of the thumbnail URL
+  const highQualityUrl = getHighQualityImageUrl(thumbnailUrl);
+  
   return (
     <div className="relative pb-[100%] bg-white" onClick={handleClick}>
-      <img src={thumbnailUrl} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+      <img 
+        src={highQualityUrl} 
+        alt={title} 
+        className="absolute inset-0 w-full h-full object-cover" 
+        loading="lazy" 
+      />
       
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">

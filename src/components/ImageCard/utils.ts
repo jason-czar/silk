@@ -1,4 +1,6 @@
 
+import { getHighQualityImageUrl } from "@/services/imageSearch";
+
 // Helper function to clean up product titles by removing common prefixes
 export const cleanProductTitle = (title: string): string => {
   // List of common prefixes to remove
@@ -38,8 +40,11 @@ export const extractItemcode = (url: string): string | null => {
 
 // Fallback color variants for when API doesn't provide them
 export const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
+  // Get high quality version of the image
+  const highQualityUrl = getHighQualityImageUrl(baseImageUrl);
+  
   // For demo purposes, we'll create some color variants with slight modifications to the URL
   return [
-    { url: baseImageUrl, color: 'Default' },
+    { url: highQualityUrl, color: 'Default' },
   ];
 };

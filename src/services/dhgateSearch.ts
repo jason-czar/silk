@@ -1,5 +1,6 @@
 
 import { dhgateApiRequest, searchDHgateProducts } from "@/integrations/dhgate/client";
+import { getHighQualityImageUrl } from "./imageSearch";
 
 export interface DHgateProduct {
   itemCode: string;
@@ -89,7 +90,7 @@ export const formatDHgateProductsAsImageResults = (dhgateResults: DHgateSearchRe
         height: 800,
         width: 800,
         byteSize: 10000, // Placeholder
-        thumbnailLink: product.imageUrl,
+        thumbnailLink: getHighQualityImageUrl(product.imageUrl), // Apply high quality URL transformation
         thumbnailHeight: 143,
         thumbnailWidth: 143
       }
