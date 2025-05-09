@@ -1,6 +1,6 @@
 
 import React from 'react';
-import ImageCard from './ImageCard';
+import ImageCard from './ImageCard/index';
 import FavoriteButton from './FavoriteButton';
 import { useAuth } from '@/context/AuthContext';
 
