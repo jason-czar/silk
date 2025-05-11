@@ -1,11 +1,11 @@
 
-import { cleanProductTitle, extractBrandName, getProductSource } from './utils';
+import { ImageCardProps } from './types';
 import { useProductDetails } from './useProductDetails';
 import { useProductNavigation } from './useProductNavigation';
 import ProductImage from './ProductImage';
 import ImageCarousel from './ImageCarousel';
 import ProductInfo from './ProductInfo';
-import { ImageCardProps } from './types';
+import { cleanProductTitle, extractBrandName, getProductSource } from './utils';
 
 const ImageCard = ({ item }: ImageCardProps) => {
   // Get product details and functionality
@@ -24,7 +24,6 @@ const ImageCard = ({ item }: ImageCardProps) => {
   // Extract relevant data from the item
   const title = item.title || '';
   const thumbnailUrl = selectedImage || item.image?.thumbnailLink || '';
-  const imageUrl = item.link || '';
   const contextLink = item.image?.contextLink || '';
   
   // Get the product source

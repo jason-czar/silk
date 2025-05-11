@@ -1,16 +1,8 @@
 
-import { useState } from 'react';
+import React from 'react';
 import { Image } from 'lucide-react';
-
-interface ProductImageProps {
-  thumbnailUrl: string;
-  title: string;
-  isLoading: boolean;
-  hasVariants: boolean;
-  onToggleVariants: () => void;
-  isLoadingProduct: boolean;
-  handleClick: (e: React.MouseEvent) => void;
-}
+import { ProductImageProps } from './types';
+import LoadingSpinner from './LoadingSpinner';
 
 const ProductImage = ({ 
   thumbnailUrl, 
@@ -27,7 +19,7 @@ const ProductImage = ({
       
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></div>
+          <LoadingSpinner />
         </div>
       )}
 
@@ -47,7 +39,7 @@ const ProductImage = ({
       {/* Loading indicator for product details */}
       {isLoadingProduct && (
         <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
-          <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full"></div>
+          <LoadingSpinner size="small" />
         </div>
       )}
     </div>

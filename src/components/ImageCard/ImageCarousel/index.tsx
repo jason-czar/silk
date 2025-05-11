@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import React from 'react';
 import { 
   Carousel,
   CarouselContent,
@@ -7,17 +7,8 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel';
-
-interface ImageVariant {
-  url: string;
-  color: string;
-}
-
-interface ImageCarouselProps {
-  variants: ImageVariant[];
-  selectedImage: string;
-  onVariantClick: (variantUrl: string) => void;
-}
+import { ImageCarouselProps } from './types';
+import CarouselItemVariant from './CarouselItemVariant';
 
 const ImageCarousel = ({ variants, selectedImage, onVariantClick }: ImageCarouselProps) => {
   if (variants.length <= 1) {
@@ -36,12 +27,11 @@ const ImageCarousel = ({ variants, selectedImage, onVariantClick }: ImageCarouse
         <CarouselContent className="-ml-2">
           {variants.map((variant, index) => (
             <CarouselItem key={index} className="pl-2 basis-1/3">
-              <div 
-                className={`aspect-square rounded overflow-hidden cursor-pointer border-2 ${selectedImage === variant.url ? 'border-blue-500' : 'border-transparent'}`}
+              <CarouselItemVariant 
+                variant={variant}
+                isSelected={selectedImage === variant.url}
                 onClick={() => onVariantClick(variant.url)}
-              >
-                <img src={variant.url} alt={`${variant.color}`} className="w-full h-full object-cover" />
-              </div>
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
