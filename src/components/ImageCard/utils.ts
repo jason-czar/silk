@@ -94,3 +94,36 @@ export const generateFallbackVariants = (baseImageUrl: string): {url: string, co
     { url: baseImageUrl, color: 'Default' },
   ];
 };
+
+// Get full size image URL from Google thumbnail URL
+export const getFullSizeGoogleImage = (thumbnailUrl: string): string => {
+  // Check if this is a Google image URL
+  if (!thumbnailUrl) return thumbnailUrl;
+  
+  try {
+    // Handle Google image URLs
+    if (thumbnailUrl.includes('googleusercontent.com')) {
+      // Extract the actual image URL from the Google thumbnail URL
+      const urlMatch = thumbnailUrl.match(/url=([^&]+)/);
+      if (urlMatch && urlMatch[1]) {
+        // Decode the URL and return it
+        return decodeURIComponent(urlMatch[1]);
+      }
+      
+      // For direct Google image URLs, try to modify size parameters
+      // Replace any size parameters with w=800&h=800
+      if (thumbnailUrl.includes('=w')) {
+        return thumbnailUrl.replace(/=w\d+-h\d+/, '=w800-h800');
+      }
+      
+      if (thumbnailUrl.includes('=s')) {
+        return thumbnailUrl.replace(/=s\d+/, '=s800');
+      }
+    }
+  } catch (error) {
+    console.error('Error transforming Google image URL:', error);
+  }
+  
+  // If we can't transform, return the original URL
+  return thumbnailUrl;
+};

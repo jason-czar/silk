@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Image } from 'lucide-react';
 import { ProductImageProps } from './types';
 import LoadingSpinner from './LoadingSpinner';
 
 const ProductImage = ({ 
   thumbnailUrl, 
+  fullSizeUrl,
   title, 
   isLoading, 
   hasVariants, 
@@ -13,9 +14,24 @@ const ProductImage = ({
   isLoadingProduct,
   handleClick 
 }: ProductImageProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  // Use the full size URL if provided, otherwise fall back to thumbnail
+  const displayUrl = fullSizeUrl || thumbnailUrl;
+
   return (
     <div className="relative pb-[100%] bg-white" onClick={handleClick}>
-      <img src={thumbnailUrl} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+      {/* Main Product Image with fullSizeUrl if available */}
+      <img 
+        src={displayUrl} 
+        alt={title} 
+        className="absolute inset-0 w-full h-full object-cover" 
+        loading="lazy" 
+        onLoad={() => setImageLoaded(true)}
+        onError={() => {
+          console.log("Error loading full size image, falling back to thumbnail");
+          setImageLoaded(true);
+        }}
+      />
       
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">

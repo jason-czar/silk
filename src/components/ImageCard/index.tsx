@@ -11,6 +11,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
   // Get product details and functionality
   const {
     selectedImage,
+    fullSizeImage,
     colorVariants,
     showVariants,
     isLoadingProduct,
@@ -39,6 +40,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
     <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
       <ProductImage 
         thumbnailUrl={thumbnailUrl}
+        fullSizeUrl={fullSizeImage}
         title={title}
         isLoading={isLoading}
         hasVariants={colorVariants.length > 1}

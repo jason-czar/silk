@@ -2,13 +2,14 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
-import { extractItemcode, generateFallbackVariants } from './utils';
+import { extractItemcode, generateFallbackVariants, getFullSizeGoogleImage } from './utils';
 import { ImageCardProps } from './types';
 
 export const useProductDetails = (item: ImageCardProps['item']) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
+  const [fullSizeImage, setFullSizeImage] = useState<string>('');
   const [colorVariants, setColorVariants] = useState<{url: string, color: string}[]>([]);
   const [showVariants, setShowVariants] = useState(false);
   const [dhgateProduct, setDhgateProduct] = useState<DHgateProductResponse['product'] | null>(null);
@@ -18,6 +19,10 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     // Set the main image when the component mounts
     if (item.image?.thumbnailLink) {
       setSelectedImage(item.image.thumbnailLink);
+      
+      // Set full size image for Google search results
+      const fullSize = getFullSizeGoogleImage(item.image.thumbnailLink);
+      setFullSizeImage(fullSize);
       
       // Set a fallback variant based on the main image
       setColorVariants(generateFallbackVariants(item.image.thumbnailLink));
@@ -100,6 +105,8 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
 
   const handleVariantClick = (variantUrl: string) => {
     setSelectedImage(variantUrl);
+    const fullSize = getFullSizeGoogleImage(variantUrl);
+    setFullSizeImage(fullSize);
   };
 
   const toggleVariants = () => {
@@ -110,6 +117,7 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     isLoading,
     setIsLoading,
     selectedImage,
+    fullSizeImage, // Add the full size image to the return value
     colorVariants,
     showVariants,
     dhgateProduct,
