@@ -1,4 +1,3 @@
-
 // Helper function to clean up product titles by removing common prefixes
 export const cleanProductTitle = (title: string): string => {
   // List of common prefixes to remove
@@ -70,6 +69,24 @@ export const getPlatformFavicon = (source: string): string => {
   }
 };
 
+// Get source display name
+export const getSourceDisplayName = (source: string): string => {
+  switch (source) {
+    case 'DHgate':
+      return 'DHgate.com';
+    case 'Made in China':
+      return 'MadeinChina.com';
+    case 'TikTok Shop':
+      return 'TikTok Shop';
+    case 'Yiwugo':
+      return 'Yiwugo.com';
+    case 'AliExpress':
+      return 'AliExpress.com';
+    default:
+      return source;
+  }
+};
+
 // Fallback color variants for when API doesn't provide them
 export const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
   // For demo purposes, we'll create some color variants with slight modifications to the URL
@@ -77,4 +94,3 @@ export const generateFallbackVariants = (baseImageUrl: string): {url: string, co
     { url: baseImageUrl, color: 'Default' },
   ];
 };
-
