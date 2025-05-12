@@ -5,8 +5,8 @@ import { toast } from "@/components/ui/use-toast";
 const DHGATE_CONFIG = {
   APP_KEY: "Em4SkdXfkY0X8vg03v8m",
   APP_SECRET: "ugKIDI4gOXTZIH5lLGI6PVVr87iz8OzX",
-  SANDBOX_URL: "http://sandbox.api.dhgate.com",
-  PRODUCTION_URL: "http://api.dhgate.com",
+  SANDBOX_URL: "https://sandbox.api.dhgate.com",
+  PRODUCTION_URL: "https://api.dhgate.com",
   DEFAULT_USERNAME: "gynnx",
   DEFAULT_PASSWORD: "1qaz2wsx"
 };
@@ -65,9 +65,12 @@ export interface DHgateSellerResponse {
 
 let cachedToken: TokenResponse | null = null;
 let tokenExpiryTime: number = 0;
+let failedAttempts = 0;
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 1000; // 1 second initial delay
 
 /**
- * Get an access token from DHgate
+ * Get an access token from DHgate with retry mechanism
  */
 export const getDHgateToken = async (): Promise<string> => {
   const currentTime = Date.now();
@@ -78,6 +81,11 @@ export const getDHgateToken = async (): Promise<string> => {
   }
   
   try {
+    // Reset failed attempts if this is a fresh token request
+    if (!cachedToken) {
+      failedAttempts = 0;
+    }
+    
     // Prepare the token request URL
     const tokenUrl = `${BASE_URL}/dop/oauth2/access_token`;
     const params = new URLSearchParams({
@@ -89,10 +97,18 @@ export const getDHgateToken = async (): Promise<string> => {
       scope: 'basic'
     });
     
-    const response = await fetch(`${tokenUrl}?${params.toString()}`);
+    // Use fetch with timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    const response = await fetch(`${tokenUrl}?${params.toString()}`, {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
-      throw new Error(`Failed to get DHgate token: ${response.statusText}`);
+      throw new Error(`Failed to get DHgate token: ${response.statusText} (${response.status})`);
     }
     
     const tokenData: TokenResponse = await response.json();
@@ -104,52 +120,92 @@ export const getDHgateToken = async (): Promise<string> => {
       ? tokenData.expires_in // If it's already a timestamp
       : Date.now() + (tokenData.expires_in * 1000) - 300000; // Convert seconds to ms and subtract 5 minutes
     
+    // Reset failed attempts on success
+    failedAttempts = 0;
+    
     return tokenData.access_token;
   } catch (error) {
-    console.error('Error getting DHgate token:', error);
+    failedAttempts++;
+    console.error(`Error getting DHgate token (attempt ${failedAttempts}):`, error);
+    
+    // Try again with exponential backoff if we haven't exceeded MAX_RETRIES
+    if (failedAttempts <= MAX_RETRIES) {
+      const delay = RETRY_DELAY * Math.pow(2, failedAttempts - 1);
+      console.log(`Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return getDHgateToken(); // Recursive retry
+    }
+    
+    // If all retries fail, throw the error
     throw new Error('Failed to authenticate with DHgate API');
   }
 };
 
 /**
- * Make a request to the DHgate API
+ * Make a request to the DHgate API with retry mechanism
  */
 export const dhgateApiRequest = async <T>(
   method: string,
   version: string = '1.0',
   params: Record<string, string> = {}
 ): Promise<T> => {
-  try {
-    // Get access token
-    const accessToken = await getDHgateToken();
-    
-    // Prepare the API request URL and parameters
-    const apiUrl = `${BASE_URL}/dop/router`;
-    const requestParams = new URLSearchParams({
-      method,
-      v: version,
-      access_token: accessToken,
-      ...params
-    });
-    
-    const response = await fetch(`${apiUrl}?${requestParams.toString()}`);
-    
-    if (!response.ok) {
-      throw new Error(`DHgate API error: ${response.statusText}`);
+  let retries = 0;
+  const maxRetries = 2;
+  
+  while (retries <= maxRetries) {
+    try {
+      // Get access token
+      const accessToken = await getDHgateToken();
+      
+      // Prepare the API request URL and parameters
+      const apiUrl = `${BASE_URL}/dop/router`;
+      const requestParams = new URLSearchParams({
+        method,
+        v: version,
+        access_token: accessToken,
+        ...params
+      });
+      
+      // Set a timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      const response = await fetch(`${apiUrl}?${requestParams.toString()}`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`DHgate API error: ${response.statusText} (${response.status})`);
+      }
+      
+      const data = await response.json();
+      
+      // Check for API errors in the response
+      if (data.error_response) {
+        throw new Error(data.error_response.msg || 'DHgate API error');
+      }
+      
+      return data as T;
+    } catch (error) {
+      retries++;
+      console.error(`Error in DHgate API request (${method}) - attempt ${retries}:`, error);
+      
+      if (retries <= maxRetries) {
+        // Exponential backoff
+        const delay = 1000 * Math.pow(2, retries - 1);
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        console.error(`Max retries reached for ${method}. Giving up.`);
+        throw error;
+      }
     }
-    
-    const data = await response.json();
-    
-    // Check for API errors in the response
-    if (data.error_response) {
-      throw new Error(data.error_response.msg || 'DHgate API error');
-    }
-    
-    return data as T;
-  } catch (error) {
-    console.error(`Error in DHgate API request (${method}):`, error);
-    throw error;
   }
+  
+  // This should never happen but TypeScript requires it
+  throw new Error(`Failed to complete DHgate API request (${method}) after ${maxRetries} retries`);
 };
 
 /**

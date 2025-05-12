@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
@@ -15,6 +14,7 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
   const [dhgateProduct, setDhgateProduct] = useState<DHgateProductResponse['product'] | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
   const [productImagesLoaded, setProductImagesLoaded] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
     // Set the main image when the component mounts
@@ -34,13 +34,15 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
         setFullSizeImage(fullSize);
       }
       
-      // Set a fallback variant based on the main image
+      // Always set fallback variants based on the main image
+      // so we have something to display even if API fails
       setColorVariants(generateFallbackVariants(item.image.thumbnailLink));
     }
     
     // If this is a DHgate product, try to fetch additional details
     let itemcode: string | null = null;
     
+    // Try multiple places to extract an itemcode
     if (item.link && item.link.includes('dhgate.com')) {
       itemcode = extractItemcode(item.link);
       console.log('Extracted itemcode from link:', itemcode);
@@ -54,6 +56,8 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
       // Fetch product details from DHgate API
       const fetchProductDetails = async () => {
         setIsLoadingProduct(true);
+        setApiError(null);
+        
         try {
           const productDetails = await getProductByItemcode(itemcode as string);
           if (productDetails) {
@@ -117,7 +121,9 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
           }
         } catch (error) {
           console.error('Failed to fetch DHgate product details:', error);
+          setApiError(error instanceof Error ? error.message : 'Unknown API error');
           // Don't show error toast to user - just silently fallback to the existing variant
+          // and keep using the fallback variants we already set
         } finally {
           setIsLoadingProduct(false);
         }
@@ -157,6 +163,7 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     dhgateProduct,
     isLoadingProduct,
     productImagesLoaded,
+    apiError,
     handleVariantClick,
     toggleVariants
   };

@@ -1,5 +1,6 @@
 
 import { dhgateApiRequest, searchDHgateProducts } from "@/integrations/dhgate/client";
+import { toast } from "@/components/ui/use-toast";
 
 export interface DHgateProduct {
   itemCode: string;
@@ -26,29 +27,46 @@ export interface DHgateSearchResult {
 }
 
 /**
- * Search products directly on DHgate
+ * Search products directly on DHgate with improved error handling
  */
 export const searchDHgate = async (
   query: string, 
   page: number = 1, 
   pageSize: number = 20
 ): Promise<DHgateSearchResult> => {
-  try {
-    const result = await searchDHgateProducts(query, page, pageSize);
-    
-    // DHgate API response structure might need adaptation
-    // Handle the case where properties might be missing
-    return {
-      totalItem: result.totalItem || 0,
-      totalPage: result.totalPage || 0,
-      pageSize: result.pageSize || pageSize,
-      pageNum: result.pageNum || page,
-      items: result.items || []
-    };
-  } catch (error) {
-    console.error('DHgate search error:', error);
-    throw new Error(error instanceof Error ? error.message : 'Failed to search DHgate products');
+  let retries = 0;
+  const maxRetries = 1;
+  
+  while (retries <= maxRetries) {
+    try {
+      const result = await searchDHgateProducts(query, page, pageSize);
+      
+      // DHgate API response structure might need adaptation
+      // Handle the case where properties might be missing
+      return {
+        totalItem: result.totalItem || 0,
+        totalPage: result.totalPage || 0,
+        pageSize: result.pageSize || pageSize,
+        pageNum: result.pageNum || page,
+        items: result.items || []
+      };
+    } catch (error) {
+      retries++;
+      console.error(`DHgate search error (attempt ${retries}):`, error);
+      
+      // If we have more retries left, wait and try again
+      if (retries <= maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+        continue;
+      }
+      
+      // Maximum retries reached, throw error
+      throw new Error(error instanceof Error ? error.message : 'Failed to search DHgate products');
+    }
   }
+  
+  // This should never happen but TypeScript requires it
+  throw new Error(`Failed to search DHgate products after ${maxRetries} retries`);
 };
 
 /**

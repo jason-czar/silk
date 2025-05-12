@@ -60,6 +60,7 @@ export const searchImages = async ({
       const page = Math.ceil(start / num);
       const pageSize = num;
       
+      console.log(`Searching DHgate for "${query}" (page ${page}, size ${pageSize})`);
       const dhgateResults = await searchDHgate(query, page, pageSize);
       return formatDHgateProductsAsImageResults(dhgateResults) as ImageSearchResult;
     } catch (error) {
@@ -72,15 +73,30 @@ export const searchImages = async ({
   const apiKey = 'AIzaSyCnhfnf18LVDXEWywoRYnTejykVPz_7niI';
   const cx = '2224a95ca357d4e8a';
   
+  console.log(`Searching Google for "${query}" (start ${start}, num ${num})`);
+  
   // Add imgSize=large to get higher quality images
   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&imgSize=large&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
   
-  const response = await fetch(url);
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error?.message || `Failed to fetch images (${response.status})`);
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error?.message || `Failed to fetch images (${response.status})`);
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Google image search error:', error);
+    // If it's an abort error, provide a more user-friendly message
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('Search request timed out. Please try again.');
+    }
+    throw new Error(error instanceof Error ? error.message : 'Failed to search for images');
   }
-  
-  return response.json();
 };

@@ -16,6 +16,19 @@ const CarouselItemVariant: React.FC<CarouselItemVariantProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   
+  // If the image fails to load, we can try again with HTTPS or HTTP
+  const handleImageError = () => {
+    const originalUrl = variant.url;
+    setError(true);
+    setLoading(false);
+    
+    // Attempt to log specific error details
+    console.error(`Failed to load image: ${originalUrl}`);
+    
+    // We could implement URL fixing here in the future
+    // For now, just mark as error to show the error state
+  };
+  
   return (
     <div 
       className={`aspect-square rounded overflow-hidden cursor-pointer border-2 relative
@@ -45,10 +58,7 @@ const CarouselItemVariant: React.FC<CarouselItemVariantProps> = ({
         alt={`${variant.color}`}
         className={`w-full h-full object-cover transition-opacity duration-200 ${loading ? 'opacity-0' : 'opacity-100'}`}
         onLoad={() => setLoading(false)}
-        onError={() => {
-          setLoading(false);
-          setError(true);
-        }}
+        onError={handleImageError}
       />
       
       {/* Small color indicator label at the bottom */}
