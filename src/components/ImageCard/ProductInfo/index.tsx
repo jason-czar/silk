@@ -10,8 +10,8 @@ import ViewProductButton from './ViewProductButton';
 const ProductInfo = ({ brandName, source, displayTitle, handleClick }: ProductInfoProps) => {
   return (
     <div className="p-3 text-white">
-      <ProductTitle title={displayTitle} />
       <SourceBadge source={source} />
+      <ProductTitle title={displayTitle} />
       <ViewProductButton onClick={handleClick} />
     </div>
   );

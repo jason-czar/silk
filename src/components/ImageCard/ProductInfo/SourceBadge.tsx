@@ -34,9 +34,24 @@ const SourceBadge: React.FC<SourceBadgeProps> = ({ source }) => {
     setIsLoading(false);
   };
 
-  // Return an empty div (hiding this component for now)
   return (
-    <div className="mb-1"></div>
+    <div className="flex items-center mb-1 justify-between">
+      <span className="text-gray-400 text-sm">{displayName}</span>
+      <Avatar className="h-5 w-5 ml-2 overflow-hidden">
+        {favicon && !iconError ? (
+          <AvatarImage 
+            src={favicon} 
+            alt={displayName} 
+            onError={handleImageError}
+            onLoad={handleImageLoad}
+            className="h-full w-full object-contain"
+          />
+        ) : null}
+        <AvatarFallback className={`text-xs ${isLoading ? 'bg-gray-200' : 'bg-gray-300'} text-black`}>
+          {displayName.charAt(0).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    </div>
   );
 };
 
