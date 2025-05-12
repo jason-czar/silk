@@ -35,8 +35,9 @@ const SourceBadge: React.FC<SourceBadgeProps> = ({ source }) => {
   };
 
   return (
-    <div className="flex items-center mb-1">
-      <Avatar className="h-5 w-5 mr-2 overflow-hidden">
+    <div className="flex items-center mb-1 justify-between">
+      <span className="text-gray-400 text-sm">{displayName}</span>
+      <Avatar className="h-5 w-5 ml-2 overflow-hidden">
         {favicon && !iconError ? (
           <AvatarImage 
             src={favicon} 
@@ -50,7 +51,6 @@ const SourceBadge: React.FC<SourceBadgeProps> = ({ source }) => {
           {displayName.charAt(0).toUpperCase()}
         </AvatarFallback>
       </Avatar>
-      <span className="text-gray-400 text-sm">{displayName}</span>
     </div>
   );
 };
