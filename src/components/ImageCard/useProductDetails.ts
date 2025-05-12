@@ -18,11 +18,20 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
   useEffect(() => {
     // Set the main image when the component mounts
     if (item.image?.thumbnailLink) {
+      // Set the thumbnail for initial display (for faster loading)
       setSelectedImage(item.image.thumbnailLink);
       
-      // Set full size image for Google search results
-      const fullSize = getFullSizeGoogleImage(item.image.thumbnailLink);
-      setFullSizeImage(fullSize);
+      // For Google search results, use the direct link to the image (item.link) 
+      // as it points to the full-size image
+      if (item.link) {
+        console.log('Using direct link for full-size image:', item.link);
+        setFullSizeImage(item.link);
+      } else {
+        // Fallback to the transformation method if link is not available
+        const fullSize = getFullSizeGoogleImage(item.image.thumbnailLink);
+        console.log('Using transformed thumbnail for full-size image:', fullSize);
+        setFullSizeImage(fullSize);
+      }
       
       // Set a fallback variant based on the main image
       setColorVariants(generateFallbackVariants(item.image.thumbnailLink));
@@ -105,8 +114,10 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
 
   const handleVariantClick = (variantUrl: string) => {
     setSelectedImage(variantUrl);
-    const fullSize = getFullSizeGoogleImage(variantUrl);
-    setFullSizeImage(fullSize);
+    
+    // When clicking a variant, try to use it directly as the full size image
+    // instead of trying to transform it
+    setFullSizeImage(variantUrl);
   };
 
   const toggleVariants = () => {
@@ -117,7 +128,7 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     isLoading,
     setIsLoading,
     selectedImage,
-    fullSizeImage, // Add the full size image to the return value
+    fullSizeImage,
     colorVariants,
     showVariants,
     dhgateProduct,

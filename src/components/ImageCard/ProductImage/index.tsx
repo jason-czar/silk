@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { ProductImageProps } from './types';
 import LoadingSpinner from './LoadingSpinner';
@@ -15,8 +15,19 @@ const ProductImage = ({
   handleClick 
 }: ProductImageProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
+  
   // Use the full size URL if provided, otherwise fall back to thumbnail
-  const displayUrl = fullSizeUrl || thumbnailUrl;
+  const displayUrl = useFallback ? thumbnailUrl : (fullSizeUrl || thumbnailUrl);
+
+  // Log image details for debugging
+  useEffect(() => {
+    if (fullSizeUrl) {
+      console.log('Full size URL available:', fullSizeUrl);
+    } else {
+      console.log('No full size URL, using thumbnail:', thumbnailUrl);
+    }
+  }, [fullSizeUrl, thumbnailUrl]);
 
   return (
     <div className="relative pb-[100%] bg-white" onClick={handleClick}>
@@ -26,9 +37,17 @@ const ProductImage = ({
         alt={title} 
         className="absolute inset-0 w-full h-full object-cover" 
         loading="lazy" 
-        onLoad={() => setImageLoaded(true)}
+        onLoad={(e) => {
+          setImageLoaded(true);
+          // Log image dimensions to verify we're getting larger images
+          const img = e.target as HTMLImageElement;
+          console.log(`Image loaded: ${img.naturalWidth}x${img.naturalHeight}`);
+        }}
         onError={() => {
-          console.log("Error loading full size image, falling back to thumbnail");
+          console.log("Error loading image, falling back to thumbnail");
+          if (!useFallback && fullSizeUrl) {
+            setUseFallback(true);
+          }
           setImageLoaded(true);
         }}
       />
