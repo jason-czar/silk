@@ -1,3 +1,4 @@
+
 // Helper function to clean up product titles by removing common prefixes
 export const cleanProductTitle = (title: string): string => {
   // List of common prefixes to remove
@@ -51,19 +52,19 @@ export const getProductSource = (url: string): string => {
   return 'Unknown';
 };
 
-// Get platform favicon
+// Get platform favicon - UPDATED to use local images
 export const getPlatformFavicon = (source: string): string => {
   switch (source) {
     case 'DHgate':
-      return 'https://www.dhgate.com/favicon.ico';
+      return '/lovable-uploads/94a3102b-906c-4664-800f-984835b28fa7.png';
     case 'Made in China':
-      return 'https://www.made-in-china.com/favicon.ico';
+      return '/lovable-uploads/c41d259a-2527-4a7a-a38a-27f1bfcea914.png';
     case 'TikTok Shop':
-      return 'https://www.tiktok.com/favicon.ico';
+      return '/lovable-uploads/c6f1c8f4-cb17-4edc-bebf-7cf3889e3182.png';
     case 'Yiwugo':
-      return 'https://www.yiwugo.com/favicon.ico';
+      return '/lovable-uploads/777300c1-8975-4c1f-9122-dd5252808a46.png';
     case 'AliExpress':
-      return 'https://www.aliexpress.us/favicon.ico';
+      return '/lovable-uploads/fc90fb5d-2a71-4021-a442-60c492e8818b.png';
     default:
       return '';
   }
