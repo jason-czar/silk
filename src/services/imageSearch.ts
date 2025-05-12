@@ -50,7 +50,7 @@ export interface ImageSearchParams {
 export const searchImages = async ({ 
   query, 
   start = 1, 
-  num = 10,
+  num = 12,
   useDHgate = false
 }: ImageSearchParams): Promise<ImageSearchResult> => {
   // First try to search directly on DHgate if the flag is set
