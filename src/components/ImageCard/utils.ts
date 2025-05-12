@@ -38,13 +38,13 @@ export const extractItemcode = (url: string): string | null => {
 
 // Get source platform from URL
 export const getProductSource = (url: string): string => {
-  if (url.includes('dhgate.com')) {
+  if (url.includes('dhgate')) {
     return 'DHgate';
-  } else if (url.includes('made-in-china.com')) {
+  } else if (url.includes('made-in-china')) {
     return 'Made in China';
-  } else if (url.includes('tiktok.com/shop')) {
+  } else if (url.includes('tiktok.com')) {
     return 'TikTok Shop';
-  } else if (url.includes('yiwugo.com')) {
+  } else if (url.includes('yiwugo')) {
     return 'Yiwugo';
   } else if (url.includes('aliexpress')) {
     return 'AliExpress';
