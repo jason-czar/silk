@@ -5,7 +5,7 @@ export const DHGATE_CONFIG = {
   APP_KEY: "",
   APP_SECRET: "",
   SANDBOX_URL: "https://sandbox.api.dhgate.com",
-  PRODUCTION_URL: "http://api.dhgate.com", // Updated to match the documentation
+  PRODUCTION_URL: "https://api.dhgate.com",
   DEFAULT_USERNAME: "",
   DEFAULT_PASSWORD: ""
 };
