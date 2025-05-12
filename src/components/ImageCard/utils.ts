@@ -51,22 +51,10 @@ export const getProductSource = (url: string): string => {
   return 'Unknown';
 };
 
-// Get platform favicon - UPDATED to use uploaded image for DHgate
+// Get platform favicon - UPDATED to use a single Supabase URL for all icons
 export const getPlatformFavicon = (source: string): string => {
-  switch (source) {
-    case 'DHgate':
-      return '/lovable-uploads/f1954bd3-2200-49b0-9dc9-da9447aae259.png';
-    case 'Made in China':
-      return 'https://drive.google.com/uc?export=view&id=1ftVDGldHWILKMJ9-fZDlPD4QTq7zllb8';
-    case 'TikTok Shop':
-      return 'https://drive.google.com/uc?export=view&id=1iuOAOOra93dH7mSbdOh9xEnIhzYRsEuT';
-    case 'Yiwugo':
-      return 'https://drive.google.com/uc?export=view&id=1J4HLONOUdGYcax-UnxS-pYN7e_OlDf0X';
-    case 'AliExpress':
-      return 'https://drive.google.com/uc?export=view&id=1J9r92b1rWsZAZLCulce0FdWDrvqhSJFt';
-    default:
-      return '';
-  }
+  // Using the provided Supabase URL for all favicons
+  return "https://jzupbllxgtobpykyerbi.supabase.co/storage/v1/object/sign/favicon/dhgate%20favicon.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5X2RiZmVjNDliLWNlNzktNDMwMS1iNzAxLTAzMWNmODFhZjViNCJ9.eyJ1cmwiOiJmYXZpY29uL2RoZ2F0ZSBmYXZpY29uLnBuZyIsImlhdCI6MTc0NzA3OTA2MCwiZXhwIjo0ODY5MTQzMDYwfQ.4GQ3xCAnCQwLXosfxy7nHoMQDGXsdlk-jZIrSKCgRxo";
 };
 
 // Get source display name
