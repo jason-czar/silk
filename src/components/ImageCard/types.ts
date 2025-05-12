@@ -1,5 +1,5 @@
 
-import { DHgateProductResponse } from '@/integrations/dhgate/client';
+import { DHgateProductResponse } from '@/integrations/dhgate/types';
 
 export interface ImageCardProps {
   item: {
