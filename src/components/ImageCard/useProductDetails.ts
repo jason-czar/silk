@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
+import { getProductByItemcode } from '@/integrations/dhgate/endpoints';
+import { DHgateProductResponse } from '@/integrations/dhgate/types';
 import { extractItemcode, generateFallbackVariants, getFullSizeGoogleImage, isImageUrl } from './utils';
 import { ImageCardProps } from './types';
 

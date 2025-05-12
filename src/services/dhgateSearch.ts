@@ -1,5 +1,5 @@
 
-import { dhgateApiRequest, searchDHgateProducts } from "@/integrations/dhgate/client";
+import { searchDHgateProducts } from "@/integrations/dhgate/endpoints";
 import { toast } from "@/components/ui/use-toast";
 
 export interface DHgateProduct {
