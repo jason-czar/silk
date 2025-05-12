@@ -30,7 +30,7 @@ const SourceBadge: React.FC<SourceBadgeProps> = ({ source }) => {
   
   // Function to handle successful image load
   const handleImageLoad = () => {
-    console.log(`Successfully loaded favicon for ${source}`);
+    console.log(`Successfully loaded favicon for ${source}: ${favicon}`);
     setIsLoading(false);
   };
 

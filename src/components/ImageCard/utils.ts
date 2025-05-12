@@ -51,20 +51,19 @@ export const getProductSource = (url: string): string => {
   return 'Unknown';
 };
 
-// Get platform favicon - UPDATED to use direct image URLs from Google Drive
+// Get platform favicon - UPDATED to use direct Google Drive URLs
 export const getPlatformFavicon = (source: string): string => {
   switch (source) {
     case 'DHgate':
-      // Using the existing local file path as we've already uploaded these files
-      return '/lovable-uploads/94a3102b-906c-4664-800f-984835b28fa7.png';
+      return 'https://drive.google.com/uc?export=view&id=1HqK-AQHVGYK36S-_Zx9557SoSZCimmKB';
     case 'Made in China':
-      return '/lovable-uploads/c41d259a-2527-4a7a-a38a-27f1bfcea914.png';
+      return 'https://drive.google.com/uc?export=view&id=1ftVDGldHWILKMJ9-fZDlPD4QTq7zllb8';
     case 'TikTok Shop':
-      return '/lovable-uploads/c6f1c8f4-cb17-4edc-bebf-7cf3889e3182.png';
+      return 'https://drive.google.com/uc?export=view&id=1iuOAOOra93dH7mSbdOh9xEnIhzYRsEuT';
     case 'Yiwugo':
-      return '/lovable-uploads/777300c1-8975-4c1f-9122-dd5252808a46.png';
+      return 'https://drive.google.com/uc?export=view&id=1J4HLONOUdGYcax-UnxS-pYN7e_OlDf0X';
     case 'AliExpress':
-      return '/lovable-uploads/fc90fb5d-2a71-4021-a442-60c492e8818b.png';
+      return 'https://drive.google.com/uc?export=view&id=1J9r92b1rWsZAZLCulce0FdWDrvqhSJFt';
     default:
       return '';
   }
