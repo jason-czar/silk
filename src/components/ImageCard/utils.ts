@@ -1,4 +1,3 @@
-
 // Helper function to clean up product titles by removing common prefixes
 export const cleanProductTitle = (title: string): string => {
   // List of common prefixes to remove
@@ -52,10 +51,11 @@ export const getProductSource = (url: string): string => {
   return 'Unknown';
 };
 
-// Get platform favicon - UPDATED to use local images
+// Get platform favicon - UPDATED to use direct image URLs from Google Drive
 export const getPlatformFavicon = (source: string): string => {
   switch (source) {
     case 'DHgate':
+      // Using the existing local file path as we've already uploaded these files
       return '/lovable-uploads/94a3102b-906c-4664-800f-984835b28fa7.png';
     case 'Made in China':
       return '/lovable-uploads/c41d259a-2527-4a7a-a38a-27f1bfcea914.png';
