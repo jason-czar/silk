@@ -29,7 +29,7 @@ const Index = () => {
       const params = {
         query,
         start: 1,
-        num: 10,
+        num: 12,
         useDHgate
       };
       setSearchParams(params);
