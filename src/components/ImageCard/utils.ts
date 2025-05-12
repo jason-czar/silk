@@ -1,3 +1,4 @@
+
 // Helper function to clean up product titles by removing common prefixes
 export const cleanProductTitle = (title: string): string => {
   // List of common prefixes to remove
@@ -57,7 +58,7 @@ export const getPlatformFavicon = (source: string): string => {
   return "https://jzupbllxgtobpykyerbi.supabase.co/storage/v1/object/sign/favicon/dhgate%20favicon.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5X2RiZmVjNDliLWNlNzktNDMwMS1iNzAxLTAzMWNmODFhZjViNCJ9.eyJ1cmwiOiJmYXZpY29uL2RoZ2F0ZSBmYXZpY29uLnBuZyIsImlhdCI6MTc0NzA3OTA2MCwiZXhwIjo0ODY5MTQzMDYwfQ.4GQ3xCAnCQwLXosfxy7nHoMQDGXsdlk-jZIrSKCgRxo";
 };
 
-// Get source display name
+// Get source display name - UPDATED to ensure actual website domains are shown
 export const getSourceDisplayName = (source: string): string => {
   switch (source) {
     case 'DHgate':
