@@ -15,6 +15,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
     colorVariants,
     showVariants,
     isLoadingProduct,
+    productImagesLoaded,
     handleVariantClick,
     toggleVariants
   } = useProductDetails(item);
@@ -49,7 +50,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
         handleClick={handleClick}
       />
 
-      {/* Color variants carousel - only displayed if showVariants is true */}
+      {/* Color variants carousel - displayed if showVariants is true or if we have images from API */}
       {showVariants && (
         <ImageCarousel 
           variants={colorVariants}

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { getProductByItemcode, DHgateProductResponse } from '@/integrations/dhgate/client';
-import { extractItemcode, generateFallbackVariants, getFullSizeGoogleImage } from './utils';
+import { extractItemcode, generateFallbackVariants, getFullSizeGoogleImage, isImageUrl } from './utils';
 import { ImageCardProps } from './types';
 
 export const useProductDetails = (item: ImageCardProps['item']) => {
@@ -14,6 +14,7 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
   const [showVariants, setShowVariants] = useState(false);
   const [dhgateProduct, setDhgateProduct] = useState<DHgateProductResponse['product'] | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
+  const [productImagesLoaded, setProductImagesLoaded] = useState(false);
 
   useEffect(() => {
     // Set the main image when the component mounts
@@ -38,84 +39,106 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     }
     
     // If this is a DHgate product, try to fetch additional details
-    if (item.link && item.link.includes('dhgate.com/product')) {
-      const itemcode = extractItemcode(item.link);
-      if (itemcode) {
-        // Fetch product details from DHgate API
-        const fetchProductDetails = async () => {
-          setIsLoadingProduct(true);
-          try {
-            const productDetails = await getProductByItemcode(itemcode);
-            if (productDetails) {
-              setDhgateProduct(productDetails);
-              
-              // First collect all images from the imageList if available
-              const allImages: {url: string, color: string}[] = [];
-              
-              // Add the main product image first if available
-              if (productDetails.originalImageUrl) {
+    let itemcode: string | null = null;
+    
+    if (item.link && item.link.includes('dhgate.com')) {
+      itemcode = extractItemcode(item.link);
+      console.log('Extracted itemcode from link:', itemcode);
+    } else if (item.image?.contextLink && item.image.contextLink.includes('dhgate.com')) {
+      // If the main link isn't DHgate but the contextLink is, try that instead
+      itemcode = extractItemcode(item.image.contextLink);
+      console.log('Extracted itemcode from contextLink:', itemcode);
+    }
+    
+    if (itemcode) {
+      // Fetch product details from DHgate API
+      const fetchProductDetails = async () => {
+        setIsLoadingProduct(true);
+        try {
+          const productDetails = await getProductByItemcode(itemcode as string);
+          if (productDetails) {
+            setDhgateProduct(productDetails);
+            
+            // Collect all unique images from the product
+            const allImages: {url: string, color: string}[] = [];
+            const uniqueImageUrls = new Set<string>();
+            
+            // Function to add an image if it's not a duplicate
+            const addUniqueImage = (url: string, name: string) => {
+              if (url && !uniqueImageUrls.has(url) && isImageUrl(url)) {
+                uniqueImageUrls.add(url);
                 allImages.push({
-                  url: productDetails.originalImageUrl,
-                  color: 'Main'
-                });
-                setSelectedImage(productDetails.originalImageUrl);
-              }
-              
-              // Add all images from the imageList if available
-              if (productDetails.imageList && Array.isArray(productDetails.imageList)) {
-                productDetails.imageList.forEach((img, index) => {
-                  if (img && img.imageUrl) {
-                    allImages.push({
-                      url: img.imageUrl,
-                      color: `Image ${index + 1}`
-                    });
-                  }
+                  url,
+                  color: name
                 });
               }
+            };
+            
+            // Add the main product image first if available
+            if (productDetails.originalImageUrl) {
+              addUniqueImage(productDetails.originalImageUrl, 'Main');
               
-              // Then add any variant images from skuProperties
-              if (productDetails.skuProperties && Array.isArray(productDetails.skuProperties)) {
-                productDetails.skuProperties.forEach((property) => {
-                  if (property && property.values && Array.isArray(property.values)) {
-                    property.values.forEach((value) => {
-                      if (value && value.imageUrl) {
-                        // Check if this image URL is already in our collection
-                        const exists = allImages.some(img => img.url === value.imageUrl);
-                        if (!exists) {
-                          allImages.push({
-                            url: value.imageUrl,
-                            color: value.propertyValueDisplayName || property.propertyName || 'Variant'
-                          });
-                        }
-                      }
-                    });
-                  }
-                });
-              }
-              
-              // If we found images, use them
-              if (allImages.length > 0) {
-                console.log(`Found ${allImages.length} product images for carousel`);
-                setColorVariants(allImages);
-              }
+              // Also update the selected image to use the higher quality original
+              setSelectedImage(productDetails.originalImageUrl);
+              setFullSizeImage(productDetails.originalImageUrl);
             }
-          } catch (error) {
-            console.error('Failed to fetch DHgate product details:', error);
-            // Fallback to the existing variant
-          } finally {
-            setIsLoadingProduct(false);
+            
+            // Add all images from the imageList if available
+            if (productDetails.imageList && Array.isArray(productDetails.imageList)) {
+              productDetails.imageList.forEach((img, index) => {
+                if (img && img.imageUrl) {
+                  addUniqueImage(img.imageUrl, `Image ${index + 1}`);
+                }
+              });
+            }
+            
+            // Then add any variant images from skuProperties
+            if (productDetails.skuProperties && Array.isArray(productDetails.skuProperties)) {
+              productDetails.skuProperties.forEach((property) => {
+                if (property && property.values && Array.isArray(property.values)) {
+                  property.values.forEach((value) => {
+                    if (value && value.imageUrl) {
+                      addUniqueImage(
+                        value.imageUrl, 
+                        value.propertyValueDisplayName || property.propertyName || 'Variant'
+                      );
+                    }
+                  });
+                }
+              });
+            }
+            
+            // If we found images, use them
+            if (allImages.length > 0) {
+              console.log(`Found ${allImages.length} product images for carousel`);
+              setColorVariants(allImages);
+              setProductImagesLoaded(true);
+            }
           }
-        };
-        
-        fetchProductDetails();
-      }
+        } catch (error) {
+          console.error('Failed to fetch DHgate product details:', error);
+          // Don't show error toast to user - just silently fallback to the existing variant
+        } finally {
+          setIsLoadingProduct(false);
+        }
+      };
+      
+      fetchProductDetails();
     }
   }, [item]);
+
+  // Automatically show variants when they're loaded (if we have more than one)
+  useEffect(() => {
+    if (productImagesLoaded && colorVariants.length > 1) {
+      // Only auto-expand if we have multiple images from DHgate
+      setShowVariants(true);
+    }
+  }, [productImagesLoaded, colorVariants.length]);
 
   const handleVariantClick = (variantUrl: string) => {
     setSelectedImage(variantUrl);
     
-    // When clicking a variant, try to use it directly as the full size image
+    // When clicking a variant, use it directly as the full size image
     // instead of trying to transform it
     setFullSizeImage(variantUrl);
   };
@@ -133,6 +156,7 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     showVariants,
     dhgateProduct,
     isLoadingProduct,
+    productImagesLoaded,
     handleVariantClick,
     toggleVariants
   };

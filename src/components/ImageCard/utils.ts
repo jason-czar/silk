@@ -29,11 +29,31 @@ export const extractBrandName = (title: string): string => {
   return title.split(' ')[0];
 };
 
-// Extract DHgate itemcode from URL
+// Extract DHgate itemcode from URL - ENHANCED to support more URL patterns
 export const extractItemcode = (url: string): string | null => {
-  // Example URL: https://www.dhgate.com/product/2023-tailwind-5-v-men-running-shoes-skepta/886638181.html
-  const match = url.match(/\/product\/.*?\/(\d+)\.html/);
-  return match ? match[1] : null;
+  // Support multiple URL patterns
+  
+  // Pattern 1: Standard product URL
+  // Example: https://www.dhgate.com/product/2023-tailwind-5-v-men-running-shoes-skepta/886638181.html
+  let match = url.match(/\/product\/.*?\/(\d+)\.html/);
+  if (match && match[1]) return match[1];
+  
+  // Pattern 2: Direct itemcode in URL
+  // Example: https://www.dhgate.com/product/itemcode/12345678.html
+  match = url.match(/\/product\/itemcode\/(\d+)\.html/);
+  if (match && match[1]) return match[1];
+  
+  // Pattern 3: Product URL with query parameters
+  // Example: https://www.dhgate.com/product/item.html?itemcode=12345678
+  match = url.match(/itemcode=(\d+)/);
+  if (match && match[1]) return match[1];
+  
+  // Pattern 4: Shortened URLs
+  // Example: https://www.dhgate.com/p/12345678.html
+  match = url.match(/\/p\/(\d+)\.html/);
+  if (match && match[1]) return match[1];
+  
+  return null;
 };
 
 // Get source platform from URL
@@ -76,9 +96,9 @@ export const getSourceDisplayName = (source: string): string => {
   }
 };
 
-// Fallback color variants for when API doesn't provide them
+// Fallback color variants for when API doesn't provide them - ENHANCED
 export const generateFallbackVariants = (baseImageUrl: string): {url: string, color: string}[] => {
-  // For demo purposes, we'll create some color variants with slight modifications to the URL
+  // Return only the base image as default
   return [
     { url: baseImageUrl, color: 'Default' },
   ];
@@ -115,4 +135,27 @@ export const getFullSizeGoogleImage = (thumbnailUrl: string): string => {
   
   // If we can't transform, return the original URL
   return thumbnailUrl;
+};
+
+// Helper function to determine if a URL is likely to be an image
+export const isImageUrl = (url: string): boolean => {
+  if (!url) return false;
+  
+  // Check common image file extensions
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+  const lowerUrl = url.toLowerCase();
+  
+  for (const ext of imageExtensions) {
+    if (lowerUrl.includes(ext)) {
+      return true;
+    }
+  }
+  
+  // Check if URL contains image-related paths or parameters
+  if (lowerUrl.includes('/img/') || lowerUrl.includes('/image/') || 
+      lowerUrl.includes('images') || lowerUrl.includes('thumb')) {
+    return true;
+  }
+  
+  return false;
 };
