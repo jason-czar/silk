@@ -13,7 +13,7 @@ const SourceBadge: React.FC<SourceBadgeProps> = ({ source }) => {
   
   // Get the appropriate favicon and display name for this platform
   const favicon = getPlatformFavicon(source);
-  const displayName = getSourceDisplayName(source);
+  const displayName = "DHgate.com"; // Always set to DHgate.com regardless of source
   
   // Reset error state when source changes
   useEffect(() => {
