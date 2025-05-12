@@ -51,11 +51,11 @@ export const getProductSource = (url: string): string => {
   return 'Unknown';
 };
 
-// Get platform favicon - UPDATED to use direct Google Drive URLs
+// Get platform favicon - UPDATED to use direct download URL for DHgate
 export const getPlatformFavicon = (source: string): string => {
   switch (source) {
     case 'DHgate':
-      return 'https://drive.google.com/uc?export=view&id=1HqK-AQHVGYK36S-_Zx9557SoSZCimmKB';
+      return 'https://drive.usercontent.google.com/download?id=1HqK-AQHVGYK36S-_Zx9557SoSZCimmKB&export=view&authuser=0';
     case 'Made in China':
       return 'https://drive.google.com/uc?export=view&id=1ftVDGldHWILKMJ9-fZDlPD4QTq7zllb8';
     case 'TikTok Shop':
