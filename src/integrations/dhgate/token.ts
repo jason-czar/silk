@@ -1,11 +1,39 @@
 
 import { TokenResponse } from './types';
-import { BASE_URL, DHGATE_CONFIG, MAX_RETRIES, RETRY_DELAY, REQUEST_TIMEOUT } from './config';
+import { BASE_URL, MAX_RETRIES, RETRY_DELAY, REQUEST_TIMEOUT } from './config';
 
 // Token storage
 let cachedToken: TokenResponse | null = null;
 let tokenExpiryTime: number = 0;
 let failedAttempts = 0;
+let dhgateCredentials: {
+  app_key: string;
+  app_secret: string;
+  username: string;
+  password: string;
+} | null = null;
+
+/**
+ * Fetch DHgate credentials from our Supabase Edge Function
+ */
+const getDHgateCredentials = async () => {
+  if (dhgateCredentials) {
+    return dhgateCredentials;
+  }
+  
+  try {
+    const response = await fetch('/api/dhgate-auth');
+    if (!response.ok) {
+      throw new Error(`Failed to get DHgate credentials: ${response.statusText}`);
+    }
+    
+    dhgateCredentials = await response.json();
+    return dhgateCredentials;
+  } catch (error) {
+    console.error('Error fetching DHgate credentials:', error);
+    throw new Error('Failed to fetch DHgate API credentials');
+  }
+};
 
 /**
  * Get an access token from DHgate with retry mechanism
@@ -24,14 +52,17 @@ export const getDHgateToken = async (): Promise<string> => {
       failedAttempts = 0;
     }
     
+    // Get credentials from Edge Function
+    const credentials = await getDHgateCredentials();
+    
     // Prepare the token request URL
     const tokenUrl = `${BASE_URL}/dop/oauth2/access_token`;
     const params = new URLSearchParams({
       grant_type: 'password',
-      username: DHGATE_CONFIG.DEFAULT_USERNAME,
-      password: DHGATE_CONFIG.DEFAULT_PASSWORD,
-      client_id: DHGATE_CONFIG.APP_KEY,
-      client_secret: DHGATE_CONFIG.APP_SECRET,
+      username: credentials.username,
+      password: credentials.password,
+      client_id: credentials.app_key,
+      client_secret: credentials.app_secret,
       scope: 'basic'
     });
     

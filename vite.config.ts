@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      '/api/dhgate-auth': {
+        target: 'https://jzupbllxgtobpykyerbi.supabase.co/functions/v1/dhgate-auth',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/dhgate-auth/, ''),
+      },
+    },
   },
   plugins: [
     react(),

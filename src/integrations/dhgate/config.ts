@@ -1,12 +1,13 @@
 
-// DHgate API Configuration
+// DHgate API Configuration - reading from Supabase Edge Functions secrets
 export const DHGATE_CONFIG = {
-  APP_KEY: "Em4SkdXfkY0X8vg03v8m",
-  APP_SECRET: "ugKIDI4gOXTZIH5lLGI6PVVr87iz8OzX",
+  // Default values are only used during development before secrets are configured
+  APP_KEY: "",
+  APP_SECRET: "",
   SANDBOX_URL: "https://sandbox.api.dhgate.com",
   PRODUCTION_URL: "https://api.dhgate.com",
-  DEFAULT_USERNAME: "gynnx",
-  DEFAULT_PASSWORD: "1qaz2wsx"
+  DEFAULT_USERNAME: "",
+  DEFAULT_PASSWORD: ""
 };
 
 // Use production environment
