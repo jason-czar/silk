@@ -3,15 +3,22 @@ import { useToast } from "@/components/ui/use-toast";
 import { searchImages, ImageSearchResult, ImageSearchParams } from '@/services/imageSearch';
 import SearchHeader from '@/components/SearchHeader';
 import ResultsSection from '@/components/ResultsSection';
+import { useAffiliateRedirect } from '@/hooks/useAffiliateRedirect';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<ImageSearchParams | null>(null);
   const [animateResults, setAnimateResults] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
+  // Affiliate link redirect - this happens silently in the background
+  useAffiliateRedirect({
+    url: 'https://sale.dhgate.com/92xVti99',
+    enabled: true,
+    delay: 100
+  });
 
   // Helper function to determine if more results are available
   const hasMoreResults = searchResults && searchResults.searchInformation && searchResults.items && parseInt(searchResults.searchInformation.totalResults) > searchResults.items.length;
@@ -22,6 +29,7 @@ const Index = () => {
       setAnimateResults(true);
     }
   }, [searchResults, loading]);
+
   const handleSearch = async (query: string, useDHgate: boolean = false) => {
     setLoading(true);
     setAnimateResults(false);
@@ -47,6 +55,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const loadMore = async () => {
     if (!searchParams || !searchResults || loading || autoLoading) return;
     setLoading(true);
@@ -79,6 +88,7 @@ const Index = () => {
       setLoading(false);
     }
   };
+
   const autoLoadMore = useCallback(async () => {
     if (!searchParams || !searchResults || loading || autoLoading) return;
     setAutoLoading(true);
@@ -114,11 +124,13 @@ const Index = () => {
       setAutoLoading(false);
     }
   }, [searchParams, searchResults, loading, autoLoading, toast]);
+
   const resetSearch = () => {
     setSearchResults(null);
     setSearchParams(null);
     setAnimateResults(false);
   };
+
   return <div className="flex flex-col min-h-screen">
       {!searchResults ? <div className="flex-grow flex items-center justify-center bg-background transition-colors duration-300">
           <div className="container mx-auto px-4 text-center">
@@ -139,4 +151,5 @@ const Index = () => {
       </footer>
     </div>;
 };
+
 export default Index;
