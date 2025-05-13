@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { ImageCardProps } from './types';
@@ -11,45 +12,31 @@ export const useProductNavigation = (item: ImageCardProps['item']) => {
     setIsLoading(true);
     
     try {
-      // Determine if this is a DHgate product
-      const isDHgateProduct = item.link && item.link.includes('dhgate.com');
+      // Affiliate URL to track the click
+      const affiliateUrl = 'https://sale.dhgate.com/92xVti99';
       
-      if (isDHgateProduct) {
-        // For DHgate products, use the existing affiliate link logic
-        // First, create an invisible iframe to load the affiliate link
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = 'https://sale.dhgate.com/92xVti99';
-        document.body.appendChild(iframe);
-        
-        // Then determine the actual product URL
-        let productUrl = item.link;
-        
-        // Set a small timeout to ensure the affiliate link is loaded before navigating
-        setTimeout(() => {
-          // Remove the iframe
-          document.body.removeChild(iframe);
-          
-          // Navigate to the product URL
-          window.open(productUrl, '_blank', 'noopener,noreferrer');
-          setIsLoading(false);
-        }, 100);
-      } else {
-        // For non-DHgate products, navigate directly to the product URL
-        let productUrl = '';
-        
-        // Choose the best URL to navigate to
-        if (item.image?.contextLink) {
-          // Use the contextLink if available
-          productUrl = item.image.contextLink;
-        } else if (item.link) {
-          // Otherwise use the direct item link
-          productUrl = item.link;
-        }
-        
-        window.open(productUrl, '_blank', 'noopener,noreferrer');
-        setIsLoading(false);
+      // Determine the actual product URL
+      let productUrl = '';
+      if (item.image?.contextLink) {
+        productUrl = item.image.contextLink;
+      } else if (item.link) {
+        productUrl = item.link;
       }
+
+      // Create and open the affiliate window first
+      const affiliateWindow = window.open(affiliateUrl, '_blank');
+      
+      // After a very short delay, redirect the affiliate window to the product URL
+      setTimeout(() => {
+        if (affiliateWindow && !affiliateWindow.closed) {
+          affiliateWindow.location.href = productUrl;
+        } else {
+          // Fallback in case the popup was blocked
+          window.open(productUrl, '_blank', 'noopener,noreferrer');
+        }
+        setIsLoading(false);
+      }, 100); // Very short delay to ensure affiliate tracking works
+      
     } catch (error) {
       console.error('Failed to navigate:', error);
       toast({

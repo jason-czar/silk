@@ -8,7 +8,10 @@ interface ViewProductButtonProps {
 const ViewProductButton: React.FC<ViewProductButtonProps> = ({ onClick }) => {
   return (
     <button 
-      onClick={onClick} 
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent double navigation
+        onClick(e); 
+      }}
       className="w-full mt-2 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100"
     >
       View product

@@ -33,6 +33,7 @@ const ImageGridItem: React.FC<ImageGridItemProps> = ({
           ? { animationDelay: `${animationDelay}s`, animationFillMode: 'forwards' } 
           : {}
       }
+      data-product-id={item.id || index}
     >
       <ImageCard item={item} />
       {user && (
