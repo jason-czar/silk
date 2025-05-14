@@ -7,6 +7,7 @@ import { useAffiliateRedirect } from '@/hooks/useAffiliateRedirect';
 import { trackEvent, trackSearch, trackError } from '@/services/analytics';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+
 const Index = () => {
   const [searchResults, setSearchResults] = useState<ImageSearchResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -210,7 +211,7 @@ const Index = () => {
         </div> : <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
           <SearchHeader onSearch={handleSearch} loading={loading} resetSearch={resetSearch} isCompact={true} />
           
-          <div className="container mx-auto px-4 py-0">
+          <div className="container mx-auto px-4 py-[20px]">
             <ResultsSection results={searchResults} loading={loading} autoLoading={autoLoading} animateResults={animateResults} hasMoreResults={!!hasMoreResults} onAutoLoadMore={autoLoadMore} />
           </div>
         </div>}
