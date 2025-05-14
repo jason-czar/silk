@@ -21,7 +21,7 @@ const SearchHeader = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/60 to-[#EBEBEB]/10 dark:from-gray-900/60 dark:to-gray-900/10 shadow-sm backdrop-blur-sm' : ''}`}>
+    <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/95 to-[#EBEBEB]/90 dark:from-gray-900/95 dark:to-gray-900/90 shadow-md backdrop-blur-lg' : ''}`}>
       <div className="container mx-auto px-4 py-[18px]">
         <header className={`flex items-center ${!isCompact ? 'mb-8' : 'mb-4 pl-[10px]'}`}>
           {!isCompact ? (
