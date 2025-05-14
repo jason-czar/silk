@@ -1,51 +1,65 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-interface AffiliateRedirectOptions {
+type AffiliateRedirectProps = {
+  url: string;
   enabled?: boolean;
   delay?: number;
-  url: string;
-}
+};
 
-export const useAffiliateRedirect = ({
-  enabled = true,
-  delay = 100, // Very short delay to make it appear seamless
-  url
-}: AffiliateRedirectOptions) => {
-  const [hasRedirected, setHasRedirected] = useState(false);
-
+export const useAffiliateRedirect = ({ 
+  url, 
+  enabled = false, 
+  delay = 500 
+}: AffiliateRedirectProps) => {
   useEffect(() => {
-    if (!enabled || hasRedirected) return;
-    
-    // Create a hidden iframe to load the affiliate link in the background
+    if (!enabled || !url) return;
+
+    // Create a hidden iframe for affiliate tracking
     const iframe = document.createElement('iframe');
-    iframe.style.position = 'absolute';
-    iframe.style.width = '1px';
-    iframe.style.height = '1px';
-    iframe.style.opacity = '0.01';
-    iframe.style.zIndex = '-1';
+    iframe.style.display = 'none';
     iframe.src = url;
     
-    const timeoutId = setTimeout(() => {
-      // Append iframe to the document
-      document.body.appendChild(iframe);
-      
-      // Mark as redirected
-      setHasRedirected(true);
-      
-      // Clean up iframe after a short period
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 5000);
-    }, delay);
+    // Track if iframe was appended to prevent removal errors
+    let iframeAppended = false;
     
-    return () => {
-      clearTimeout(timeoutId);
-      if (document.body.contains(iframe)) {
-        document.body.removeChild(iframe);
+    // Add to DOM
+    const appendIframe = () => {
+      if (document.body) {
+        document.body.appendChild(iframe);
+        iframeAppended = true;
       }
     };
-  }, [enabled, hasRedirected, url, delay]);
+    
+    // Set a timer to add the iframe after a delay
+    const timer = setTimeout(() => {
+      appendIframe();
+      
+      // Auto-remove after 10 seconds
+      setTimeout(() => {
+        if (iframeAppended && iframe.parentNode) {
+          try {
+            document.body.removeChild(iframe);
+          } catch (error) {
+            console.error('Error removing affiliate iframe:', error);
+          }
+        }
+      }, 10000);
+      
+    }, delay);
 
-  return { hasRedirected };
+    // Cleanup function
+    return () => {
+      clearTimeout(timer);
+      
+      // Clean up iframe if it exists and was appended
+      if (iframeAppended && iframe.parentNode) {
+        try {
+          document.body.removeChild(iframe);
+        } catch (error) {
+          console.error('Error removing affiliate iframe during cleanup:', error);
+        }
+      }
+    };
+  }, [url, enabled, delay]);
 };
