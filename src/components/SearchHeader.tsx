@@ -4,6 +4,12 @@ import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Menu } from 'lucide-react';
+import { 
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 
 interface SearchHeaderProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
@@ -42,10 +48,28 @@ const SearchHeader = ({
               <div className="flex-grow flex items-center justify-center">
                 <SearchBar onSearch={onSearch} disabled={loading} />
               </div>
-              <div className="ml-4 flex items-center gap-2">
-                <UserMenu />
-                <ThemeToggle />
-              </div>
+              {isMobile ? (
+                <div className="ml-2">
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <Menu size={20} className="text-gray-600 dark:text-gray-300" />
+                      </button>
+                    </DrawerTrigger>
+                    <DrawerContent className="p-4">
+                      <div className="flex flex-col items-center gap-4">
+                        <UserMenu />
+                        <ThemeToggle />
+                      </div>
+                    </DrawerContent>
+                  </Drawer>
+                </div>
+              ) : (
+                <div className="ml-4 flex items-center gap-2">
+                  <UserMenu />
+                  <ThemeToggle />
+                </div>
+              )}
             </>
           )}
         </header>
