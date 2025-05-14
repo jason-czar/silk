@@ -4,6 +4,14 @@ import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Menu } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 interface SearchHeaderProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
@@ -27,8 +35,31 @@ const SearchHeader = ({
           {!isCompact ? (
             <div className="flex items-center justify-center mb-8 w-full">
               <div className="absolute top-4 right-4 flex items-center gap-2">
-                <UserMenu />
-                <ThemeToggle />
+                {isMobile ? (
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <Menu size={20} />
+                      </button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-[250px] sm:w-[300px]">
+                      <SheetHeader>
+                        <SheetTitle>Menu</SheetTitle>
+                      </SheetHeader>
+                      <div className="mt-6 flex flex-col gap-4">
+                        <UserMenu />
+                        <div className="flex justify-center">
+                          <ThemeToggle />
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                ) : (
+                  <>
+                    <UserMenu />
+                    <ThemeToggle />
+                  </>
+                )}
               </div>
               <h1 className="font-['Montserrat'] font-black italic text-[#E3231E] text-7xl">Silk</h1>
             </div>
@@ -43,8 +74,31 @@ const SearchHeader = ({
                 <SearchBar onSearch={onSearch} disabled={loading} />
               </div>
               <div className="ml-4 flex items-center gap-2">
-                <UserMenu />
-                <ThemeToggle />
+                {isMobile ? (
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <Menu size={20} />
+                      </button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-[250px] sm:w-[300px]">
+                      <SheetHeader>
+                        <SheetTitle>Menu</SheetTitle>
+                      </SheetHeader>
+                      <div className="mt-6 flex flex-col gap-4">
+                        <UserMenu />
+                        <div className="flex justify-center">
+                          <ThemeToggle />
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                ) : (
+                  <>
+                    <UserMenu />
+                    <ThemeToggle />
+                  </>
+                )}
               </div>
             </>
           )}
