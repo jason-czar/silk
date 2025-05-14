@@ -24,12 +24,28 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
     
     // If this is the initial load or we're replacing results
     if (prevItemCount === 0 || results.items.length <= prevItemCount) {
-      setVisibleItems(results.items.length);
+      // For initial load, stagger the appearance of items
+      if (animate) {
+        let count = 0;
+        const interval = setInterval(() => {
+          count++;
+          setVisibleItems(Math.min(count, results.items.length));
+          if (count >= results.items.length) {
+            clearInterval(interval);
+          }
+        }, 60); // Faster staggering for initial load (60ms between each item)
+        
+        return () => clearInterval(interval);
+      } else {
+        // No animation, show all at once
+        setVisibleItems(results.items.length);
+      }
+      
       setPrevItemCount(results.items.length);
       return;
     }
     
-    // For newly loaded items (from infinite scroll), apply staggered animation
+    // For newly loaded items (from infinite scroll)
     const newItemCount = results.items.length;
     const itemsToAnimate = newItemCount - prevItemCount;
     
@@ -49,7 +65,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
     setPrevItemCount(newItemCount);
     
     return () => clearInterval(interval);
-  }, [results?.items?.length]);
+  }, [results?.items?.length, animate]);
 
   // Calculate number of items to animate for staggered animation
   const calculateItemsToAnimate = () => {
@@ -74,14 +90,14 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
   }
 
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${animate ? 'fade-in' : ''}`}>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {results.items.slice(0, visibleItems).map((item, index) => (
         <ImageGridItem
           key={`${item.link}-${index}`}
           item={item}
           index={index}
-          shouldAnimate={index >= prevItemCount - itemsToAnimate}
-          animationDelay={(index - (prevItemCount - itemsToAnimate)) * 0.1}
+          shouldAnimate={true}
+          animationDelay={(index * 0.08)} // Reduced delay for smoother animation
           favoritedItems={favoritedItems}
           onFavoriteAdded={addFavorite}
         />

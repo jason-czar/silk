@@ -23,7 +23,7 @@ const ResultsSection = ({
   if (!results) return null;
 
   return (
-    <main className={animateResults ? 'fade-in' : ''}>
+    <main className={`transition-all duration-500 ${animateResults ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <ImageGrid results={results} loading={loading && !results} animate={animateResults} />
       
       <InfiniteScrollHandler 
@@ -41,7 +41,7 @@ const ResultsSection = ({
       )}
       
       {results?.searchInformation && (
-        <div className="text-center text-sm text-gray-500 mt-4">
+        <div className="text-center text-sm text-gray-500 mt-4 animate-fade-in">
           Found {results.searchInformation.formattedTotalResults} results in {results.searchInformation.formattedSearchTime} seconds
         </div>
       )}
