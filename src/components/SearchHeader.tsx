@@ -4,12 +4,6 @@ import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu } from 'lucide-react';
-import { 
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 
 interface SearchHeaderProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
@@ -27,7 +21,7 @@ const SearchHeader = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/95 to-[#EBEBEB]/90 dark:from-gray-900/95 dark:to-gray-900/90 shadow-md backdrop-blur-lg' : ''}`}>
+    <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/60 to-[#EBEBEB]/10 dark:from-gray-900/60 dark:to-gray-900/10 shadow-sm backdrop-blur-sm' : ''}`}>
       <div className="container mx-auto px-4 py-[18px]">
         <header className={`flex items-center ${!isCompact ? 'mb-8' : 'mb-4 pl-[10px]'}`}>
           {!isCompact ? (
@@ -48,28 +42,10 @@ const SearchHeader = ({
               <div className="flex-grow flex items-center justify-center">
                 <SearchBar onSearch={onSearch} disabled={loading} />
               </div>
-              {isMobile ? (
-                <div className="ml-2">
-                  <Drawer>
-                    <DrawerTrigger asChild>
-                      <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
-                        <Menu size={20} className="text-gray-600 dark:text-gray-300" />
-                      </button>
-                    </DrawerTrigger>
-                    <DrawerContent className="p-4">
-                      <div className="flex flex-col items-center gap-4">
-                        <UserMenu />
-                        <ThemeToggle />
-                      </div>
-                    </DrawerContent>
-                  </Drawer>
-                </div>
-              ) : (
-                <div className="ml-4 flex items-center gap-2">
-                  <UserMenu />
-                  <ThemeToggle />
-                </div>
-              )}
+              <div className="ml-4 flex items-center gap-2">
+                <UserMenu />
+                <ThemeToggle />
+              </div>
             </>
           )}
         </header>

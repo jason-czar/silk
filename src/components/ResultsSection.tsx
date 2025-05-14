@@ -62,7 +62,7 @@ const ResultsSection = ({
   if (!results) return null;
 
   return (
-    <main className={`transition-all duration-500 ${animateResults ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${isMobile ? 'pt-14' : ''}`}>
+    <main className={`transition-all duration-500 ${animateResults ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       {/* Show progress bar at the top during initial load */}
       {loading && !autoLoading && loadProgress > 0 && loadProgress < 100 && (
         <div className="sticky top-0 z-10 w-full px-4">
