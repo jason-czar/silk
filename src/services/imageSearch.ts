@@ -1,5 +1,6 @@
+
 import { formatDHgateProductsAsImageResults, searchDHgate } from "./dhgateSearch";
-import { trackError, trackSearch } from "@/services/analytics";
+import { trackError, trackEvent } from "@/services/analytics";
 
 export interface ImageSearchResult {
   kind: string;
@@ -70,7 +71,7 @@ export const searchImages = async ({
         
         // Track successful search
         const searchDuration = (Date.now() - searchStartTime) / 1000;
-        trackSearch(query, dhgateResults.items.length, {
+        trackSearchQuery(query, dhgateResults.items.length, {
           source: searchSource,
           duration: searchDuration,
           success: true
@@ -121,7 +122,7 @@ export const searchImages = async ({
       
       // Track successful search
       const searchDuration = (Date.now() - searchStartTime) / 1000;
-      trackSearch(query, result.items?.length || 0, {
+      trackSearchQuery(query, result.items?.length || 0, {
         source: searchSource,
         duration: searchDuration,
         success: true
@@ -155,9 +156,9 @@ export const searchImages = async ({
   }
 };
 
-// Helper function for trackSearch with additional params
-function trackSearch(query: string, resultCount: number, additionalData?: Record<string, any>) {
+// Helper function for trackSearch with additional params - renamed to avoid conflicts
+function trackSearchQuery(query: string, resultCount: number, additionalData?: Record<string, any>) {
   const data = { query, resultCount, ...additionalData };
-  // Call the imported trackSearch
-  trackSearch(query, resultCount);
+  // Call the event tracking with the search data
+  trackEvent('search', data);
 }
