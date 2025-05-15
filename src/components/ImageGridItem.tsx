@@ -25,7 +25,7 @@ const ImageGridItem: React.FC<ImageGridItemProps> = ({
 }) => {
   const { user } = useAuth();
   const isMobile = useIsMobile();
-  const { elementRef, styles } = use3DTiltEffect(12); // Using 12 degrees as max tilt for a subtle effect
+  const { elementRef, styles } = use3DTiltEffect(24); // Updated from 12 to 24 degrees for a more pronounced effect
 
   return (
     <div 
