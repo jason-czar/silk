@@ -34,8 +34,8 @@ const ImageCard = ({ item }: ImageCardProps) => {
   // Clean up the title by removing common prefixes like "Bulk"
   const cleanTitle = cleanProductTitle(title);
   
-  // Display the cleaned title with truncation if needed - UPDATED from 20 to 30 characters
-  const displayTitle = cleanTitle.length > 30 ? cleanTitle.substring(0, 30) + '...' : cleanTitle;
+  // Display the cleaned title with truncation if needed - UPDATED from 30 to 60 characters
+  const displayTitle = cleanTitle.length > 60 ? cleanTitle.substring(0, 60) + '...' : cleanTitle;
   
   return (
     <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
