@@ -27,6 +27,11 @@ const ImageGridItem: React.FC<ImageGridItemProps> = ({
   const isMobile = useIsMobile();
   const { elementRef, styles } = use3DTiltEffect(24); // Updated from 12 to 24 degrees for a more pronounced effect
 
+  // Determine if this is likely a high-quality image based on dimensions
+  const isLikelyHighQuality = item.image && 
+    item.image.width >= 600 && 
+    item.image.height >= 600;
+
   return (
     <div 
       ref={elementRef}
@@ -39,6 +44,7 @@ const ImageGridItem: React.FC<ImageGridItemProps> = ({
         animationFillMode: shouldAnimate ? 'forwards' : undefined
       }}
       data-product-id={item.id || index}
+      data-image-quality={isLikelyHighQuality ? 'high' : 'standard'}
     >
       <ImageCard item={item} />
       {user && (

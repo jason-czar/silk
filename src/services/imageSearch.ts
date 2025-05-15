@@ -46,13 +46,15 @@ export interface ImageSearchParams {
   start?: number;
   num?: number;
   useDHgate?: boolean; // Parameter to determine search source
+  preferHighQuality?: boolean; // New parameter to control image quality preference
 }
 
 export const searchImages = async ({ 
   query, 
   start = 1, 
   num = 12,
-  useDHgate = false
+  useDHgate = false,
+  preferHighQuality = true // Default to preferring higher quality images
 }: ImageSearchParams): Promise<ImageSearchResult> => {
   const searchStartTime = Date.now();
   let searchSource = 'google';
@@ -95,8 +97,17 @@ export const searchImages = async ({
     
     console.log(`Searching Google for "${query}" (start ${start}, num ${num})`);
     
-    // Add imgSize=large to get higher quality images
-    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&imgSize=large&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+    // Build the URL with optimized parameters for image quality
+    // We've removed imgSize=large but added other quality-enhancing parameters
+    let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+    
+    // Apply quality parameters based on preference
+    if (preferHighQuality) {
+      // Add parameters that encourage higher quality images:
+      // - imgType=photo tends to return higher quality photographic images
+      // - rights=cc_publicdomain often returns professional images
+      url += '&imgType=photo&rights=cc_publicdomain';
+    }
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
@@ -120,12 +131,18 @@ export const searchImages = async ({
       
       const result = await response.json();
       
+      // Apply client-side filtering for minimum image quality
+      if (preferHighQuality && result.items?.length) {
+        result.items = filterLowQualityImages(result.items);
+      }
+      
       // Track successful search
       const searchDuration = (Date.now() - searchStartTime) / 1000;
       trackSearchQuery(query, result.items?.length || 0, {
         source: searchSource,
         duration: searchDuration,
-        success: true
+        success: true,
+        qualityFilter: preferHighQuality
       });
       
       return result;
@@ -155,6 +172,23 @@ export const searchImages = async ({
     throw error;
   }
 };
+
+// Helper function to filter out low quality images based on dimensions and size
+function filterLowQualityImages(items: any[]) {
+  const MIN_WIDTH = 400;  // Minimum acceptable width
+  const MIN_HEIGHT = 400; // Minimum acceptable height
+  
+  return items.filter(item => {
+    // Skip items without image data
+    if (!item.image) return false;
+    
+    // Check dimensions against thresholds
+    const width = item.image.width || 0;
+    const height = item.image.height || 0;
+    
+    return width >= MIN_WIDTH && height >= MIN_HEIGHT;
+  });
+}
 
 // Helper function for trackSearch with additional params - renamed to avoid conflicts
 function trackSearchQuery(query: string, resultCount: number, additionalData?: Record<string, any>) {

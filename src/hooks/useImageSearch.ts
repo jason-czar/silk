@@ -11,6 +11,7 @@ export const useImageSearch = () => {
   const [animateResults, setAnimateResults] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preferHighQuality, setPreferHighQuality] = useState<boolean>(true);
   const { toast } = useToast();
 
   // Helper function to determine if more results are available
@@ -28,7 +29,8 @@ export const useImageSearch = () => {
         query,
         start: 1,
         num: 10,
-        useDHgate
+        useDHgate,
+        preferHighQuality
       };
       setSearchParams(params);
 
@@ -41,7 +43,8 @@ export const useImageSearch = () => {
       trackEvent('search', {
         query,
         resultCount: results.items?.length || 0,
-        success: true
+        success: true,
+        qualityPreference: preferHighQuality
       });
     } catch (error) {
       console.error('Search error:', error);
@@ -92,7 +95,8 @@ export const useImageSearch = () => {
       trackEvent('load_more', {
         query: searchParams.query,
         newResults: moreResults.items?.length || 0,
-        totalResults: (searchResults.items?.length || 0) + (moreResults.items?.length || 0)
+        totalResults: (searchResults.items?.length || 0) + (moreResults.items?.length || 0),
+        qualityPreference: preferHighQuality
       });
     } catch (error) {
       console.error('Load more error:', error);
@@ -145,7 +149,8 @@ export const useImageSearch = () => {
       trackEvent('auto_load_more', {
         query: searchParams.query,
         newResults: moreResults.items?.length || 0,
-        totalResults: (searchResults.items?.length || 0) + (moreResults.items?.length || 0)
+        totalResults: (searchResults.items?.length || 0) + (moreResults.items?.length || 0),
+        qualityPreference: preferHighQuality
       });
     } catch (error) {
       console.error('Auto load more error:', error);
@@ -175,7 +180,25 @@ export const useImageSearch = () => {
     setError(null);
 
     // Track search reset
-    trackEvent('reset_search', {});
+    trackEvent('reset_search', {
+      qualityPreference: preferHighQuality
+    });
+  };
+  
+  // New function to toggle quality preference
+  const toggleQualityPreference = () => {
+    setPreferHighQuality(prev => !prev);
+    
+    // Track preference change
+    trackEvent('toggle_quality_preference', {
+      newPreference: !preferHighQuality ? 'high' : 'standard'
+    });
+    
+    // Notify the user
+    toast({
+      title: `Image Quality: ${!preferHighQuality ? 'High' : 'Standard'}`,
+      description: `Search will now return ${!preferHighQuality ? 'higher' : 'standard'} quality images.`,
+    });
   };
 
   return {
@@ -185,10 +208,12 @@ export const useImageSearch = () => {
     animateResults,
     error,
     hasMoreResults,
+    preferHighQuality,
     handleSearch,
     loadMore,
     autoLoadMore,
     resetSearch,
-    setAnimateResults
+    setAnimateResults,
+    toggleQualityPreference
   };
 };

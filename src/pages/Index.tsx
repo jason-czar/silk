@@ -7,6 +7,8 @@ import WelcomeScreen from '@/components/WelcomeScreen';
 import SearchResultsScreen from '@/components/SearchResultsScreen';
 import Footer from '@/components/Footer';
 import ErrorAlert from '@/components/ErrorAlert';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 const Index = () => {
   const { 
@@ -16,10 +18,12 @@ const Index = () => {
     animateResults, 
     error, 
     hasMoreResults, 
+    preferHighQuality,
     handleSearch, 
     autoLoadMore, 
     resetSearch,
-    setAnimateResults 
+    setAnimateResults,
+    toggleQualityPreference 
   } = useImageSearch();
 
   // Affiliate link redirect - this happens silently in the background
@@ -50,7 +54,19 @@ const Index = () => {
       )}
       
       {!searchResults ? (
-        <WelcomeScreen onSearch={handleSearch} loading={loading} />
+        <div>
+          <WelcomeScreen onSearch={handleSearch} loading={loading} />
+          <div className="max-w-3xl mx-auto mt-4 flex items-center justify-end px-4">
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="quality-preference" 
+                checked={preferHighQuality}
+                onCheckedChange={toggleQualityPreference}
+              />
+              <Label htmlFor="quality-preference">Prefer high-quality images</Label>
+            </div>
+          </div>
+        </div>
       ) : (
         <SearchResultsScreen
           searchResults={searchResults}
@@ -61,6 +77,8 @@ const Index = () => {
           onSearch={handleSearch}
           resetSearch={resetSearch}
           onAutoLoadMore={autoLoadMore}
+          preferHighQuality={preferHighQuality}
+          onToggleQualityPreference={toggleQualityPreference}
         />
       )}
       
