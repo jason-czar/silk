@@ -182,3 +182,15 @@
 .image-grid {
   @apply grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
 }
+
+/* 3D Card Tilt Effect Styles */
+@media (min-width: 768px) {
+  .image-grid-item {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  
+  .image-grid-item:hover {
+    z-index: 10;
+  }
+}

@@ -3,6 +3,8 @@ import React from 'react';
 import ImageCard from './ImageCard/index';
 import FavoriteButton from './FavoriteButton';
 import { useAuth } from '@/context/AuthContext';
+import { use3DTiltEffect } from '@/hooks/use3DTiltEffect';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageGridItemProps {
   item: any;
@@ -22,17 +24,20 @@ const ImageGridItem: React.FC<ImageGridItemProps> = ({
   onFavoriteAdded
 }) => {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
+  const { elementRef, styles } = use3DTiltEffect(12); // Using 12 degrees as max tilt for a subtle effect
 
   return (
     <div 
+      ref={elementRef}
       className={`group relative ${
         shouldAnimate ? 'animate-fadeIn opacity-0' : ''
-      }`}
-      style={
-        shouldAnimate 
-          ? { animationDelay: `${animationDelay}s`, animationFillMode: 'forwards' } 
-          : {}
-      }
+      } ${!isMobile ? 'hover:z-10 shadow-sm hover:shadow-md transition-shadow' : ''}`}
+      style={{
+        ...(!isMobile ? styles : {}),
+        animationDelay: shouldAnimate ? `${animationDelay}s` : undefined,
+        animationFillMode: shouldAnimate ? 'forwards' : undefined
+      }}
       data-product-id={item.id || index}
     >
       <ImageCard item={item} />
