@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -120,13 +119,8 @@ export default function Auth() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-block">
-            <img 
-              src="/lovable-uploads/db230db2-4a02-4e6f-b7b7-f54da79455b2.png" 
-              alt="Silk Logo" 
-              className="h-12 mx-auto mb-4" 
-            />
+            <h1 className="font-['Montserrat'] font-black italic text-[#E3231E] text-5xl mb-4">Silk</h1>
           </Link>
-          <h1 className="text-2xl font-bold">Welcome to Silk</h1>
           <p className="text-gray-500 dark:text-gray-400">Sign in or create an account</p>
         </div>
 
