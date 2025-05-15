@@ -1,16 +1,12 @@
-
 import React from 'react';
-
 interface ProductTitleProps {
   title: string;
 }
-
-const ProductTitle: React.FC<ProductTitleProps> = ({ title }) => {
-  return (
-    <p className="text-base font-medium mb-1 truncate text-[#2C2C2C]">
+const ProductTitle: React.FC<ProductTitleProps> = ({
+  title
+}) => {
+  return <p className="text-base mb-1 truncate text-[#2C2C2C] font-normal">
       {title}
-    </p>
-  );
+    </p>;
 };
-
 export default ProductTitle;
