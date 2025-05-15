@@ -32,7 +32,7 @@ const ImageGridItem: React.FC<ImageGridItemProps> = ({
       ref={elementRef}
       className={`group relative ${
         shouldAnimate ? 'animate-fadeIn opacity-0' : ''
-      } ${!isMobile ? 'hover:z-10 shadow-sm hover:shadow-md transition-shadow' : ''}`}
+      } ${!isMobile ? 'hover:z-10 shadow-md hover:shadow-xl transition-shadow duration-300' : ''}`}
       style={{
         ...(!isMobile ? styles : {}),
         animationDelay: shouldAnimate ? `${animationDelay}s` : undefined,
