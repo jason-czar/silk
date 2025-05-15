@@ -7,7 +7,7 @@ interface ImageGridSkeletonProps {
 
 const ImageGridSkeleton: React.FC<ImageGridSkeletonProps> = ({ count = 8 }) => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded animate-pulse">
           <div className="w-full aspect-square"></div>

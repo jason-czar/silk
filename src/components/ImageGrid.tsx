@@ -123,7 +123,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({ results, loading = false, animate
   }, [visibleItems, results?.items?.length]);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
       {results.items.slice(0, visibleItems).map((item, index) => (
         <ImageGridItem
           key={`${item.link}-${index}`}
