@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -6,14 +5,12 @@ import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-
 interface SearchHeaderProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   loading: boolean;
   resetSearch?: () => void;
   isCompact?: boolean;
 }
-
 const SearchHeader = ({
   onSearch,
   loading,
@@ -21,9 +18,7 @@ const SearchHeader = ({
   isCompact = false
 }: SearchHeaderProps) => {
   const isMobile = useIsMobile();
-
-  return (
-    <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/60 to-[#EBEBEB]/10 dark:from-gray-900/60 dark:to-gray-900/10 shadow-sm backdrop-blur-sm' : ''}`}>
+  return <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/60 to-[#EBEBEB]/10 dark:from-gray-900/60 dark:to-gray-900/10 shadow-sm backdrop-blur-sm' : ''}`}>
       <div className="container mx-auto px-4 py-[18px]">
         <header className={`flex items-center ${!isCompact ? 'mb-8' : 'mb-4 pl-[10px]'}`}>
           {!isCompact ? <div className="flex items-center justify-center mb-0 w-full">
@@ -85,26 +80,15 @@ const SearchHeader = ({
               </div>
             </>}
         </header>
-
-        {!isCompact && (
-          <>
+        {!isCompact && <>
             <p className="text-gray-600 dark:text-gray-300 mb-12 text-xl sm:text-2xl px-4 sm:px-[42px] transition-colors duration-300">
               Find similar products - at factory direct prices.
             </p>
             <div className="scale-in">
-              <SearchBar onSearch={onSearch} disabled={loading} showSuggestions={!isCompact} />
+              <SearchBar onSearch={onSearch} disabled={loading} />
             </div>
-          </>
-        )}
-
-        {isCompact && (
-          <div className="flex-grow flex items-center justify-center">
-            <SearchBar onSearch={onSearch} disabled={loading} showSuggestions={false} />
-          </div>
-        )}
+          </>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default SearchHeader;
