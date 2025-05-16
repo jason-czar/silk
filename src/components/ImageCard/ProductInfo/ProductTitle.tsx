@@ -6,10 +6,8 @@ interface ProductTitleProps {
 const ProductTitle: React.FC<ProductTitleProps> = ({
   title
 }) => {
-  return (
-    <p className="text-base mb-1 line-clamp-2 min-h-[48px] text-[#2C2C2C] font-normal hover:text-black transition-colors">
+  return <p className="text-base mb-1 line-clamp-2 min-h-[48px] text-[#2C2C2C] font-normal">
       {title}
-    </p>
-  );
+    </p>;
 };
 export default ProductTitle;

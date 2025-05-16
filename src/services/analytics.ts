@@ -1,6 +1,7 @@
+
 // Simple analytics service to track user events
 
-type EventType = 'search' | 'click' | 'favorite' | 'view_product' | 'signin' | 'error' | 'load_more' | 'auto_load_more' | 'reset_search' | 'toggle_quality_preference';
+type EventType = 'search' | 'click' | 'favorite' | 'view_product' | 'signin' | 'error' | 'load_more' | 'auto_load_more' | 'reset_search';
 
 interface AnalyticsEvent {
   type: EventType;

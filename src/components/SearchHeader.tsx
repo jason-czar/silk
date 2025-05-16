@@ -5,8 +5,6 @@ import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import {
   Sheet,
   SheetContent,
@@ -20,17 +18,13 @@ interface SearchHeaderProps {
   loading: boolean;
   resetSearch?: () => void;
   isCompact?: boolean;
-  preferHighQuality?: boolean;
-  onToggleQualityPreference?: () => void;
 }
 
 const SearchHeader = ({
   onSearch,
   loading,
   resetSearch,
-  isCompact = false,
-  preferHighQuality,
-  onToggleQualityPreference
+  isCompact = false
 }: SearchHeaderProps) => {
   const isMobile = useIsMobile();
   
@@ -57,16 +51,6 @@ const SearchHeader = ({
                         <div className="flex justify-center">
                           <ThemeToggle />
                         </div>
-                        {onToggleQualityPreference && (
-                          <div className="flex items-center space-x-2 justify-center mt-4">
-                            <Switch 
-                              id="compact-quality-preference" 
-                              checked={preferHighQuality}
-                              onCheckedChange={onToggleQualityPreference}
-                            />
-                            <Label htmlFor="compact-quality-preference">High-quality images</Label>
-                          </div>
-                        )}
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -106,16 +90,6 @@ const SearchHeader = ({
                         <div className="flex justify-center">
                           <ThemeToggle />
                         </div>
-                        {onToggleQualityPreference && (
-                          <div className="flex items-center space-x-2 justify-center mt-4">
-                            <Switch 
-                              id="quality-preference-sheet" 
-                              checked={preferHighQuality}
-                              onCheckedChange={onToggleQualityPreference}
-                            />
-                            <Label htmlFor="quality-preference-sheet">High-quality images</Label>
-                          </div>
-                        )}
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -123,16 +97,6 @@ const SearchHeader = ({
                   <>
                     <UserMenu />
                     <ThemeToggle />
-                    {onToggleQualityPreference && (
-                      <div className="flex items-center space-x-2">
-                        <Switch 
-                          id="quality-preference-header" 
-                          checked={preferHighQuality}
-                          onCheckedChange={onToggleQualityPreference}
-                        />
-                        <Label htmlFor="quality-preference-header" className="text-sm">High-quality</Label>
-                      </div>
-                    )}
                   </>
                 )}
               </div>

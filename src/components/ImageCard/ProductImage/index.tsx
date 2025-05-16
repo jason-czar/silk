@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { ProductImageProps } from './types';
 import LoadingSpinner from './LoadingSpinner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { trackError } from '@/services/analytics';
-import { getBestQualityImageUrl } from '@/lib/utils';
 
 const ProductImage = ({ 
   thumbnailUrl, 
@@ -21,15 +19,10 @@ const ProductImage = ({
   const [useFallback, setUseFallback] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
   const [loadError, setLoadError] = useState(false);
-  const [imageDimensions, setImageDimensions] = useState<{width: number, height: number} | null>(null);
   const isMobile = useIsMobile();
   
-  // Process URLs to get best quality versions
-  const processedFullSizeUrl = fullSizeUrl ? getBestQualityImageUrl(fullSizeUrl) : '';
-  const processedThumbnailUrl = getBestQualityImageUrl(thumbnailUrl);
-  
   // Use the full size URL if provided, otherwise fall back to thumbnail
-  const displayUrl = useFallback ? processedThumbnailUrl : (processedFullSizeUrl || processedThumbnailUrl);
+  const displayUrl = useFallback ? thumbnailUrl : (fullSizeUrl || thumbnailUrl);
   
   // Reset image loaded state when URL changes
   useEffect(() => {
@@ -39,12 +32,12 @@ const ProductImage = ({
 
   // Log image details for debugging
   useEffect(() => {
-    if (processedFullSizeUrl) {
-      console.log('Full size URL available:', processedFullSizeUrl);
+    if (fullSizeUrl) {
+      console.log('Full size URL available:', fullSizeUrl);
     } else {
-      console.log('No full size URL, using thumbnail:', processedThumbnailUrl);
+      console.log('No full size URL, using thumbnail:', thumbnailUrl);
     }
-  }, [processedFullSizeUrl, processedThumbnailUrl]);
+  }, [fullSizeUrl, thumbnailUrl]);
 
   return (
     <div 
@@ -70,18 +63,12 @@ const ProductImage = ({
           // Log image dimensions to verify we're getting larger images
           const img = e.target as HTMLImageElement;
           console.log(`Image loaded: ${img.naturalWidth}x${img.naturalHeight}`);
-          
-          // Store image dimensions for quality assessment
-          setImageDimensions({
-            width: img.naturalWidth,
-            height: img.naturalHeight
-          });
         }}
         onError={(e) => {
           console.log("Error loading image, falling back to thumbnail");
           setLoadError(true);
           
-          if (!useFallback && processedFullSizeUrl) {
+          if (!useFallback && fullSizeUrl) {
             setUseFallback(true);
           } else {
             // If we're already using fallback and it still fails, mark as loaded
@@ -91,8 +78,8 @@ const ProductImage = ({
             // Track the error for analytics
             trackError("Image load error", "IMAGE_LOAD_ERROR", {
               imageUrl: displayUrl,
-              thumbnailUrl: processedThumbnailUrl,
-              fullSizeUrl: processedFullSizeUrl
+              thumbnailUrl,
+              fullSizeUrl
             });
           }
         }}
@@ -118,13 +105,6 @@ const ProductImage = ({
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <LoadingSpinner />
-        </div>
-      )}
-
-      {/* High quality badge - show for images that meet quality thresholds */}
-      {imageLoaded && imageDimensions && imageDimensions.width > 800 && imageDimensions.height > 800 && (
-        <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-sm opacity-70">
-          HD
         </div>
       )}
 
