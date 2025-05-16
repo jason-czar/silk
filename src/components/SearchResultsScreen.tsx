@@ -13,6 +13,8 @@ interface SearchResultsScreenProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   resetSearch: () => void;
   onAutoLoadMore: () => Promise<void>;
+  preferHighQuality?: boolean;
+  onToggleQualityPreference?: () => void;
 }
 
 const SearchResultsScreen: React.FC<SearchResultsScreenProps> = ({
@@ -23,7 +25,9 @@ const SearchResultsScreen: React.FC<SearchResultsScreenProps> = ({
   hasMoreResults,
   onSearch,
   resetSearch,
-  onAutoLoadMore
+  onAutoLoadMore,
+  preferHighQuality,
+  onToggleQualityPreference
 }) => {
   return (
     <div className="bg-[#EBEBEB] dark:bg-gray-900 min-h-screen transition-colors duration-300">
@@ -31,7 +35,9 @@ const SearchResultsScreen: React.FC<SearchResultsScreenProps> = ({
         onSearch={onSearch} 
         loading={loading} 
         resetSearch={resetSearch} 
-        isCompact={true} 
+        isCompact={true}
+        preferHighQuality={preferHighQuality}
+        onToggleQualityPreference={onToggleQualityPreference}
       />
       
       <div className="container mx-auto px-4 py-0">
