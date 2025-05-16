@@ -21,7 +21,7 @@ const SearchHeader = ({
   return <div className={`${isCompact ? 'sticky top-0 z-50 bg-gradient-to-b from-[#EBEBEB]/60 to-[#EBEBEB]/10 dark:from-gray-900/60 dark:to-gray-900/10 shadow-sm backdrop-blur-sm' : ''}`}>
       <div className="container mx-auto px-4 py-[18px]">
         <header className={`flex items-center ${!isCompact ? 'mb-8' : 'mb-4 pl-[10px]'}`}>
-          {!isCompact ? <div className="flex items-center justify-center mb-8 w-full">
+          {!isCompact ? <div className="flex items-center justify-center mb-0 w-full">
               <div className="absolute top-4 right-4 flex items-center gap-2">
                 {isMobile ? <Sheet>
                     <SheetTrigger asChild>
