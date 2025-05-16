@@ -21,7 +21,7 @@ const ImageCard = ({ item }: ImageCardProps) => {
   } = useProductDetails(item);
   
   // Get navigation functionality
-  const { isLoading, handleClick } = useProductNavigation(item);
+  const { isLoading, handleClick, handleTouchStart } = useProductNavigation(item);
 
   // Extract relevant data from the item
   const title = item.title || '';
@@ -38,7 +38,11 @@ const ImageCard = ({ item }: ImageCardProps) => {
   const displayTitle = cleanTitle.length > 60 ? cleanTitle.substring(0, 60) + '...' : cleanTitle;
   
   return (
-    <div className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb]">
+    <div 
+      className="rounded-lg overflow-hidden shadow-md h-full bg-[#ebebeb] touch-manipulation"
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+    >
       <ProductImage 
         thumbnailUrl={thumbnailUrl}
         fullSizeUrl={fullSizeImage}

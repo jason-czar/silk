@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { ProductImageProps } from './types';
@@ -44,6 +43,7 @@ const ProductImage = ({
     <div 
       className="relative pb-[100%] bg-white touch-manipulation"
       onClick={handleClick}
+      style={{ touchAction: 'manipulation' }}
     >
       {/* Main Product Image with fullSizeUrl if available */}
       <img 
@@ -119,6 +119,7 @@ const ProductImage = ({
             e.stopPropagation();
             onToggleVariants();
           }}
+          style={{ touchAction: 'manipulation' }}
         >
           <Image size={isMobile ? 20 : 16} className="text-gray-600" />
         </div>
