@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const welcomeToastShown = useRef(false);
 
   useEffect(() => {
     // Set up auth state listener first
@@ -31,11 +33,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null);
         
         if (event === 'SIGNED_IN') {
-          toast({
-            title: "Welcome back!",
-            description: "You've successfully signed in."
-          });
+          // Only show welcome toast for genuine sign-ins, not when returning to app
+          if (!welcomeToastShown.current) {
+            toast({
+              title: "Welcome back!",
+              description: "You've successfully signed in."
+            });
+            welcomeToastShown.current = true;
+          }
         } else if (event === 'SIGNED_OUT') {
+          // Reset the welcome toast flag when signing out
+          welcomeToastShown.current = false;
+          
           toast({
             title: "Signed out",
             description: "You've been signed out successfully."
@@ -48,6 +57,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // If there's an existing session, mark as if we've shown the welcome toast
+      if (session) {
+        welcomeToastShown.current = true;
+      }
+      
       setLoading(false);
     });
 
