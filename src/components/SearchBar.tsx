@@ -5,22 +5,41 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
 interface SearchBarProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   disabled?: boolean;
+  showSuggestions?: boolean;
 }
+
 const SearchBar = ({
   onSearch,
-  disabled = false
+  disabled = false,
+  showSuggestions = false
 }: SearchBarProps) => {
   const [query, setQuery] = useState('');
   const [isProcessingUrl, setIsProcessingUrl] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingTimer, setProcessingTimer] = useState<NodeJS.Timeout | null>(null);
   const [useDHgate, setUseDHgate] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
+  // Search suggestions
+  const searchSuggestions = [
+    "Hermes Birkin",
+    "Alo Yoga",
+    "New Balance 9060",
+    "Prada Sunglasses",
+    "Lululemon Leggings",
+    "Apple Watch",
+    "Nike Dunk Low"
+  ];
+
+  const handleSuggestionClick = (suggestion: string) => {
+    onSearch(suggestion, useDHgate);
+  };
+
   const isValidUrl = (string: string) => {
     try {
       new URL(string);
@@ -29,6 +48,7 @@ const SearchBar = ({
       return false;
     }
   };
+
   const sendUrlToZapier = async (url: string) => {
     setIsProcessingUrl(true);
     setProcessingProgress(0);
@@ -152,6 +172,7 @@ const SearchBar = ({
       setIsProcessingUrl(false);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
@@ -162,22 +183,63 @@ const SearchBar = ({
       onSearch(trimmedQuery, useDHgate);
     }
   };
-  return <div className="search-bar-container flex items-end justify-center">
+
+  return (
+    <div className="search-bar-container flex flex-col items-center justify-center w-full">
       <form onSubmit={handleSubmit} className="w-full">
-        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB]\n                    border border-gray-300 text-gray-800 text-lg\n                    placeholder:text-[#BDBDBD]\n                    focus:outline-none\n                    focus:border-[#E3231E70]\n                    focus:ring-2\n                    focus:ring-[#E3231E70]\n                    shadow-md\n                    px-[22px] py-[16px]" />
-        <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
-          <Search size={24} className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} />
+        <input 
+          type="text" 
+          value={query} 
+          onChange={e => setQuery(e.target.value)} 
+          placeholder="Paste URL or search" 
+          disabled={disabled || isProcessingUrl} 
+          className="w-full pr-12 rounded-full bg-[#EBEBEB]
+                    border border-gray-300 text-gray-800 text-lg
+                    placeholder:text-[#BDBDBD]
+                    focus:outline-none
+                    focus:border-[#E3231E70]
+                    focus:ring-2
+                    focus:ring-[#E3231E70]
+                    shadow-md
+                    px-[22px] py-[16px]" 
+        />
+        <button 
+          type="submit" 
+          disabled={disabled || isProcessingUrl || !query.trim()} 
+          aria-label="Search" 
+          className="absolute right-4 top-1/2 -translate-y-1/2"
+        >
+          <Search 
+            size={24} 
+            className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} 
+          />
         </button>
       </form>
       
-      {isProcessingUrl && <div className="mt-2">
+      {isProcessingUrl && (
+        <div className="mt-2">
           <Progress value={processingProgress} className="h-1" />
           <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
-        </div>}
+        </div>
+      )}
       
-      <div className="flex items-center justify-end space-x-2 mt-2">
-        {/* Any additional content */}
-      </div>
-    </div>;
+      {showSuggestions && !isProcessingUrl && (
+        <div className="w-full mt-6 flex flex-wrap justify-center gap-2">
+          {searchSuggestions.map((suggestion) => (
+            <Button
+              key={suggestion}
+              variant="outline"
+              size="sm"
+              onClick={() => handleSuggestionClick(suggestion)}
+              className="rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-300 px-4 py-1 text-sm font-medium transition-colors"
+            >
+              {suggestion}
+            </Button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default SearchBar;
