@@ -5,22 +5,33 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+
 interface SearchBarProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   disabled?: boolean;
+  showSuggestions?: boolean;
 }
+
 const SearchBar = ({
   onSearch,
-  disabled = false
+  disabled = false,
+  showSuggestions = true
 }: SearchBarProps) => {
   const [query, setQuery] = useState('');
   const [isProcessingUrl, setIsProcessingUrl] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingTimer, setProcessingTimer] = useState<NodeJS.Timeout | null>(null);
   const [useDHgate, setUseDHgate] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
+  // Search suggestions to display
+  const suggestedSearches = ["Hermes Birkin", "Alo yoga", "New Balance 9060", "Prada sunglasses"];
+  
+  const handleSuggestionClick = (suggestion: string) => {
+    setQuery(suggestion); // Update input field with the suggestion
+    onSearch(suggestion, useDHgate); // Perform the search
+  };
+
   const isValidUrl = (string: string) => {
     try {
       new URL(string);
@@ -162,7 +173,7 @@ const SearchBar = ({
       onSearch(trimmedQuery, useDHgate);
     }
   };
-  return <div className="search-bar-container flex items-end justify-center">
+  return <div className="search-bar-container flex flex-col items-end justify-center">
       <form onSubmit={handleSubmit} className="w-full">
         <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB]\n                    border border-gray-300 text-gray-800 text-lg\n                    placeholder:text-[#BDBDBD]\n                    focus:outline-none\n                    focus:border-[#E3231E70]\n                    focus:ring-2\n                    focus:ring-[#E3231E70]\n                    shadow-md\n                    px-[22px] py-[16px]" />
         <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -175,9 +186,23 @@ const SearchBar = ({
           <p className="text-xs text-gray-500 mt-1 text-center">Processing product data... {processingProgress}%</p>
         </div>}
       
-      <div className="flex items-center justify-end space-x-2 mt-2">
-        {/* Any additional content */}
-      </div>
+      {/* Search suggestions */}
+      {showSuggestions && !isProcessingUrl && !disabled && (
+        <div className="flex flex-wrap gap-2 mt-4 justify-center w-full">
+          {suggestedSearches.map((suggestion, index) => (
+            <button
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion)}
+              className="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-full text-sm font-medium 
+                        text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 
+                        transition-colors duration-200"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      )}
     </div>;
 };
+
 export default SearchBar;

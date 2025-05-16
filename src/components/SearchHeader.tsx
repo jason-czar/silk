@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -5,12 +6,14 @@ import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+
 interface SearchHeaderProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   loading: boolean;
   resetSearch?: () => void;
   isCompact?: boolean;
 }
+
 const SearchHeader = ({
   onSearch,
   loading,
@@ -53,7 +56,7 @@ const SearchHeader = ({
                 </div>
               </div>
               <div className="flex-grow flex items-center justify-center">
-                <SearchBar onSearch={onSearch} disabled={loading} />
+                <SearchBar onSearch={onSearch} disabled={loading} showSuggestions={false} />
               </div>
               <div className="ml-4 flex items-center gap-2">
                 {isMobile ? <Sheet>
@@ -85,10 +88,11 @@ const SearchHeader = ({
               Find similar products - at factory direct prices.
             </p>
             <div className="scale-in">
-              <SearchBar onSearch={onSearch} disabled={loading} />
+              <SearchBar onSearch={onSearch} disabled={loading} showSuggestions={true} />
             </div>
           </>}
       </div>
     </div>;
 };
+
 export default SearchHeader;
