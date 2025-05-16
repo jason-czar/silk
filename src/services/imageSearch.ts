@@ -95,8 +95,8 @@ export const searchImages = async ({
     
     console.log(`Searching Google for "${query}" (start ${start}, num ${num})`);
     
-    // Add imgSize=large to get higher quality images
-    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&imgSize=large&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
+    // Removed imgSize=large parameter to allow images of all sizes
+    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&searchType=image&q=${encodeURIComponent(query)}&start=${start}&num=${num}`;
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
