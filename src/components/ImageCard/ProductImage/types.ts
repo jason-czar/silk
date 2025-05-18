@@ -7,5 +7,6 @@ export interface ProductImageProps {
   hasVariants: boolean;
   onToggleVariants: () => void;
   isLoadingProduct: boolean;
-  handleClick: (e: React.MouseEvent) => void;
+  handleClick: () => void;
+  colorVariants?: { url: string; color: string }[];
 }
