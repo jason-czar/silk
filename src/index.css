@@ -172,7 +172,11 @@
 }
 
 .search-bar-container input {
-  @apply w-full py-3 px-5 pr-12 rounded-full bg-[#EBEBEB] dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 placeholder:text-[#BDBDBD] dark:placeholder:text-gray-500 focus:outline-none focus:border-[#E3231E] focus:ring-2 focus:ring-[#E3231E] shadow-md transition-colors duration-300;
+  @apply w-full py-3 px-5 pr-12 rounded-full bg-[#EBEBEB] dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 placeholder:text-[#BDBDBD] dark:placeholder:text-gray-500 focus:outline-none shadow-md transition-colors duration-300;
+  /* Remove the solid border/ring and replace with box-shadow for focus state */
+  @apply focus:border-transparent focus:ring-0;
+  /* Add subtle drop shadow effect with lower opacity when focused */
+  @apply focus:shadow-[0_0_0_3px_rgba(227,35,30,0.3)];
 }
 
 .search-bar-container button {

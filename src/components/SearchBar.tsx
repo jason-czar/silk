@@ -5,10 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+
 interface SearchBarProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   disabled?: boolean;
 }
+
 const SearchBar = ({
   onSearch,
   disabled = false
@@ -164,9 +166,28 @@ const SearchBar = ({
   };
   return <div className="search-bar-container flex items-end justify-center">
       <form onSubmit={handleSubmit} className="w-full">
-        <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Paste URL or search" disabled={disabled || isProcessingUrl} className="w-full pr-12 rounded-full bg-[#EBEBEB]\n                    border border-gray-300 text-gray-800 text-lg\n                    placeholder:text-[#BDBDBD]\n                    focus:outline-none\n                    focus:border-[#E3231E70]\n                    focus:ring-2\n                    focus:ring-[#E3231E70]\n                    shadow-md\n                    px-[22px] py-[16px]" />
-        <button type="submit" disabled={disabled || isProcessingUrl || !query.trim()} aria-label="Search" className="absolute right-4 top-1/2 -translate-y-1/2">
-          <Search size={24} className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} />
+        <input 
+          type="text" 
+          value={query} 
+          onChange={e => setQuery(e.target.value)} 
+          placeholder="Paste URL or search" 
+          disabled={disabled || isProcessingUrl} 
+          className="w-full pr-12 rounded-full bg-[#EBEBEB]
+                    border border-gray-300 text-gray-800 text-lg
+                    placeholder:text-[#BDBDBD]
+                    shadow-md
+                    px-[22px] py-[16px]" 
+        />
+        <button 
+          type="submit" 
+          disabled={disabled || isProcessingUrl || !query.trim()} 
+          aria-label="Search" 
+          className="absolute right-4 top-1/2 -translate-y-1/2"
+        >
+          <Search 
+            size={24} 
+            className={`${isProcessingUrl ? 'animate-pulse' : ''} text-primary hover:text-primary/80 transition-colors duration-300`} 
+          />
         </button>
       </form>
       
@@ -180,4 +201,5 @@ const SearchBar = ({
       </div>
     </div>;
 };
+
 export default SearchBar;
