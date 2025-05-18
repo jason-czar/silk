@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -5,6 +6,8 @@ import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+
 interface SearchHeaderProps {
   onSearch: (query: string, useDHgate?: boolean) => void;
   loading: boolean;
@@ -25,16 +28,18 @@ const SearchHeader = ({
               <div className="absolute top-4 right-4 flex items-center gap-2">
                 {isMobile ? <Sheet>
                     <SheetTrigger asChild>
-                      <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
+                      <button className="p-2 rounded-full transition-all hover:bg-gray-200 dark:hover:bg-gray-700 hover:rotate-12">
                         <Menu size={20} />
                       </button>
                     </SheetTrigger>
-                    <SheetContent side="right" className="w-[250px] sm:w-[300px]">
-                      <SheetHeader>
-                        <SheetTitle>Menu</SheetTitle>
+                    <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm backdrop-blur-lg bg-white/80 dark:bg-gray-900/90 border-l border-white/20 dark:border-gray-800/50">
+                      <SheetHeader className="pb-6">
+                        <SheetTitle className="text-2xl bg-gradient-to-r from-[#E3231E] to-rose-500 bg-clip-text text-transparent font-bold">Silk Menu</SheetTitle>
                       </SheetHeader>
-                      <div className="mt-6 flex flex-col gap-4">
-                        <UserMenu />
+                      <div className="mt-6 flex flex-col gap-6">
+                        <div className="flex justify-center scale-110 mb-4">
+                          <UserMenu />
+                        </div>
                         <div className="flex justify-center">
                           <ThemeToggle />
                         </div>
@@ -58,16 +63,18 @@ const SearchHeader = ({
               <div className="ml-4 flex items-center gap-2 mx-[18px]">
                 {isMobile ? <Sheet>
                     <SheetTrigger asChild>
-                      <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
+                      <button className="p-2 rounded-full transition-all hover:bg-gray-200 dark:hover:bg-gray-700 hover:rotate-12">
                         <Menu size={20} />
                       </button>
                     </SheetTrigger>
-                    <SheetContent side="right" className="w-[250px] sm:w-[300px]">
-                      <SheetHeader>
-                        <SheetTitle>Menu</SheetTitle>
+                    <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm backdrop-blur-lg bg-white/80 dark:bg-gray-900/90 border-l border-white/20 dark:border-gray-800/50">
+                      <SheetHeader className="pb-6">
+                        <SheetTitle className="text-2xl bg-gradient-to-r from-[#E3231E] to-rose-500 bg-clip-text text-transparent font-bold">Silk Menu</SheetTitle>
                       </SheetHeader>
-                      <div className="mt-6 flex flex-col gap-4">
-                        <UserMenu />
+                      <div className="mt-6 flex flex-col gap-6">
+                        <div className="flex justify-center scale-110 mb-4">
+                          <UserMenu />
+                        </div>
                         <div className="flex justify-center">
                           <ThemeToggle />
                         </div>
