@@ -55,7 +55,7 @@ const SearchHeader = ({
               <div className="flex-grow flex items-center justify-center">
                 <SearchBar onSearch={onSearch} disabled={loading} />
               </div>
-              <div className="ml-4 flex items-center gap-2">
+              <div className="ml-4 flex items-center gap-2 mx-[18px]">
                 {isMobile ? <Sheet>
                     <SheetTrigger asChild>
                       <button className="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
