@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { ProductImageProps } from './types';
@@ -123,13 +122,6 @@ const ProductImage = ({
           <Image size={isMobile ? 20 : 16} className="text-gray-600" />
         </div>
       )}
-      
-      {/* Loading indicator for product details - HIDDEN as requested */}
-      {/* {isLoadingProduct && (
-        <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
-          <LoadingSpinner size="small" />
-        </div>
-      )} */}
     </div>
   );
 };

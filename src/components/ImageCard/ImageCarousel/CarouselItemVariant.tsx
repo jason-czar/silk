@@ -16,23 +16,20 @@ const CarouselItemVariant: React.FC<CarouselItemVariantProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   
-  // If the image fails to load, we can try again with HTTPS or HTTP
+  // If the image fails to load, we can try again with a modified URL
   const handleImageError = () => {
     const originalUrl = variant.url;
     setError(true);
     setLoading(false);
     
-    // Attempt to log specific error details
+    // Log error details for debugging
     console.error(`Failed to load image: ${originalUrl}`);
-    
-    // We could implement URL fixing here in the future
-    // For now, just mark as error to show the error state
   };
   
   return (
     <div 
       className={`aspect-square rounded overflow-hidden cursor-pointer border-2 relative
-        ${isSelected ? 'border-blue-500' : 'border-transparent'}`}
+        ${isSelected ? 'border-blue-500' : 'border-transparent hover:border-blue-300'}`}
       onClick={onClick}
       title={variant.color} // Add tooltip with color name
     >
@@ -61,10 +58,12 @@ const CarouselItemVariant: React.FC<CarouselItemVariantProps> = ({
         onError={handleImageError}
       />
       
-      {/* Small color indicator label at the bottom */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-xs text-white py-0.5 px-1 truncate text-center">
-        {variant.color}
-      </div>
+      {/* Small color indicator badge at the bottom */}
+      {isSelected && (
+        <div className="absolute bottom-0 left-0 right-0 bg-blue-500 bg-opacity-70 text-xs text-white py-0.5 px-1 truncate text-center">
+          Selected
+        </div>
+      )}
     </div>
   );
 };
