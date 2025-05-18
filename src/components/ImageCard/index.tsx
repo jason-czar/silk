@@ -48,7 +48,6 @@ const ImageCard = ({ item }: ImageCardProps) => {
         onToggleVariants={toggleVariants}
         isLoadingProduct={isLoadingProduct}
         handleClick={handleClick}
-        colorVariants={colorVariants}
       />
 
       {/* Color variants carousel - displayed if showVariants is true or if we have images from API */}

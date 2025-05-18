@@ -1,10 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { getProductByItemcode } from '@/integrations/dhgate/endpoints';
 import { DHgateProductResponse } from '@/integrations/dhgate/types';
 import { extractItemcode, generateFallbackVariants, getFullSizeGoogleImage, isImageUrl } from './utils';
 import { ImageCardProps } from './types';
-import { fetchProductImagesFromHtml, isDHgateProductUrl } from '@/services/productHtmlParser';
 
 export const useProductDetails = (item: ImageCardProps['item']) => {
   const { toast } = useToast();
@@ -17,7 +17,6 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
   const [productImagesLoaded, setProductImagesLoaded] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [isLoadingHtmlImages, setIsLoadingHtmlImages] = useState(false);
 
   useEffect(() => {
     // Set the main image when the component mounts
@@ -126,70 +125,20 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
           console.error('Failed to fetch DHgate product details:', error);
           setApiError(error instanceof Error ? error.message : 'Unknown API error');
           // Don't show error toast to user - just silently fallback to the existing variant
+          // and keep using the fallback variants we already set
         } finally {
           setIsLoadingProduct(false);
         }
       };
       
       fetchProductDetails();
-      
-      // Additionally, try to fetch images from HTML
-      const fetchHtmlImages = async () => {
-        // Get the product URL
-        const productUrl = item.link || item.image?.contextLink;
-        
-        // Only proceed if this is a DHgate URL
-        if (productUrl && isDHgateProductUrl(productUrl)) {
-          setIsLoadingHtmlImages(true);
-          try {
-            const htmlImages = await fetchProductImagesFromHtml(productUrl);
-            
-            if (htmlImages && htmlImages.length > 0) {
-              // Create variant objects from HTML images
-              const htmlVariants = htmlImages.map((url, index) => ({
-                url,
-                color: `Image ${index + 1}`
-              }));
-              
-              // Merge with existing variants, preferring HTML images since they're higher quality
-              setColorVariants(prevVariants => {
-                // Create a combined list with HTML images first
-                const combinedVariants = [...htmlVariants];
-                
-                // Keep track of URLs we've already added
-                const addedUrls = new Set(htmlVariants.map(v => v.url));
-                
-                // Add any previous variants that aren't duplicates
-                prevVariants.forEach(variant => {
-                  if (!addedUrls.has(variant.url)) {
-                    addedUrls.add(variant.url);
-                    combinedVariants.push(variant);
-                  }
-                });
-                
-                console.log(`Enhanced carousel with ${htmlVariants.length} HTML-parsed images`);
-                return combinedVariants;
-              });
-              
-              setProductImagesLoaded(true);
-            }
-          } catch (error) {
-            console.error('Error fetching images from HTML:', error);
-            // Silently fail and continue using the API images or fallbacks
-          } finally {
-            setIsLoadingHtmlImages(false);
-          }
-        }
-      };
-      
-      fetchHtmlImages();
     }
   }, [item]);
 
   // Automatically show variants when they're loaded (if we have more than one)
   useEffect(() => {
     if (productImagesLoaded && colorVariants.length > 1) {
-      // Only auto-expand if we have multiple images
+      // Only auto-expand if we have multiple images from DHgate
       setShowVariants(true);
     }
   }, [productImagesLoaded, colorVariants.length]);
@@ -218,7 +167,6 @@ export const useProductDetails = (item: ImageCardProps['item']) => {
     productImagesLoaded,
     apiError,
     handleVariantClick,
-    toggleVariants,
-    isLoadingHtmlImages
+    toggleVariants
   };
 };

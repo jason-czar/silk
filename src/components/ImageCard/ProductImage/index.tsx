@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Image, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Image } from 'lucide-react';
 import { ProductImageProps } from './types';
 import LoadingSpinner from './LoadingSpinner';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -14,23 +14,16 @@ const ProductImage = ({
   hasVariants, 
   onToggleVariants, 
   isLoadingProduct,
-  handleClick,
-  colorVariants = []
+  handleClick 
 }: ProductImageProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
   const [loadError, setLoadError] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const isMobile = useIsMobile();
   
-  // Get all available images for carousel
-  const carouselImages = colorVariants.length > 0 
-    ? colorVariants.map(variant => variant.url)
-    : [fullSizeUrl || thumbnailUrl].filter(Boolean);
-  
   // Use the full size URL if provided, otherwise fall back to thumbnail
-  const displayUrl = useFallback ? thumbnailUrl : (carouselImages[currentImageIndex] || fullSizeUrl || thumbnailUrl);
+  const displayUrl = useFallback ? thumbnailUrl : (fullSizeUrl || thumbnailUrl);
   
   // Reset image loaded state when URL changes
   useEffect(() => {
@@ -45,28 +38,7 @@ const ProductImage = ({
     } else {
       console.log('No full size URL, using thumbnail:', thumbnailUrl);
     }
-    
-    console.log('Carousel images available:', carouselImages.length);
-  }, [fullSizeUrl, thumbnailUrl, carouselImages]);
-
-  // Navigation functions
-  const goToNextImage = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering handleClick
-    if (carouselImages.length > 1) {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
-      );
-    }
-  };
-
-  const goToPreviousImage = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering handleClick
-    if (carouselImages.length > 1) {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === 0 ? carouselImages.length - 1 : prevIndex - 1
-      );
-    }
-  };
+  }, [fullSizeUrl, thumbnailUrl]);
 
   return (
     <div 
@@ -81,7 +53,7 @@ const ProductImage = ({
           imageLoaded ? 'opacity-100' : 'opacity-0'
         }`}
         loading="lazy" 
-        decoding="async"
+        decoding="async" // Add decoding async for better performance
         onLoad={(e) => {
           setImageLoaded(true);
           setLoadError(false);
@@ -113,40 +85,6 @@ const ProductImage = ({
           }
         }}
       />
-      
-      {/* Navigation arrows - only visible on desktop */}
-      {!isMobile && carouselImages.length > 1 && (
-        <>
-          <button 
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-1.5 rounded-full shadow-md z-10 hover:bg-white transition-colors"
-            onClick={goToPreviousImage}
-            aria-label="Previous image"
-          >
-            <ChevronLeft size={16} className="text-gray-700" />
-          </button>
-          <button 
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-1.5 rounded-full shadow-md z-10 hover:bg-white transition-colors"
-            onClick={goToNextImage}
-            aria-label="Next image"
-          >
-            <ChevronRight size={16} className="text-gray-700" />
-          </button>
-          
-          {/* Image counter indicators */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {carouselImages.map((_, index) => (
-              <div 
-                key={index}
-                className={`w-1.5 h-1.5 rounded-full bg-white ${
-                  index === currentImageIndex 
-                    ? 'opacity-100 scale-125' 
-                    : 'opacity-60'
-                } shadow-sm transition-all duration-200`}
-              />
-            ))}
-          </div>
-        </>
-      )}
       
       {/* Loading background while image is loading */}
       {!imageLoaded && (
@@ -185,6 +123,13 @@ const ProductImage = ({
           <Image size={isMobile ? 20 : 16} className="text-gray-600" />
         </div>
       )}
+      
+      {/* Loading indicator for product details - HIDDEN as requested */}
+      {/* {isLoadingProduct && (
+        <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-sm">
+          <LoadingSpinner size="small" />
+        </div>
+      )} */}
     </div>
   );
 };
