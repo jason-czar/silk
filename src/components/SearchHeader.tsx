@@ -4,7 +4,7 @@ import SearchBar from '@/components/SearchBar';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserMenu from '@/components/UserMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu } from 'lucide-react';
+import { Heart, Menu, Settings } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 
@@ -40,6 +40,22 @@ const SearchHeader = ({
                         <div className="flex justify-center scale-110 mb-4">
                           <UserMenu />
                         </div>
+                        <nav className="mt-2">
+                          <ul className="space-y-3">
+                            <li className="menu-item-appear" style={{ '--item-index': 0 } as React.CSSProperties}>
+                              <Link to="/favorites" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
+                                <Heart size={18} className="text-[#E3231E]" />
+                                <span className="font-medium">My Favorites</span>
+                              </Link>
+                            </li>
+                            <li className="menu-item-appear" style={{ '--item-index': 1 } as React.CSSProperties}>
+                              <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
+                                <Settings size={18} className="text-gray-600 dark:text-gray-300" />
+                                <span className="font-medium">Settings</span>
+                              </Link>
+                            </li>
+                          </ul>
+                        </nav>
                         <div className="flex justify-center">
                           <ThemeToggle />
                         </div>
@@ -75,6 +91,22 @@ const SearchHeader = ({
                         <div className="flex justify-center scale-110 mb-4">
                           <UserMenu />
                         </div>
+                        <nav className="mt-2">
+                          <ul className="space-y-3">
+                            <li className="menu-item-appear" style={{ '--item-index': 0 } as React.CSSProperties}>
+                              <Link to="/favorites" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
+                                <Heart size={18} className="text-[#E3231E]" />
+                                <span className="font-medium">My Favorites</span>
+                              </Link>
+                            </li>
+                            <li className="menu-item-appear" style={{ '--item-index': 1 } as React.CSSProperties}>
+                              <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
+                                <Settings size={18} className="text-gray-600 dark:text-gray-300" />
+                                <span className="font-medium">Settings</span>
+                              </Link>
+                            </li>
+                          </ul>
+                        </nav>
                         <div className="flex justify-center">
                           <ThemeToggle />
                         </div>
